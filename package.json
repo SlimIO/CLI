@@ -1,0 +1,65 @@
+{
+    "name": "@slimio/cli",
+    "version": "0.1.0",
+    "description": "SlimIO Command Line Interface",
+    "main": "index.js",
+    "preferGlobal": true,
+    "bin": {
+        "slimio": "./bin/index.js"
+    },
+    "scripts": {
+        "prepublishOnly": "pkg-ok",
+        "test": "ava --verbose",
+        "doc": "jsdoc -c ./jsdoc.json -r -R ./README.md -P ./package.json --verbose",
+        "coverage": "nyc ava",
+        "report": "nyc report --reporter=html"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/SlimIO/CLI.git"
+    },
+    "keywords": [
+        "SlimIO",
+        "monitoring"
+    ],
+    "author": "SlimIO",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/SlimIO/CLI/issues"
+    },
+    "homepage": "https://github.com/SlimIO/CLI#readme",
+    "dependencies": {
+        "@slimio/tcp-sdk": "^0.1.0",
+        "commander": "^2.19.0"
+    },
+    "devDependencies": {
+        "@commitlint/cli": "^7.2.1",
+        "@commitlint/config-conventional": "^7.1.2",
+        "@escommunity/minami": "^1.0.0",
+        "@slimio/eslint-config": "^2.0.3",
+        "@types/node": "^10.12.12",
+        "ava": "^0.25.0",
+        "cross-env": "^5.2.0",
+        "eslint": "^5.10.0",
+        "husky": "^1.2.0",
+        "jsdoc": "^3.5.5",
+        "nyc": "^13.1.0",
+        "pkg-ok": "^2.3.1"
+    },
+    "engines": {
+        "node": ">=10"
+    },
+    "husky": {
+        "hooks": {
+            "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+        }
+    },
+    "nyc": {
+        "check-coverage": true,
+        "per-file": false,
+        "lines": 98,
+        "statements": 98,
+        "functions": 98,
+        "branches": 90
+    }
+}
