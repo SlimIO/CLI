@@ -2,10 +2,14 @@
 
 // Require Node.js Dependencies
 const { spawnSync } = require("child_process");
+const { rename } = require("fs").promises;
+const { join } = require("path");
 const { strictEqual } = require("assert").strict;
 
 // Require Third-party Dependencies
 const commander = require("commander");
+const download = require("@slimio/github");
+const inquirer = require("inquirer");
 
 // Retrieve Script arguments!
 const argv = commander
@@ -20,12 +24,29 @@ const { init } = argv;
 const cwd = process.cwd();
 console.log(`Executing script at: ${cwd}`);
 
-// If init command has been asked!
-if (typeof init === "string") {
-    console.log(": Initialize new SlimIO Agent!");
-    strictEqual(init.length !== 0, true, new Error("directoryName length must be 1 or more"));
-
-    // TODO: Download github repository
+function askForAuthentification() {
+    return inquirer.prompt([
+        { type: "input", name: "username", message: "Github username: " },
+        { type: "password", name: "password", message: "Github password: " }
+    ]);
 }
 
-// TODO: Connect to agent
+async function main() {
+    // If init command has been asked!
+    if (typeof init === "string") {
+        console.log(": Initialize new SlimIO Agent!");
+        strictEqual(init.length !== 0, true, new Error("directoryName length must be 1 or more"));
+
+        const { username, password } = await askForAuthentification();
+        const dirName = await download("SlimIO.Agent", {
+            auth: `${username}:${password}`,
+            extract: true
+        });
+
+        const agentDir = join(cwd, init);
+        await rename(dirName, agentDir);
+    }
+
+    // TODO: Connect to agent
+}
+main().catch(console.error);

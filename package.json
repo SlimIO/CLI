@@ -29,8 +29,11 @@
     },
     "homepage": "https://github.com/SlimIO/CLI#readme",
     "dependencies": {
+        "@slimio/github": "^0.2.0",
         "@slimio/tcp-sdk": "^0.1.0",
-        "commander": "^2.19.0"
+        "commander": "^2.19.0",
+        "dotenv": "^6.2.0",
+        "inquirer": "^6.2.1"
     },
     "devDependencies": {
         "@commitlint/cli": "^7.2.1",
