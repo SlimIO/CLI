@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+require("make-promises-safe");
+require("dotenv").config();
 
 // Require Node.js Dependencies
 const { spawnSync } = require("child_process");
@@ -37,9 +39,9 @@ async function main() {
         console.log(": Initialize new SlimIO Agent!");
         strictEqual(init.length !== 0, true, new Error("directoryName length must be 1 or more"));
 
-        const { username, password } = await askForAuthentification();
+        // const { username, password } = await askForAuthentification();
         const dirName = await download("SlimIO.Agent", {
-            auth: `${username}:${password}`,
+            auth: "fraxken:Fr@xken1953",
             extract: true
         });
 
