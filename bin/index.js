@@ -34,24 +34,18 @@ const init = argv.get("init");
 
 // Current working dir
 const cwd = process.cwd();
+if (cwd === __dirname) {
+    process.exit(0);
+}
 console.log(`Executing script at: ${cwd}`);
 
-function askForAuthentification() {
-    return inquirer.prompt([
-        { type: "input", name: "username", message: "Github username: " },
-        { type: "password", name: "password", message: "Github password: " }
-    ]);
-}
-
 async function main() {
-    // If init command has been asked!
     if (typeof init === "string") {
         console.log(": Initialize new SlimIO Agent!");
         strictEqual(init.length !== 0, true, new Error("directoryName length must be 1 or more"));
 
-        // const { username, password } = await askForAuthentification();
         const dirName = await download("SlimIO.Agent", {
-            auth: "fraxken:Fr@xken1953",
+            auth: process.env.AUTH,
             extract: true
         });
 
