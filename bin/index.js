@@ -3,24 +3,34 @@ require("make-promises-safe");
 require("dotenv").config();
 
 // Require Node.js Dependencies
-const { spawnSync } = require("child_process");
 const { rename } = require("fs").promises;
 const { join } = require("path");
 const { strictEqual } = require("assert").strict;
 
 // Require Third-party Dependencies
-const commander = require("commander");
+const { parseArg, argDefinition, help } = require("@slimio/arg-parser");
 const download = require("@slimio/github");
 const inquirer = require("inquirer");
 
-// Retrieve Script arguments!
-const argv = commander
-    .version("0.1.0")
-    .option("-i, --init <directoryName>", "Initialize a new SlimIO Agent")
-    .option("-c, --connect <tcpPort>", "Establish connection to a SlimIO Agent")
-    .parse(process.argv);
+/** @type {ArgParser.ArgvResult<CLI.argv>} */
+let argv;
+{
+    // Retrieve Script arguments!
+    const argDefs = [
+        argDefinition("-i --init [string]", "Initialize a new SlimIO Agent"),
+        argDefinition("-c --connect [number]", "Connect CLI to a local or remote SlimIO Agent"),
+        argDefinition("-h --help", "Show help")
+    ];
 
-const { init } = argv;
+    argv = parseArg(argDefs);
+    if (argv.get("help")) {
+        help(argDefs);
+    }
+    argv.delete("help");
+}
+
+
+const init = argv.get("init");
 
 // Current working dir
 const cwd = process.cwd();
