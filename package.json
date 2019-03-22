@@ -34,7 +34,7 @@
         "commander": "^2.19.0",
         "dotenv": "^7.0.0",
         "inquirer": "^6.2.2",
-        "make-promises-safe": "^4.0.0"
+        "make-promises-safe": "^5.0.0"
     },
     "devDependencies": {
         "@commitlint/cli": "^7.5.2",
