@@ -33,7 +33,7 @@
         "@slimio/tcp-sdk": "^0.1.0",
         "commander": "^2.19.0",
         "dotenv": "^7.0.0",
-        "inquirer": "^6.2.1",
+        "inquirer": "^6.2.2",
         "make-promises-safe": "^4.0.0"
     },
     "devDependencies": {
