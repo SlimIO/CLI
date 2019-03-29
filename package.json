@@ -27,7 +27,7 @@
     "homepage": "https://github.com/SlimIO/CLI#readme",
     "dependencies": {
         "@slimio/arg-parser": "^0.2.4",
-        "@slimio/github": "^0.4.0",
+        "@slimio/github": "^0.4.1",
         "@slimio/tcp-sdk": "^0.1.1",
         "@slimio/utils": "^0.8.0",
         "dotenv": "^7.0.0",
