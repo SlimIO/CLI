@@ -9,6 +9,7 @@ if (dotenv.error) {
 const { rename } = require("fs").promises;
 const { join } = require("path");
 const { strictEqual } = require("assert").strict;
+const url = require("url");
 
 // Require Third-party Dependencies
 const { parseArg, argDefinition, help } = require("@slimio/arg-parser");
@@ -46,6 +47,20 @@ if (cwd === __dirname) {
     process.exit(0);
 }
 
+
+async function githubDownload(path) {
+    try {
+        return download(path, {
+            auth: process.env.AUTH,
+            extract: true
+        });
+    }
+    catch (err) {
+        throw new Error(`${path} github repository doesn't exist`);
+    }
+}
+
+
 console.log(`Executing script at: ${cwd}`);
 
 async function main() {
@@ -53,14 +68,9 @@ async function main() {
         console.log(": Initialize new SlimIO Agent!");
         strictEqual(init.length !== 0, true, new Error("directoryName length must be 1 or more"));
 
-        let agentDir;
+        const agentDir = join(cwd, init);
         {
-            const dirName = await download("SlimIO.Agent", {
-                auth: process.env.AUTH,
-                extract: true
-            });
-
-            agentDir = join(cwd, init);
+            const dirName = await githubDownload("SlimIO.Agent");
             await rename(dirName, agentDir);
 
             console.log(`Agent installed with name ${init}`);
@@ -76,17 +86,50 @@ async function main() {
 
         console.log("Starting installing Built-in addons");
         for (const addonName of builtInAddons) {
-            const dirName = await download(`SlimIO.${addonName}`, {
-                auth: process.env.AUTH,
-                extract: true
-            });
+            const dirName = await githubDownload(`SlimIO.${addonName}`);
 
             const addonDir = join(addonsDir, addonName);
             await rename(dirName, addonDir);
 
             console.log(`Addon ${addonName} installed`);
         }
-        process.chdir("../..");
+        process.chdir("..");
+    }
+
+    if (typeof add === "string") {
+        process.chdir("addons");
+        let myurl;
+        try {
+            myurl = new URL(add);
+        }
+        catch (error) {
+            const dirName = await githubDownload(`SlimIO.${add}`);
+            console.log(`dirName: ${dirName}`);
+            await rename(dirName, add);
+
+            return;
+        }
+
+        const { hostname, pathname } = myurl;
+        console.log(`Hostname: ${hostname}`);
+        console.log(`Pathname: ${pathname}`);
+        console.log();
+
+        if (hostname !== "github.com") {
+            throw new Error("URL hostname must be github.com");
+        }
+        const [, orga, addon] = pathname.split("/");
+        console.log(`Orga: ${orga}`);
+        console.log(`Addon: ${addon}`);
+        console.log(`Pathname: ${pathname}`);
+        if (orga !== "SlimIO") {
+            console.log("test");
+            throw new Error("At this time, organisation must be SlimIO"); 
+        }
+
+        const dirName = await githubDownload(`SlimIO.${addon}`);
+        console.log(`dirName: ${dirName}`);
+        await rename(dirName, addon);
     }
 
     // TODO: Connect to agent
