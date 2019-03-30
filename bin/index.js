@@ -48,16 +48,11 @@ if (cwd === __dirname) {
 }
 
 
-async function githubDownload(path) {
-    try {
-        return download(path, {
-            auth: process.env.AUTH,
-            extract: true
-        });
-    }
-    catch (err) {
-        throw new Error(`${path} github repository doesn't exist`);
-    }
+function githubDownload(path) {
+    return download(path, {
+        auth: process.env.AUTH,
+        extract: true
+    });
 }
 
 
@@ -104,32 +99,29 @@ async function main() {
         }
         catch (error) {
             const dirName = await githubDownload(`SlimIO.${add}`);
-            console.log(`dirName: ${dirName}`);
             await rename(dirName, add);
+            console.log(`Addon ${addon} installed`);
 
             return;
         }
 
         const { hostname, pathname } = myurl;
-        console.log(`Hostname: ${hostname}`);
-        console.log(`Pathname: ${pathname}`);
-        console.log();
 
-        if (hostname !== "github.com") {
+        const spliteHostname = hostname.split(".");
+        const ext = spliteHostname.pop();
+        const host = spliteHostname.pop();
+
+        if (`${host}.${ext}` !== "github.com") {
             throw new Error("URL hostname must be github.com");
         }
         const [, orga, addon] = pathname.split("/");
-        console.log(`Orga: ${orga}`);
-        console.log(`Addon: ${addon}`);
-        console.log(`Pathname: ${pathname}`);
         if (orga !== "SlimIO") {
-            console.log("test");
-            throw new Error("At this time, organisation must be SlimIO"); 
+            throw new Error("At this time, organisation must be SlimIO");
         }
 
         const dirName = await githubDownload(`SlimIO.${addon}`);
-        console.log(`dirName: ${dirName}`);
         await rename(dirName, addon);
+        console.log(`Addon ${addon} installed`);
     }
 
     // TODO: Connect to agent
