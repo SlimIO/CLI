@@ -24,16 +24,16 @@ const EXEC_SUFFIX = process.platform === "win32";
 
 const TCP_CONNECT_TIMEOUT_MS = 1000;
 
-const builtInAddons = ["Events", "Socket"];
+const builtInAddons = ["Events", "Socket", "Addon-Agent"];
 
 /** @type {ArgParser.ArgvResult<CLI.argv>} */
 let argv;
 {
     // Retrieve Script arguments
     const argDefs = [
-        argDefinition("-i --init [string]", "Initialize a new SlimIO Agent"),
+        argDefinition("-i --init [string=agent]", "Initialize a new SlimIO Agent"),
         argDefinition("-a --add [string]", "Add an addon to the agent"),
-        argDefinition("-c --connect [number]", "Connect CLI to a local or remote SlimIO Agent"),
+        argDefinition("-c --connect [number=1337]", "Connect CLI to a local or remote SlimIO Agent"),
         argDefinition("-h --help", "Show help")
     ];
 
@@ -64,12 +64,7 @@ function githubDownload(path) {
 }
 
 function npmInstall(cwd) {
-    const npmProcess = spawnSync(`npm${EXEC_SUFFIX ? ".cmd" : ""}`, ["install"], { cwd });
-    for (const out of npmProcess.output) {
-        if (out !== null) {
-            console.log(out.toString());
-        }
-    }
+    spawnSync(`npm${EXEC_SUFFIX ? ".cmd" : ""}`, ["install"], { cwd, stdio: "inherit" });
 }
 
 console.log(`Executing script at: ${cwd}`);
@@ -88,7 +83,11 @@ async function main() {
 
             process.chdir(agentDir);
             console.log("> npm install");
-            npmInstall(process.cwd());
+
+            spawnSync(`npm${EXEC_SUFFIX ? ".cmd" : ""}`, ["install"], {
+                cwd: process.cwd(),
+                stdio: "inherit"
+            });
             // console.log(npmProcess);
             console.log();
         }
@@ -109,7 +108,10 @@ async function main() {
 
             process.chdir(addonDir);
             console.log("> npm install");
-            npmInstall(process.cwd());
+            spawnSync(`npm${EXEC_SUFFIX ? ".cmd" : ""}`, ["install"], {
+                cwd: process.cwd(),
+                stdio: "inherit"
+            });
             // console.log(npmProcess);
         }
 
@@ -128,7 +130,10 @@ async function main() {
             console.log(`Addon ${addon} installed`);
             process.chdir(addonDir);
             console.log("> npm install");
-            npmInstall(process.cwd());
+            spawnSync(`npm${EXEC_SUFFIX ? ".cmd" : ""}`, ["install"], {
+                cwd: process.cwd(),
+                stdio: "inherit"
+            });
 
             return;
         }
@@ -153,7 +158,10 @@ async function main() {
 
         process.chdir(addon);
         console.log("> npm install");
-        npmInstall(process.cwd());
+        spawnSync(`npm${EXEC_SUFFIX ? ".cmd" : ""}`, ["install"], {
+            cwd: process.cwd(),
+            stdio: "inherit"
+        });
 
         return;
     }
