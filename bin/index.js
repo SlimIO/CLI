@@ -104,7 +104,7 @@ async function main() {
             const addonDir = join(addonsDir, addonName);
             await rename(dirName, addonDir);
 
-            console.log(`Addon ${addonName} installed`);
+            console.log(`Addon ${addonName} has been cloned from GitHub`);
 
             process.chdir(addonDir);
             console.log("> npm install");
@@ -127,7 +127,7 @@ async function main() {
         catch (error) {
             const dirName = await githubDownload(`SlimIO.${add}`);
             await rename(dirName, add);
-            console.log(`Addon ${addon} installed`);
+            console.log(`Addon ${addon} has been cloned from GitHub`);
             process.chdir(addonDir);
             console.log("> npm install");
             spawnSync(`npm${EXEC_SUFFIX ? ".cmd" : ""}`, ["install"], {
@@ -154,7 +154,7 @@ async function main() {
 
         const dirName = await githubDownload(`SlimIO.${addon}`);
         await rename(dirName, addon);
-        console.log(`Addon ${addon} installed`);
+        console.log(`Addon ${addon} has been cloned from GitHub`);
 
         process.chdir(addon);
         console.log("> npm install");
@@ -171,7 +171,13 @@ async function main() {
 
         await client.once("connect", TCP_CONNECT_TIMEOUT_MS);
 
-        repl.start(`localhost:${connect}`);
+        const info = await new Promise((resolve, reject) => {
+            client.sendMessage("events.get_info").subscribe(resolve, reject);
+        });
+        console.log(info);
+
+        console.log(client.agent);
+        repl.start(`localhost:${connect}> `);
     }
     // TODO: Connect to agent
 }
