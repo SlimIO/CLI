@@ -9,13 +9,20 @@ if (dotenv.error) {
 const { rename } = require("fs").promises;
 const { join } = require("path");
 const { strictEqual } = require("assert").strict;
-const url = require("url");
+const { spawnSync } = require("child_process");
+const repl = require("repl");
 
 // Require Third-party Dependencies
 const { parseArg, argDefinition, help } = require("@slimio/arg-parser");
 const { createDirectory } = require("@slimio/utils");
 const download = require("@slimio/github");
+const TcpSdk = require("@slimio/tcp-sdk");
 const inquirer = require("inquirer");
+
+// CONSTANTS
+const EXEC_SUFFIX = process.platform === "win32";
+
+const TCP_CONNECT_TIMEOUT_MS = 1000;
 
 const builtInAddons = ["Events", "Socket"];
 
@@ -40,6 +47,7 @@ let argv;
 
 const init = argv.get("init");
 const add = argv.get("add");
+const connect = argv.get("connect");
 
 // Current working dir
 const cwd = process.cwd();
@@ -55,6 +63,14 @@ function githubDownload(path) {
     });
 }
 
+function npmInstall(cwd) {
+    const npmProcess = spawnSync(`npm${EXEC_SUFFIX ? ".cmd" : ""}`, ["install"], { cwd });
+    for (const out of npmProcess.output) {
+        if (out !== null) {
+            console.log(out.toString());
+        }
+    }
+}
 
 console.log(`Executing script at: ${cwd}`);
 
@@ -68,16 +84,19 @@ async function main() {
             const dirName = await githubDownload("SlimIO.Agent");
             await rename(dirName, agentDir);
 
-            console.log(`Agent installed with name ${init}`);
+            console.log(`Agent - Installed with name ${init}`);
+
+            process.chdir(agentDir);
+            console.log("> npm install");
+            npmInstall(process.cwd());
+            // console.log(npmProcess);
+            console.log();
         }
 
 
         // install built-in addons
         const addonsDir = join(agentDir, "addons");
         await createDirectory(addonsDir);
-
-        console.log();
-        process.chdir(addonsDir);
 
         console.log("Starting installing Built-in addons");
         for (const addonName of builtInAddons) {
@@ -87,8 +106,14 @@ async function main() {
             await rename(dirName, addonDir);
 
             console.log(`Addon ${addonName} installed`);
+
+            process.chdir(addonDir);
+            console.log("> npm install");
+            npmInstall(process.cwd());
+            // console.log(npmProcess);
         }
-        process.chdir("..");
+
+        return;
     }
 
     if (typeof add === "string") {
@@ -101,6 +126,9 @@ async function main() {
             const dirName = await githubDownload(`SlimIO.${add}`);
             await rename(dirName, add);
             console.log(`Addon ${addon} installed`);
+            process.chdir(addonDir);
+            console.log("> npm install");
+            npmInstall(process.cwd());
 
             return;
         }
@@ -122,8 +150,21 @@ async function main() {
         const dirName = await githubDownload(`SlimIO.${addon}`);
         await rename(dirName, addon);
         console.log(`Addon ${addon} installed`);
+
+        process.chdir(addon);
+        console.log("> npm install");
+        npmInstall(process.cwd());
+
+        return;
     }
 
+    if (typeof connect === "number") {
+        const client = new TcpSdk(connect);
+
+        await client.once("connect", TCP_CONNECT_TIMEOUT_MS);
+
+        repl.start(`localhost:${connect}`);
+    }
     // TODO: Connect to agent
 }
 main().catch(console.error);
