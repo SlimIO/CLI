@@ -28,7 +28,7 @@
     "dependencies": {
         "@slimio/arg-parser": "^0.3.0",
         "@slimio/github": "^0.4.2",
-        "@slimio/tcp-sdk": "^0.1.1",
+        "@slimio/tcp-sdk": "^0.2.0",
         "@slimio/utils": "^0.8.0",
         "dotenv": "^7.0.0",
         "inquirer": "^6.2.2",
