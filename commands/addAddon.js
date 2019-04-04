@@ -8,6 +8,7 @@ const {
 } = require("../utils");
 
 async function addAddon(add) {
+    // verify instance of Agent of index.js in current dir
     process.chdir("addons");
     let myurl;
     try {

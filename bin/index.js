@@ -5,25 +5,16 @@ if (dotenv.error) {
     throw dotenv.error;
 }
 
-// Require Node.js Dependencies
-const { rename } = require("fs").promises;
-const { join } = require("path");
-const { strictEqual } = require("assert").strict;
-const { spawnSync } = require("child_process");
-
 // Require Third-party Dependencies
 const { parseArg, argDefinition, help } = require("@slimio/arg-parser");
-const inquirer = require("inquirer");
 
 // Require Internal Dependencies
 const {
     initAgent,
     addAddon,
+    create,
     connectAgent
 } = require("../commands");
-
-// CONSTANTS
-const TCP_CONNECT_TIMEOUT_MS = 1000;
 
 
 /** @type {ArgParser.ArgvResult<CLI.argv>} */
@@ -74,7 +65,9 @@ async function main() {
     }
 
     if (argv.has("create") === true) {
-        
+        create();
+
+        return;
     }
 
     if (typeof connect === "number") {

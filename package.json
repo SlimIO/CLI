@@ -26,8 +26,10 @@
     },
     "homepage": "https://github.com/SlimIO/CLI#readme",
     "dependencies": {
+        "@slimio/addon-factory": "^0.4.0",
         "@slimio/arg-parser": "^0.3.0",
         "@slimio/github": "^0.4.2",
+        "@slimio/manifest": "^0.2.1",
         "@slimio/tcp-sdk": "^0.2.0",
         "@slimio/utils": "^0.8.0",
         "dotenv": "^7.0.0",
