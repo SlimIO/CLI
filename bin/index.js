@@ -39,10 +39,6 @@ let argv;
 
 console.log(argv);
 
-const init = argv.get("init");
-const add = argv.get("add");
-const connect = argv.get("connect");
-
 // Current working dir
 const cwd = process.cwd();
 if (cwd === __dirname) {
@@ -52,26 +48,26 @@ if (cwd === __dirname) {
 console.log(`Executing script at: ${cwd}`);
 
 async function main() {
-    if (typeof init === "string") {
-        await initAgent(init);
+    if (argv.has("init")) {
+        await initAgent(argv.get("init"));
 
         return;
     }
 
-    if (typeof add === "string") {
-        await addAddon(add);
+    if (argv.has("add")) {
+        await addAddon(argv.get("add"));
 
         return;
     }
 
-    if (argv.has("create") === true) {
+    if (argv.get("create") === true) {
         create();
 
         return;
     }
 
-    if (typeof connect === "number") {
-        connectAgent(connect);
+    if (argv.has("connect")) {
+        connectAgent(argv.get("connect"));
     }
 }
 main().catch(console.error);

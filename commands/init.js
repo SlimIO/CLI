@@ -10,7 +10,8 @@ const { createDirectory } = require("@slimio/utils");
 // Require Internal Dependencies
 const {
     githubDownload,
-    npmInstall
+    npmInstall,
+    npmCI
 } = require("../utils");
 
 
@@ -30,7 +31,7 @@ async function initAgent(init) {
         process.chdir(agentDir);
         console.log("> npm install");
 
-        npmInstall(process.cwd());
+        npmCI(process.cwd());
         console.log();
     }
 

@@ -15,10 +15,15 @@ function githubDownload(path) {
 }
 
 function npmInstall(cwd) {
-    return spawnSync(`npm${EXEC_SUFFIX ? ".cmd" : ""}`, ["install"], { cwd, stdio: "inherit" });
+    return spawnSync(`npm${EXEC_SUFFIX ? ".cmd" : ""}`, ["install", "--production"], { cwd, stdio: "inherit" });
+}
+
+function npmCI(cwd) {
+    return spawnSync(`npm${EXEC_SUFFIX ? ".cmd" : ""}`, ["ci"], { cwd, stdio: "inherit" });
 }
 
 module.exports = {
     githubDownload,
-    npmInstall
+    npmInstall,
+    npmCI
 };

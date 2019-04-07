@@ -1,3 +1,7 @@
+// Require Node.js Dependencies
+const { join } = require("path");
+const { readFile } = require("fs").promises;
+
 // Require Third-party Dependencies
 const inquirer = require("inquirer");
 const Manifest = require("@slimio/manifest");
@@ -38,17 +42,31 @@ async function create() {
     }
     else if (createFile === "manifest") {
         console.log("create Manifest !");
+        const { name, type } = await inquirer.prompt([
+            {
+                type: "input",
+                message: "Give a name for the Manifest file",
+                name: "name"
+            },
+            {
+                type: "list",
+                message: "Choose the project type",
+                name: "type",
+                choices: ["Addon", "NAPI", "CLI", "Package"]
+            }
+        ]);
+
+        const packageJSON = await readFile(join(process.cwd(), "package.json"));
+        const { version } = JSON.parse(packageJSON);
         Manifest.create({
-            name: "Agent",
-            version: "0.1.0",
-            type: "Package"
-        });
+            name,
+            version,
+            type
+        }, join(process.cwd(), `${name}.toml`));
     }
     else {
         throw new Error("answers.createFile must be addon|manifest");
     }
-
-    console.log(createFile);
 }
 
 module.exports = create;
