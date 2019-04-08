@@ -20,14 +20,13 @@ function prompt() {
     }]);
 }
 
-async function tcpSendMessage(tcp, client, addonCallback) {
-    client.connect();
-    await tcp.once("connect", TCP_CONNECT_TIMEOUT_MS);
+async function tcpSendMessage(client, addonCallback) {
+    await client.connect(TCP_CONNECT_TIMEOUT_MS);
 
     const result = await new Promise((resolve, reject) => {
-        tcp.sendMessage(addonCallback).subscribe(resolve, reject);
+        client.sendMessage(addonCallback).subscribe(resolve, reject);
     });
-    tcp.close();
+    client.close();
 
     return result;
 }
@@ -35,11 +34,10 @@ async function tcpSendMessage(tcp, client, addonCallback) {
 async function connectAgent(options = Object.create(null)) {
     const { port, host } = Object.assign({}, DEFAULT_OPTIONS, options);
 
-    const tcp = new TcpSdk({ host, port });
-    await tcp.once("connect", TCP_CONNECT_TIMEOUT_MS);
-    const { version, location } = tcp.agent;
-    tcp.close();
-    const { client } = tcp;
+    const client = new TcpSdk({ host, port });
+    await client.once("connect", TCP_CONNECT_TIMEOUT_MS);
+    const { version, location } = client.agent;
+    client.close();
 
     if (host === "localhost" || host === "127.0.0.1") {
         process.chdir(location);
@@ -61,10 +59,9 @@ async function connectAgent(options = Object.create(null)) {
         }
 
         if (cmd === "addons") {
-            client.connect(port, host);
-            await tcp.once("connect", TCP_CONNECT_TIMEOUT_MS);
-            const addons = await tcp.getActiveAddons();
-            tcp.close();
+            await client.connect(TCP_CONNECT_TIMEOUT_MS);
+            const addons = await client.getActiveAddons();
+            client.close();
 
             const { addon } = await inquirer.prompt([{
                 type: "list",
@@ -72,10 +69,7 @@ async function connectAgent(options = Object.create(null)) {
                 name: "addon",
                 choices: addons
             }]);
-
-            await tcp.once("connect", TCP_CONNECT_TIMEOUT_MS);
-            const addonInfo = await tcpSendMessage(tcp, client, `${addon}.get_info`);
-            console.log(addonInfo.callbacks);
+            const addonInfo = await tcpSendMessage(client, `${addon}.get_info`);
 
             const { callback } = await inquirer.prompt([{
                 type: "list",
@@ -85,7 +79,7 @@ async function connectAgent(options = Object.create(null)) {
             }]);
             console.log(callback);
 
-            const callbackResult = await tcpSendMessage(tcp, client, `${addon}.${callback}`);
+            const callbackResult = await tcpSendMessage(client, `${addon}.${callback}`);
             console.log(callbackResult);
         }
 
