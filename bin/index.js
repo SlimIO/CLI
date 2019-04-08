@@ -25,7 +25,7 @@ let argv;
         argDefinition("-i --init [string=agent]", "Initialize a new SlimIO Agent"),
         argDefinition("-a --add [string]", "Add an addon to the agent"),
         argDefinition("--create", "Create bunch of files for the agent"),
-        argDefinition("-c --connect [number=1337]", "Connect CLI to a local or remote SlimIO Agent"),
+        argDefinition("-c --connect [string=localhost:1337]", "Connect CLI to a local or remote SlimIO Agent"),
         argDefinition("-h --help", "Show help")
     ];
 
@@ -67,7 +67,8 @@ async function main() {
     }
 
     if (argv.has("connect")) {
-        connectAgent(argv.get("connect"));
+        const [host, port] = argv.get("connect").split(":");
+        connectAgent({ host, port });
     }
 }
 main().catch(console.error);

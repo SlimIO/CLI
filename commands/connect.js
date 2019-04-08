@@ -4,8 +4,13 @@ const inquirer = require("inquirer");
 
 // Require Internal Dependencies
 const create = require("./create");
+
 // CONSTANTS
 const TCP_CONNECT_TIMEOUT_MS = 1000;
+const DEFAULT_OPTIONS = {
+    port: 1337,
+    host: "localhost"
+};
 
 function prompt() {
     return inquirer.prompt([{
@@ -16,17 +21,16 @@ function prompt() {
 }
 
 
-async function connectAgent(connect) {
-    const client = new TcpSdk(connect);
+async function connectAgent(options = Object.create(null)) {
+    const { port, host } = Object.assign({}, DEFAULT_OPTIONS, options);
+    const client = new TcpSdk({ host, port });
+
     await client.once("connect", TCP_CONNECT_TIMEOUT_MS);
-
-    const prompt = `localhost:${connect} >`;
-
-    console.log(client.agent);
     const { agent: { version, location } } = client;
+    client.close();
+    const prompt = `${host}:${port} >`;
 
     process.chdir(location);
-
     let cmd;
     while (cmd !== "quit") {
         const { command } = await inquirer.prompt([{
