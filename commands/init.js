@@ -5,13 +5,15 @@ const { join } = require("path");
 
 // Require Third-party Dependencies
 const { createDirectory } = require("@slimio/utils");
+const Manifest = require("@slimio/manifest");
 
 
 // Require Internal Dependencies
 const {
     githubDownload,
     npmInstall,
-    npmCI
+    npmCI,
+    renameDirFromManifest
 } = require("../utils");
 
 
@@ -37,15 +39,13 @@ async function initAgent(init) {
 
 
     // install built-in addons
-    const addonsDir = join(agentDir, "addons");
-    await createDirectory(addonsDir);
+    await createDirectory(join(agentDir, "addons"));
+    process.chdir("addons");
 
     console.log("Starting installing Built-in addons");
     for (const addonName of builtInAddons) {
         const dirName = await githubDownload(`SlimIO.${addonName}`);
-
-        const addonDir = join(addonsDir, addonName);
-        await rename(dirName, addonDir);
+        const addonDir = await renameDirFromManifest(dirName);
 
         console.log(`Addon ${addonName} has been cloned from GitHub`);
 
@@ -53,6 +53,7 @@ async function initAgent(init) {
         console.log("> npm install");
 
         npmInstall(process.cwd());
+        process.chdir("..");
     }
 }
 
