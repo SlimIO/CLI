@@ -1,6 +1,7 @@
 // Require Third-party Dependencies
 const TcpSdk = require("@slimio/tcp-sdk");
 const inquirer = require("inquirer");
+const qoa = require("qoa");
 
 // Require Internal Dependencies
 const create = require("./create");
@@ -13,10 +14,10 @@ const DEFAULT_OPTIONS = {
 };
 
 function prompt() {
-    return inquirer.prompt([{
+    return qoa.prompt([{
         type: "input",
-        message: prompt,
-        name: "cmd"
+        query: prompt,
+        handle: "cmd"
     }]);
 }
 
@@ -47,10 +48,10 @@ async function connectAgent(options = Object.create(null)) {
     const prompt = `${host}:${port} >`;
     let cmd;
     while (cmd !== "quit") {
-        const { command } = await inquirer.prompt([{
+        const { command } = await qoa.prompt([{
             type: "input",
-            message: prompt,
-            name: "command"
+            query: prompt,
+            handle: "command"
         }]);
         cmd = command;
 
@@ -63,26 +64,25 @@ async function connectAgent(options = Object.create(null)) {
             const addons = await client.getActiveAddons();
             client.close();
 
-            const { addon } = await inquirer.prompt([{
-                type: "list",
-                message: "Choose an active addon",
-                name: "addon",
-                choices: addons
+            const { addon } = await qoa.prompt([{
+                type: "interactive",
+                query: "Choose an active addon",
+                handle: "addon",
+                menu: addons
             }]);
             const addonInfo = await tcpSendMessage(client, `${addon}.get_info`);
 
-            const { callback } = await inquirer.prompt([{
-                type: "list",
-                message: "Choose an active addon",
-                name: "callback",
-                choices: addonInfo.callbacks
+            const { callback } = await qoa.prompt([{
+                type: "interactive",
+                query: "Choose an active addon",
+                handle: "callback",
+                menu: addonInfo.callbacks
             }]);
             console.log(callback);
 
             const callbackResult = await tcpSendMessage(client, `${addon}.${callback}`);
             console.log(callbackResult);
         }
-
     }
 
     client.close();
