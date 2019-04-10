@@ -1,6 +1,5 @@
 // Require Third-party Dependencies
 const TcpSdk = require("@slimio/tcp-sdk");
-const inquirer = require("inquirer");
 const qoa = require("qoa");
 
 // Require Internal Dependencies

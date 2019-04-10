@@ -4,7 +4,6 @@ const { readFile } = require("fs").promises;
 const { strictEqual } = require("assert").strict;
 
 // Require Third-party Dependencies
-const inquirer = require("inquirer");
 const qoa = require("qoa");
 const Manifest = require("@slimio/manifest");
 const { AddonFactory } = require("@slimio/addon-factory");
