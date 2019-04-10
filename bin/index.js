@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 require("make-promises-safe");
-const dotenv = require("dotenv").config({ path: `${__dirname}/.env` });
+const { join } = require("path");
+const dotenv = require("dotenv").config({ path: join(__dirname, "..", ".env") });
 if (dotenv.error) {
     throw dotenv.error;
 }
