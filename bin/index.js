@@ -68,8 +68,7 @@ async function main() {
 
     if (argv.has("connect")) {
         const [host, port] = argv.get("connect").split(":");
-        const portNumber = Number(port);
-        connectAgent({ host, port: portNumber });
+        connectAgent({ host, port: Number(port) });
     }
 }
 main().catch(console.error);
