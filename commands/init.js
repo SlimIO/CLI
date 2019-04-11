@@ -5,8 +5,6 @@ const { join } = require("path");
 
 // Require Third-party Dependencies
 const { createDirectory } = require("@slimio/utils");
-const Manifest = require("@slimio/manifest");
-
 
 // Require Internal Dependencies
 const {
@@ -16,8 +14,8 @@ const {
     renameDirFromManifest
 } = require("../utils");
 
-
-const builtInAddons = ["Events", "Socket", "Addon-Agent"];
+// CONSTANT
+const BUILT_IN_ADDONS = ["Events", "Socket", "Addon-Agent"];
 
 async function initAgent(init) {
     console.log(": Initialize new SlimIO Agent!");
@@ -28,7 +26,7 @@ async function initAgent(init) {
         const dirName = await githubDownload("SlimIO.Agent");
         await rename(dirName, agentDir);
 
-        console.log(`Agent - Installed with name ${init}`);
+        console.log(`Agent has been cloned from GitHub with dir name ${init}`);
 
         process.chdir(agentDir);
         console.log("> npm install");
@@ -43,7 +41,7 @@ async function initAgent(init) {
     process.chdir("addons");
 
     console.log("Starting installing Built-in addons");
-    for (const addonName of builtInAddons) {
+    for (const addonName of BUILT_IN_ADDONS) {
         const dirName = await githubDownload(`SlimIO.${addonName}`);
         const addonDir = await renameDirFromManifest(dirName);
 

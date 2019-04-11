@@ -69,18 +69,19 @@ async function connectAgent(options = Object.create(null)) {
                 handle: "addon",
                 menu: addons
             }]);
-            const addonInfo = await tcpSendMessage(client, `${addon}.get_info`);
+            console.log();
 
+            const addonInfo = await tcpSendMessage(client, `${addon}.get_info`);
             const { callback } = await qoa.prompt([{
                 type: "interactive",
-                query: "Choose an active addon",
+                query: "Choose a callback",
                 handle: "callback",
                 menu: addonInfo.callbacks
             }]);
-            console.log(callback);
+            console.log(callback, "\n");
 
             const callbackResult = await tcpSendMessage(client, `${addon}.${callback}`);
-            console.log(callbackResult);
+            console.log(callbackResult, "\n");
         }
     }
 

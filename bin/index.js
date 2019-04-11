@@ -10,13 +10,7 @@ if (dotenv.error) {
 const { parseArg, argDefinition, help } = require("@slimio/arg-parser");
 
 // Require Internal Dependencies
-const {
-    initAgent,
-    addAddon,
-    create,
-    connectAgent
-} = require("../commands");
-
+const commands = require("../commands");
 
 /** @type {ArgParser.ArgvResult<CLI.argv>} */
 let argv;
@@ -38,38 +32,36 @@ let argv;
     argv.delete("help");
 }
 
-console.log(argv);
-
 // Current working dir
 const cwd = process.cwd();
 if (cwd === __dirname) {
     process.exit(0);
 }
 
-console.log(`Executing script at: ${cwd}`);
+console.log(`Executing script at: ${cwd} \n`);
 
 async function main() {
     if (argv.has("init")) {
-        await initAgent(argv.get("init"));
+        await commands.initAgent(argv.get("init"));
 
         return;
     }
 
     if (argv.has("add")) {
-        await addAddon(argv.get("add"));
+        await commands.addAddon(argv.get("add"));
 
         return;
     }
 
     if (argv.get("create") === true) {
-        create();
+        await commands.create();
 
         return;
     }
 
     if (argv.has("connect")) {
         const [host, port] = argv.get("connect").split(":");
-        connectAgent({ host, port: Number(port) });
+        await commands.connectAgent({ host, port: Number(port) });
     }
 }
 main().catch(console.error);
