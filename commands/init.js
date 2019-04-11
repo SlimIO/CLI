@@ -12,7 +12,7 @@ const {
     npmInstall,
     npmCI,
     renameDirFromManifest
-} = require("../utils");
+} = require("../src/utils");
 
 // CONSTANT
 const BUILT_IN_ADDONS = ["Events", "Socket", "Addon-Agent"];

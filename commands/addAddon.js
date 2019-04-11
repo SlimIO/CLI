@@ -5,7 +5,7 @@ const { rename } = require("fs").promises;
 const {
     githubDownload,
     npmInstall
-} = require("../utils");
+} = require("../src/utils");
 
 async function addAddon(add) {
     // verify instance of Agent of index.js in current dir
