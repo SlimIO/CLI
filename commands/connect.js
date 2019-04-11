@@ -12,6 +12,13 @@ const DEFAULT_OPTIONS = {
     host: "localhost"
 };
 
+const commands = new Map([
+    ["addons", "Call an addon's callback"],
+    ["create", "Create a default addon or manifest"],
+    ["help", "Display all commands"],
+    ["quit", "Quit prompt"]
+]);
+
 function prompt() {
     return qoa.prompt([{
         type: "input",
@@ -54,6 +61,10 @@ async function connectAgent(options = Object.create(null)) {
         }]);
         cmd = command;
 
+        if (!commands.has(cmd)) {
+            continue;
+        }
+
         if (cmd === "create") {
             await create();
         }
@@ -82,6 +93,15 @@ async function connectAgent(options = Object.create(null)) {
 
             const callbackResult = await tcpSendMessage(client, `${addon}.${callback}`);
             console.log(callbackResult, "\n");
+        }
+
+        if (cmd === "help") {
+            console.log();
+            console.log("commands :");
+            for (const [command, desc] of commands) {
+                console.log(`${command}: ${desc}`);
+            }
+            console.log();
         }
     }
 
