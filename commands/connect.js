@@ -1,6 +1,7 @@
 // Require Third-party Dependencies
 const TcpSdk = require("@slimio/tcp-sdk");
 const qoa = require("qoa");
+const { grey, yellow } = require("kleur");
 
 // Require Internal Dependencies
 const create = require("./create");
@@ -18,14 +19,6 @@ const commands = new Map([
     ["help", "Display all commands"],
     ["quit", "Quit prompt"]
 ]);
-
-function prompt() {
-    return qoa.prompt([{
-        type: "input",
-        query: prompt,
-        handle: "cmd"
-    }]);
-}
 
 async function tcpSendMessage(client, addonCallback) {
     await client.connect(TCP_CONNECT_TIMEOUT_MS);
@@ -50,8 +43,9 @@ async function connectAgent(options = Object.create(null)) {
         process.chdir(location);
     }
 
+    console.log(yellow("Connected on agent !\n"));
 
-    const prompt = `${host}:${port} >`;
+    const prompt = grey(`${host}:${port} >`);
     let cmd;
     while (cmd !== "quit") {
         const { command } = await qoa.prompt([{
@@ -89,15 +83,15 @@ async function connectAgent(options = Object.create(null)) {
                 handle: "callback",
                 menu: addonInfo.callbacks
             }]);
-            console.log(callback, "\n");
 
             const callbackResult = await tcpSendMessage(client, `${addon}.${callback}`);
-            console.log(callbackResult, "\n");
+            console.log(callbackResult);
+            console.log();
         }
 
         if (cmd === "help") {
             console.log();
-            console.log("commands :");
+            console.log(bold().grey("commands :"));
             for (const [command, desc] of commands) {
                 console.log(`${command}: ${desc}`);
             }

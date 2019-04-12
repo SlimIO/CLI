@@ -1,11 +1,12 @@
 // Require Node.js Dependencies
 const { rename } = require("fs").promises;
+const { join } = require("path");
+
+// Require Third-party Dependencies
+const { yellow, grey } = require("kleur");
 
 // Require Internal Dependencies
-const {
-    githubDownload,
-    npmInstall
-} = require("../src/utils");
+const { installAddon } = require("../src/utils");
 
 async function addAddon(add) {
     // verify instance of Agent of index.js in current dir
@@ -15,14 +16,7 @@ async function addAddon(add) {
         myurl = new URL(add);
     }
     catch (error) {
-        const dirName = await githubDownload(`SlimIO.${add}`);
-        await rename(dirName, add);
-        console.log(`Addon ${add} has been cloned from GitHub`);
-
-        process.chdir(add);
-        console.log("> npm install");
-
-        npmInstall(process.cwd());
+        await installAddon(add);
 
         return;
     }
@@ -41,14 +35,7 @@ async function addAddon(add) {
         throw new Error("At this time, organisation must be SlimIO");
     }
 
-    const dirName = await githubDownload(`SlimIO.${addon}`);
-    await rename(dirName, addon);
-    console.log(`Addon ${addon} has been cloned from GitHub`);
-
-    process.chdir(addon);
-    console.log("> npm install");
-
-    npmInstall(process.cwd());
+    await installAddon(addon);
 }
 
 module.exports = addAddon;
