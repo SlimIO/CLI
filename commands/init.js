@@ -28,22 +28,31 @@ async function initAgent(init) {
 
         console.log(`Agent has been cloned from GitHub with dir name ${yellow(init)}`);
 
-        process.chdir(agentDir);
         console.log(`${yellow(">")} ${grey("npm install")}`);
 
-        npmCI();
+        npmCI(agentDir);
         console.log();
     }
 
 
     // install built-in addons
-    await createDirectory(join(agentDir, "addons"));
-    process.chdir("addons");
+    const addonDir = join(agentDir, "addons");
+    await createDirectory(addonDir);
 
     console.log(yellow().bold("Starting installing Built-in addons"));
+    const promises = [];
     for (const addonName of BUILT_IN_ADDONS) {
-        await installAddon(addonName);
+        promises.push(installAddon(addonName, addonDir));
     }
+
+
+    // setImmediate(async() => {
+    const results = await Promise.all(promises);
+    // });
+    // for (let ind = 0; ind < BUILT_IN_ADDONS.length; ind++) {
+    //     console.log(BUILT_IN_ADDONS[ind]);
+    //     console.log(results[ind]);
+    // }
 }
 
 module.exports = initAgent;

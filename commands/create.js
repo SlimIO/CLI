@@ -35,15 +35,6 @@ async function create() {
     }
     else if (createFile === "Manifest") {
         console.log("create Manifest !");
-        const { name } = await qoa.prompt([
-            {
-                type: "input",
-                query: "Give a name for the Manifest file",
-                handle: "name"
-            }
-        ]);
-        strictEqual(name.length !== 0, true, new Error("Manifest name length must be 1 or more"));
-
         const { type } = await qoa.prompt([
             {
                 type: "interactive",
@@ -54,12 +45,14 @@ async function create() {
         ]);
 
         const packageJSON = await readFile(join(process.cwd(), "package.json"));
-        const { version } = JSON.parse(packageJSON);
+        const { name, version } = JSON.parse(packageJSON);
+
+        // remove @slimio from package name
         Manifest.create({
             name,
             version,
             type
-        }, join(process.cwd(), `${name}.toml`));
+        }, join(process.cwd(), "slimio.toml"));
     }
     else {
         throw new Error("answers.createFile must be addon|manifest");

@@ -36,6 +36,7 @@
         "dotenv": "^7.0.0",
         "kleur": "^3.0.3",
         "make-promises-safe": "^5.0.0",
+        "ora": "^3.4.0",
         "qoa": "^0.2.0"
     },
     "devDependencies": {
