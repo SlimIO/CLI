@@ -15,7 +15,7 @@ const {
 } = require("../src/utils");
 
 // CONSTANT
-const BUILT_IN_ADDONS = ["Events", "Socket", "Addon-Agent"];
+const BUILT_IN_ADDONS = ["Events", "Socket", "Gate"];
 
 async function initAgent(init) {
     console.log(yellow().bold("Initialize new SlimIO Agent!"));
