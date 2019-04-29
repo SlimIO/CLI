@@ -31,7 +31,7 @@
         "@slimio/github": "^0.4.2",
         "@slimio/lazy": "^1.2.0",
         "@slimio/manifest": "^0.3.0",
-        "@slimio/tcp-sdk": "^0.3.2",
+        "@slimio/tcp-sdk": "^0.3.3",
         "@slimio/utils": "^0.8.0",
         "dotenv": "^7.0.0",
         "kleur": "^3.0.3",
