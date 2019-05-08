@@ -34,7 +34,6 @@ async function create() {
         await newAddon.generate(process.cwd());
     }
     else if (createFile === "Manifest") {
-        console.log("create Manifest !");
         const { type } = await qoa.prompt([
             {
                 type: "interactive",

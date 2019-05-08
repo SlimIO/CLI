@@ -60,12 +60,6 @@ async function installAddon(addonName, dlDir = process.cwd()) {
 
         // console.log(`${yellow(">")} ${grey("npm install")}`);
         spinner.text = `${yellow(">")} ${grey("npm install")}`;
-
-        // subProcess.stdout.on("data", (data) => {
-        //     console.log(data.toString("utf8"));
-        //     spinner.text = data.toString("utf8");
-        //     spinner.render();
-        // });
         await new Promise((resolve, reject) => {
             const subProcess = npmInstall(join(dlDir, addonDir));
             subProcess.on("close", (code) => {
