@@ -39,11 +39,13 @@ async function create() {
                 type: "interactive",
                 query: "Choose the project type",
                 handle: "type",
-                menu: ["Addon", "NAPI", "CLI", "Package"]
+                menu: [...Manifest.TYPES]
             }
         ]);
 
         const packageJSON = await readFile(join(process.cwd(), "package.json"));
+
+        // remove @slimio for package name;
         const { name, version } = JSON.parse(packageJSON);
 
         // remove @slimio from package name
