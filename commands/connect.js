@@ -91,7 +91,7 @@ async function connectAgent(options = Object.create(null)) {
 
         if (cmd === "help") {
             console.log();
-            console.log(bold().grey("commands :"));
+            console.log(grey().bold("commands :"));
             for (const [command, desc] of commands) {
                 console.log(`${command}: ${desc}`);
             }
