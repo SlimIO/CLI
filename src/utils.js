@@ -1,5 +1,5 @@
 // Require Node.js Dependencies
-const { spawnSync, spawn } = require("child_process");
+const { spawn } = require("child_process");
 const { rename } = require("fs").promises;
 const { join } = require("path");
 
@@ -7,7 +7,7 @@ const { join } = require("path");
 const download = require("@slimio/github");
 const Manifest = require("@slimio/manifest");
 const { yellow, grey } = require("kleur");
-const ora = require("ora");
+const Spinner = require("@slimio/async-cli-spinner");
 
 // CONSTANTS
 const EXEC_SUFFIX = process.platform === "win32";
@@ -25,7 +25,7 @@ function npmInstall(cwd = process.cwd()) {
 }
 
 function npmCI(cwd = process.cwd()) {
-    return spawnSync(`npm${EXEC_SUFFIX ? ".cmd" : ""}`, ["ci"], { cwd, stdio: "inherit" });
+    return spawn(`npm${EXEC_SUFFIX ? ".cmd" : ""}`, ["ci"], { cwd, stdio: "pipe" });
 }
 
 async function renameDirFromManifest(dir = process.cwd(), fileName = "slimio.toml") {
@@ -48,34 +48,45 @@ async function renameDirFromManifest(dir = process.cwd(), fileName = "slimio.tom
 
 async function installAddon(addonName, dlDir = process.cwd()) {
     // console.log(yellow().green(dlDir));
-    const spinner = ora().start(addonName);
+    const spinner = new Spinner({ prefixText: yellow(addonName), spinner: "dots" });
+    spinner.start("Installation started");
     try {
+        spinner.text = "Cloning from GitHub";
         const dirName = await githubDownload(`SlimIO.${addonName}`, dlDir);
-        // console.log(`DIR_NAME: ${yellow().green(dirName)}`);
-        const addonRealName = dirName.split("\\").pop();
-        spinner.text = `Addon ${yellow(addonRealName)} has been cloned from GitHub`;
 
+        spinner.text = "Renaming folder from manifest";
         const addonDir = await renameDirFromManifest(dirName);
-        spinner.text = `Directory ${yellow(addonRealName)} has been renamed as ${yellow(addonDir)}`;
 
-        // console.log(`${yellow(">")} ${grey("npm install")}`);
-        spinner.text = `${yellow(">")} ${grey("npm install")}`;
+        spinner.text = "Installing dependencies";
         await new Promise((resolve, reject) => {
             const subProcess = npmInstall(join(dlDir, addonDir));
             subProcess.on("close", (code) => {
-                spinner.succeed(`Addon ${addonName} succeed installed`);
+                spinner.succeed("Node dependencies installed");
                 resolve();
-            });
-            subProcess.stderr.on("data", (data) => {
-                // console.log(data.toString("utf8"));
-                // spinner.fail(`Addon ${addonName} fail with err : ${data}`);
             });
             subProcess.on("error", reject);
         });
     }
     catch (err) {
-        spinner.fail(`Addon ${addonName} fail with err : ${err}`);
+        spinner.failed("Something wrong append !");
+        throw Error(err);
     }
+}
+
+async function installAgentDep(agentDir) {
+    return new Promise((resolve, reject) => {
+        const spinner = new Spinner({ prefixText: yellow("Agent"), spinner: "dots" });
+        spinner.start("Installing dependencies");
+        const subProcess = npmCI(agentDir);
+        subProcess.on("close", (code) => {
+            spinner.succeed("Node dependencies installed");
+            resolve();
+        });
+        subProcess.on("error", (err) => {
+            spinner.failed("Something wrong append !");
+            reject(err);
+        });
+    });
 }
 
 module.exports = {
@@ -83,5 +94,6 @@ module.exports = {
     npmInstall,
     npmCI,
     renameDirFromManifest,
-    installAddon
+    installAddon,
+    installAgentDep
 };

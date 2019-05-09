@@ -5,12 +5,13 @@ const { join } = require("path");
 
 // Require Third-party Dependencies
 const { createDirectory } = require("@slimio/utils");
-const { yellow, grey } = require("kleur");
+const { yellow, bold } = require("kleur");
+const Spinner = require("@slimio/async-cli-spinner");
 
 // Require Internal Dependencies
 const {
     githubDownload,
-    npmCI,
+    installAgentDep,
     installAddon
 } = require("../src/utils");
 
@@ -18,6 +19,7 @@ const {
 const BUILT_IN_ADDONS = ["Events", "Socket", "Gate"];
 
 async function initAgent(init) {
+    const promises = [];
     console.log(yellow().bold("Initialize new SlimIO Agent!"));
     strictEqual(init.length !== 0, true, new Error("directoryName length must be 1 or more"));
 
@@ -27,27 +29,26 @@ async function initAgent(init) {
         await rename(dirName, agentDir);
 
         console.log(`Agent has been cloned from GitHub with dir name ${yellow(init)}`);
-
-        console.log(`${yellow(">")} ${grey("npm install")}`);
-
-        npmCI(agentDir);
-        console.log();
     }
 
 
     // install built-in addons
     const addonDir = join(agentDir, "addons");
     await createDirectory(addonDir);
+    console.log(yellow().bold("Addons folder created"));
+    console.log();
 
-    console.log(yellow().bold("Starting installing Built-in addons"));
-    const promises = [];
+    console.log(`Starting ${yellow("installing Built-in addons")} & ${yellow("install Agent dependencies")}`);
+
+    promises.push(Spinner.create(installAgentDep, agentDir));
     for (const addonName of BUILT_IN_ADDONS) {
-        promises.push(installAddon(addonName, addonDir));
+        promises.push(Spinner.create(installAddon, addonName, addonDir));
     }
 
 
     // setImmediate(async() => {
-    const results = await Promise.all(promises);
+    await Spinner.startAll(promises);
+    // const results = await Promise.all(promises);
     // });
     // for (let ind = 0; ind < BUILT_IN_ADDONS.length; ind++) {
     //     console.log(BUILT_IN_ADDONS[ind]);
