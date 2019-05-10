@@ -1,6 +1,6 @@
 // Require Node.js Dependencies
 const { strictEqual } = require("assert").strict;
-const { rename } = require("fs").promises;
+const { rename, stat } = require("fs").promises;
 const { join } = require("path");
 
 // Require Third-party Dependencies
@@ -20,8 +20,21 @@ const BUILT_IN_ADDONS = ["Events", "Socket", "Gate"];
 
 async function initAgent(init) {
     const promises = [];
+
     console.log(yellow().bold("Initialize new SlimIO Agent!"));
     strictEqual(init.length !== 0, true, new Error("directoryName length must be 1 or more"));
+    let stats;
+    try {
+        stats = await stat(init);
+        if (stats.isDirectory()) {
+            throw new Error(`Directory ${init} already exist`);
+        }
+    }
+    catch (err) {
+        if (err.code !== "ENOENT") {
+            throw err;
+        }
+    }
 
     const agentDir = join(process.cwd(), init);
     {
