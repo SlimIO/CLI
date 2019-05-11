@@ -1,6 +1,6 @@
 // Require Node.js Dependencies
 const { join } = require("path");
-const { readFile } = require("fs").promises;
+const { readFile, stat } = require("fs").promises;
 const { strictEqual } = require("assert").strict;
 
 // Require Third-party Dependencies
@@ -34,6 +34,18 @@ async function create() {
         await newAddon.generate(process.cwd());
     }
     else if (createFile === "Manifest") {
+        try {
+            const stats = await stat("slimio.toml");
+            if (stats.isFile()) {
+                throw new Error(`File ${init} already exist`);
+            }
+        }
+        catch (err) {
+            if (err.code !== "ENOENT") {
+                throw err;
+            }
+        }
+
         const { type } = await qoa.prompt([
             {
                 type: "interactive",
@@ -45,12 +57,16 @@ async function create() {
 
         const packageJSON = await readFile(join(process.cwd(), "package.json"));
 
-        // remove @slimio for package name;
         const { name, version } = JSON.parse(packageJSON);
+        const [firstChar] = name;
 
+        let realName = name;
+        if (firstChar === "@") {
+            realName = name.split("/")[1];
+        }
         // remove @slimio from package name
         Manifest.create({
-            name,
+            name: realName,
             version,
             type
         }, join(process.cwd(), "slimio.toml"));
