@@ -15,7 +15,7 @@ const EXEC_SUFFIX = process.platform === "win32";
 function githubDownload(path, dest = process.cwd()) {
     return download(path, {
         dest,
-        auth: process.env.AUTH,
+        auth: process.env.GIT_TOKEN,
         extract: true
     });
 }
