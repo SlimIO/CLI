@@ -8,8 +8,10 @@ const qoa = require("qoa");
 const Manifest = require("@slimio/manifest");
 const { AddonFactory } = require("@slimio/addon-factory");
 
+// Require Internal Dependencies
+const { checkBeInAgentDir } = require("../src/utils");
+
 async function create() {
-    // verify instance of Agent of index.js in current dir
     const { createFile } = await qoa.prompt([
         {
             type: "interactive",
@@ -20,6 +22,7 @@ async function create() {
     ]);
 
     if (createFile === "Addon") {
+        checkBeInAgentDir();
         process.chdir("addons");
         const { addonName } = await qoa.prompt([
             {

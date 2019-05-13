@@ -6,10 +6,13 @@ const { join } = require("path");
 const { yellow, grey } = require("kleur");
 
 // Require Internal Dependencies
-const { installAddon } = require("../src/utils");
+const {
+    installAddon,
+    checkBeInAgentDir
+} = require("../src/utils");
 
 async function addAddon(add) {
-    // verify instance of Agent of index.js in current dir
+    checkBeInAgentDir();
     process.chdir("addons");
     let myurl;
     try {

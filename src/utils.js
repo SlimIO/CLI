@@ -89,11 +89,24 @@ async function installAgentDep(agentDir) {
     });
 }
 
+function checkBeInAgentDir() {
+    try {
+        const { name, type } = Manifest.open();
+        if (name !== "agent" && type !== "Service") {
+            throw Error();
+        }
+    }
+    catch (err) {
+        throw new Error("You must be in an Agent directory");
+    }
+}
+
 module.exports = {
     githubDownload,
     npmInstall,
     npmCI,
     renameDirFromManifest,
     installAddon,
-    installAgentDep
+    installAgentDep,
+    checkBeInAgentDir
 };
