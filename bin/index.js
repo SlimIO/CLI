@@ -20,6 +20,7 @@ let argv;
         argDefinition("-i --init [string=agent]", "Initialize a new SlimIO Agent"),
         argDefinition("-a --add [string]", "Add an addon to the agent"),
         argDefinition("--create", "Create bunch of files for the agent"),
+        argDefinition("-b --build", "Build the agent"),
         argDefinition("-c --connect [string=localhost:1337]", "Connect CLI to a local or remote SlimIO Agent"),
         argDefinition("-h --help", "Show help")
     ];
@@ -55,6 +56,12 @@ async function main() {
 
     if (argv.get("create") === true) {
         await commands.create();
+
+        return;
+    }
+
+    if (argv.get("build") === true) {
+        await commands.build();
 
         return;
     }
