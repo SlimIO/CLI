@@ -59,14 +59,7 @@ async function initAgent(init) {
     }
 
 
-    // setImmediate(async() => {
     await Spinner.startAll(promises);
-    // const results = await Promise.all(promises);
-    // });
-    // for (let ind = 0; ind < BUILT_IN_ADDONS.length; ind++) {
-    //     console.log(BUILT_IN_ADDONS[ind]);
-    //     console.log(results[ind]);
-    // }
 }
 
 module.exports = initAgent;
