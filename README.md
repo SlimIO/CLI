@@ -34,14 +34,14 @@ $ slimio <command> <value>
 | Command & Shortcut| Type | Default value | Description |
 | --- | --- | --- | --- |
 |--init -i|string|agent|Initialize a new SlimIO Agent|
-|--add|string|null|Add an addon to the agent|
-|--create|null|null|Create bunch of files for the agent|
+|--add|string||Add an addon to the agent|
+|--create|||Create bunch of files for the agent|
 |--service|string|add|Create an agent service|
 |--connect -c|String|localhost:1337|Connect CLI to a local or remote SlimIO Agent|
 
 <br/>
 <details>
-<summary>--init -i</summary>
+<summary>--init, -i</summary>
 <br/>
 
 >Default value: `agent`
@@ -63,19 +63,6 @@ Currently, it's only take from SlimIO organization.
 </details>
 
 <details>
-<summary>--connect -c</summary>
-
->Default value: `localhost:1337`
-
-Connect CLI to a local or remote SlimIO Agent:
-
-| Command | Description |
-| --- | --- |
-|add|Add `SlimIO Agent` service|
-|rm|Remove `SlimIO Agent` service|
-</details>
-
-<details>
 <summary>--create</summary>
 <br/>
 
@@ -87,7 +74,23 @@ Create bunch of files for the agent:
 </details>
 
 <details>
-<summary>--connect -c</summary>
+<summary>--service</summary>
+<br/>
+
+>You must be in an agent folder !  
+>Default value: `add`
+
+Create a service of the Agent
+
+| Command | Description |
+| --- | --- |
+|add|Add `SlimIO Agent` service|
+|rm|Remove `SlimIO Agent` service|
+</details>
+
+<details>
+<summary>--connect, -c</summary>
+<br/>
 
 >Default value: `localhost:1337`
 
