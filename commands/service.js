@@ -5,15 +5,17 @@ const { join } = require("path");
 const osService = require("os-service");
 const { checkBeInAgentDir } = require("../src/utils");
 
+const SERVICE_NAME = "SlimIO";
+
 function service(arg) {
     checkBeInAgentDir();
 
     const options = {
-        nodePath: join(process.cwd(), "index.js")
+        programArgs: join(process.cwd(), "index.js")
     };
 
     if (arg === "add") {
-        osService.add("SlimIO Agent", options, (err) => {
+        osService.add(SERVICE_NAME, options, (err) => {
             if (err) {
                 console.trace(err);
             }
@@ -31,7 +33,7 @@ function service(arg) {
         });
     }
     else if (arg === "rm") {
-        osService.remove("SlimIO Agent", (err) => {
+        osService.remove(SERVICE_NAME, (err) => {
             if (err) {
                 console.trace(err);
             }
