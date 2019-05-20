@@ -2,6 +2,7 @@
 const TcpSdk = require("@slimio/tcp-sdk");
 const qoa = require("qoa");
 const { grey, yellow } = require("kleur");
+const prettyJSON = require("@slimio/pretty-json");
 
 // Require Internal Dependencies
 const create = require("./create");
@@ -85,7 +86,7 @@ async function connectAgent(options = Object.create(null)) {
             }]);
 
             const callbackResult = await tcpSendMessage(client, `${addon}.${callback}`);
-            console.log(callbackResult);
+            prettyJSON(callbackResult);
             console.log();
         }
 
