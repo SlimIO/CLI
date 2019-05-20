@@ -38,6 +38,8 @@ $ slimio <command> <value>
 <details>
 <summary>--init -i</summary>
 
+>Default value: `agent`
+
 Initialize a new SlimIO Agent:
 - Install Agent folder
 - Install Built-in addons
@@ -49,20 +51,19 @@ The value define the name of the agent folder
 <details>
 <summary>--add</summary>
 
-Add an addon to the agent with the name or an Url from github.
+Add an addon to the agent with the name or an Url from github.  
 Currently, it's only take from SlimIO organization.
-
-The value define the name of the agent folder
 </details>
 
 
 <details>
 <summary>--create</summary>
 
+>You must be in an agent folder !
+
 Create bunch of files for the agent:
 - Addon: default addon for a developper
 - Manifest: file configuration for SlimIO projects
-
 </details>
 
 <details>
@@ -78,5 +79,4 @@ Connect CLI to a local or remote SlimIO Agent:
 |create|Create bunch of files for the agent|
 |help|Show all commands|
 |quit|Exit agent connection|
-
 </details>
