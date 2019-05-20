@@ -1,13 +1,21 @@
 {
     "opts": {
         "encoding": "utf8",
-        "destination": "./docs/",
+        "destination": "./jsdoc/",
         "recurse": true,
         "template": "node_modules/@escommunity/minami"
     },
     "source": {
         "include": [
-            "index.js"
+            "bin/index.js",
+            "commands/index.js",
+            "commands/addAddon.js",
+            "commands/build.js",
+            "commands/create.js",
+            "commands/init.js",
+            "commands/service.js",
+            "commands/connect.js",
+            "src/utils.js"
         ],
         "exclude": [
             "node_modules",
