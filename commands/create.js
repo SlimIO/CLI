@@ -58,21 +58,13 @@ async function create() {
             }
         ]);
 
-        const packageJSON = await readFile(join(process.cwd(), "package.json"));
+        const buf = await readFile(join(process.cwd(), "package.json"));
+        const { name, version } = JSON.parse(buf.toString());
 
-        const { name, version } = JSON.parse(packageJSON);
-        const [firstChar] = name;
+        const realName = name.charAt(0) === "@" ? name.split("/")[1] : name;
+        const options = { name: realName, version, type };
 
-        let realName = name;
-        if (firstChar === "@") {
-            realName = name.split("/")[1];
-        }
-        // remove @slimio from package name
-        Manifest.create({
-            name: realName,
-            version,
-            type
-        }, join(process.cwd(), "slimio.toml"));
+        Manifest.create(options, join(process.cwd(), "slimio.toml"), true);
     }
     else {
         throw new Error("answers.createFile must be addon|manifest");
