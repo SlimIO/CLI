@@ -1,11 +1,11 @@
 // Require Node.js Dependencies
 const { strictEqual } = require("assert").strict;
-const { rename, stat } = require("fs").promises;
+const { rename, stat, mkdir } = require("fs").promises;
 const { join } = require("path");
+const { performance } = require("perf_hooks");
 
 // Require Third-party Dependencies
-const { createDirectory } = require("@slimio/utils");
-const { yellow, bold } = require("kleur");
+const { yellow, white, green } = require("kleur");
 const Spinner = require("@slimio/async-cli-spinner");
 
 // Require Internal Dependencies
@@ -16,16 +16,14 @@ const {
 } = require("../src/utils");
 
 // CONSTANT
-const BUILT_IN_ADDONS = ["Events", "Socket", "Gate"];
+const BUILT_IN_ADDONS = ["Events", "Socket", "Gate", "Alerting"];
 
-async function initAgent(init) {
-    const promises = [];
-
-    console.log(yellow().bold("Initialize new SlimIO Agent!"));
+async function initAgent(init, additionalAddons = []) {
+    console.log(white().bold("Initialize new SlimIO Agent!"));
     strictEqual(init.length !== 0, true, new Error("directoryName length must be 1 or more"));
-    let stats;
+
     try {
-        stats = await stat(init);
+        const stats = await stat(init);
         if (stats.isDirectory()) {
             throw new Error(`Directory ${init} already exist`);
         }
@@ -36,30 +34,28 @@ async function initAgent(init) {
         }
     }
 
+    const startTime = performance.now();
     const agentDir = join(process.cwd(), init);
+    const addonDir = join(agentDir, "addons");
     {
         const dirName = await githubDownload("SlimIO.Agent");
         await rename(dirName, agentDir);
 
-        console.log(`Agent has been cloned from GitHub with dir name ${yellow(init)}`);
+        console.log(`Agent successfully cloned at ${yellow().bold(agentDir)}`);
     }
 
+    // Create addons directory
+    await mkdir(addonDir);
 
-    // install built-in addons
-    const addonDir = join(agentDir, "addons");
-    await createDirectory(addonDir);
-    console.log(yellow().bold("Addons folder created"));
-    console.log();
+    console.log(`\n${yellow().bold("Installing Built-in addons")} and ${yellow().bold("Install Agent dependencies")}`);
+    const toInstall = [...new Set([...BUILT_IN_ADDONS, ...additionalAddons])];
+    await Spinner.startAll([
+        Spinner.create(installAgentDep, agentDir),
+        ...toInstall.map((addonName) => Spinner.create(installAddon, addonName, addonDir))
+    ]);
 
-    console.log(`Starting ${yellow("installing Built-in addons")} & ${yellow("install Agent dependencies")}`);
-
-    promises.push(Spinner.create(installAgentDep, agentDir));
-    for (const addonName of BUILT_IN_ADDONS) {
-        promises.push(Spinner.create(installAddon, addonName, addonDir));
-    }
-
-
-    await Spinner.startAll(promises);
+    const executeTimeMs = (performance.now() - startTime) / 1000;
+    console.log(green().bold(`\nInstallation completed in ${yellow().bold(executeTimeMs.toFixed(2))} seconds`));
 }
 
 module.exports = initAgent;

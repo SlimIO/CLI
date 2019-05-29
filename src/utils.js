@@ -6,7 +6,7 @@ const { join } = require("path");
 // Require Third-party Dependencies
 const download = require("@slimio/github");
 const Manifest = require("@slimio/manifest");
-const { yellow, grey } = require("kleur");
+const { yellow, cyan } = require("kleur");
 const Spinner = require("@slimio/async-cli-spinner");
 
 // CONSTANTS
@@ -48,7 +48,7 @@ async function renameDirFromManifest(dir = process.cwd(), fileName = "slimio.tom
 
 async function installAddon(addonName, dlDir = process.cwd()) {
     // console.log(yellow().green(dlDir));
-    const spinner = new Spinner({ prefixText: yellow(addonName), spinner: "dots" });
+    const spinner = new Spinner({ prefixText: cyan().bold(addonName), spinner: "dots" });
     spinner.start("Installation started");
     try {
         spinner.text = "Cloning from GitHub";
@@ -75,7 +75,7 @@ async function installAddon(addonName, dlDir = process.cwd()) {
 
 async function installAgentDep(agentDir) {
     return new Promise((resolve, reject) => {
-        const spinner = new Spinner({ prefixText: yellow("Agent"), spinner: "dots" });
+        const spinner = new Spinner({ prefixText: cyan().bold("Agent"), spinner: "dots" });
         spinner.start("Installing dependencies");
         const subProcess = npmCI(agentDir);
         subProcess.on("close", (code) => {
