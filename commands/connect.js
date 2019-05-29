@@ -1,7 +1,7 @@
 // Require Third-party Dependencies
 const TcpSdk = require("@slimio/tcp-sdk");
 const qoa = require("qoa");
-const { grey, yellow } = require("kleur");
+const { grey, yellow, white } = require("kleur");
 const prettyJSON = require("@slimio/pretty-json");
 
 // Require Internal Dependencies
@@ -13,13 +13,20 @@ const DEFAULT_OPTIONS = {
     port: 1337,
     host: "localhost"
 };
-
-const commands = new Map([
+const REPL_COMMANDS = new Map([
     ["addons", "Call an addon's callback"],
     ["create", "Create a default addon or manifest"],
     ["help", "Display all commands"],
     ["quit", "Quit prompt"]
 ]);
+
+function showREPLCommands() {
+    console.log(`\n${white().bold("commands :")}`);
+    for (const [command, desc] of REPL_COMMANDS) {
+        console.log(`${yellow(command)}: ${desc}`);
+    }
+    console.log();
+}
 
 async function tcpSendMessage(client, addonCallback) {
     await client.connect(TCP_CONNECT_TIMEOUT_MS);
@@ -33,75 +40,69 @@ async function tcpSendMessage(client, addonCallback) {
 }
 
 async function connectAgent(options = Object.create(null)) {
-    const { port, host } = Object.assign({}, DEFAULT_OPTIONS, options);
+    const { host, port } = Object.assign({}, DEFAULT_OPTIONS, options);
 
     const client = new TcpSdk({ host, port });
     await client.once("connect", TCP_CONNECT_TIMEOUT_MS);
-    const { version, location } = client.agent;
+    const { location } = client.agent;
     client.close();
 
     if (host === "localhost" || host === "127.0.0.1") {
         process.chdir(location);
     }
 
-    console.log(yellow("Connected on agent !\n"));
-
-    const prompt = grey(`${host}:${port} >`);
-    let cmd;
-    while (cmd !== "quit") {
+    console.log(yellow(`Connected on '${host}' agent !\n`));
+    const query = grey(`${host}:${port} >`);
+    replWhile: while (true) {
         const { command } = await qoa.prompt([{
-            type: "input",
-            query: prompt,
-            handle: "command"
+            type: "input", query, handle: "command"
         }]);
-        cmd = command;
 
-        if (!commands.has(cmd)) {
+        if (!REPL_COMMANDS.has(command)) {
             continue;
         }
 
-        if (cmd === "create") {
-            await create();
-        }
+        switch (command) {
+            case "help":
+                showREPLCommands();
+                break;
+            case "quit":
+                break replWhile;
+            case "create":
+                await create();
+                break;
+            case "addons": {
+                await client.connect(TCP_CONNECT_TIMEOUT_MS);
+                const addons = await client.getActiveAddons();
+                client.close();
 
-        if (cmd === "addons") {
-            await client.connect(TCP_CONNECT_TIMEOUT_MS);
-            const addons = await client.getActiveAddons();
-            client.close();
+                const { addon } = await qoa.prompt([{
+                    type: "interactive",
+                    query: "Choose an active addon",
+                    handle: "addon",
+                    menu: addons
+                }]);
+                console.log("");
 
-            const { addon } = await qoa.prompt([{
-                type: "interactive",
-                query: "Choose an active addon",
-                handle: "addon",
-                menu: addons
-            }]);
-            console.log();
+                const addonInfo = await tcpSendMessage(client, `${addon}.get_info`);
+                const { callback } = await qoa.prompt([{
+                    type: "interactive",
+                    query: "Choose a callback",
+                    handle: "callback",
+                    menu: addonInfo.callbacks
+                }]);
 
-            const addonInfo = await tcpSendMessage(client, `${addon}.get_info`);
-            const { callback } = await qoa.prompt([{
-                type: "interactive",
-                query: "Choose a callback",
-                handle: "callback",
-                menu: addonInfo.callbacks
-            }]);
-
-            const callbackResult = await tcpSendMessage(client, `${addon}.${callback}`);
-            prettyJSON(callbackResult);
-            console.log();
-        }
-
-        if (cmd === "help") {
-            console.log();
-            console.log(grey().bold("commands :"));
-            for (const [command, desc] of commands) {
-                console.log(`${command}: ${desc}`);
+                console.log("");
+                const callbackResult = await tcpSendMessage(client, `${addon}.${callback}`);
+                prettyJSON(callbackResult);
+                console.log("");
+                break;
             }
-            console.log();
         }
     }
 
     client.close();
-    console.log(`Connect to ${prompt} closed`);
+    console.log(`REPL Connection to ${query} closed\n`);
 }
 
 module.exports = connectAgent;
