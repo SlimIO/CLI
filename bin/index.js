@@ -22,6 +22,7 @@ let argv;
         argDefinition("-a --add [string]", "Add an addon to the agent"),
         argDefinition("--create", "Create bunch of files for the agent"),
         argDefinition("--service [string=add]", "Create an agent service"),
+        argDefinition("--addons [array]", "A list of addons"),
         // argDefinition("-b --build", "Build the agent"),
         argDefinition("-c --connect [string=localhost:1337]", "Connect CLI to a local or remote SlimIO Agent"),
         argDefinition("-h --help", "Show help")
@@ -48,7 +49,8 @@ if (process.cwd() === __dirname) {
 async function main() {
     console.log(`\n > Executing SlimIO CLI at: ${white().bold(process.cwd())}\n`);
     if (argv.has("init")) {
-        await commands.initAgent(argv.get("init"));
+        const addons = argv.get("addons");
+        await commands.initAgent(argv.get("init"), addons);
     }
     else if (argv.has("add")) {
         await commands.addAddon(argv.get("add"));

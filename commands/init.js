@@ -5,7 +5,7 @@ const { join } = require("path");
 const { performance } = require("perf_hooks");
 
 // Require Third-party Dependencies
-const { yellow, white, green } = require("kleur");
+const { yellow, white, green, cyan } = require("kleur");
 const Spinner = require("@slimio/async-cli-spinner");
 
 // Require Internal Dependencies
@@ -48,6 +48,11 @@ async function initAgent(init, additionalAddons = []) {
     await mkdir(addonDir);
 
     console.log(`\n${yellow().bold("Installing Built-in addons")} and ${yellow().bold("Install Agent dependencies")}`);
+    if (additionalAddons.length > 0) {
+        const addonsList = additionalAddons.map((name) => yellow().bold(name)).join(",");
+        console.log(`${cyan().bold("Note:")} Additional addons detected => ${addonsList}`);
+    }
+
     const toInstall = [...new Set([...BUILT_IN_ADDONS, ...additionalAddons])];
     await Spinner.startAll([
         Spinner.create(installAgentDep, agentDir),

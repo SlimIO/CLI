@@ -6,6 +6,7 @@ declare namespace CLI {
         service: string;
         connect: string;
         help: boolean;
+        addons: string[];
     }
 }
 
