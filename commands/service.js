@@ -11,7 +11,7 @@ function service(arg) {
     checkBeInAgentDir();
 
     const options = {
-        programArgs: join(process.cwd(), "index.js")
+        programPath: join(process.cwd(), "index.js")
     };
 
     if (arg === "add") {
