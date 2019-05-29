@@ -8,6 +8,7 @@ if (dotenv.error) {
 
 // Require Third-party Dependencies
 const { parseArg, argDefinition, help } = require("@slimio/arg-parser");
+const { white } = require("kleur");
 
 // Require Internal Dependencies
 const commands = require("../commands");
@@ -35,8 +36,7 @@ let argv;
 }
 
 // Current working dir
-const cwd = process.cwd();
-if (cwd === __dirname) {
+if (process.cwd() === __dirname) {
     process.exit(0);
 }
 
@@ -46,7 +46,7 @@ if (cwd === __dirname) {
  * @returns {Promise<void>}
  */
 async function main() {
-    console.log(`Executing script at: ${cwd} \n`);
+    console.log(`\n > Executing SlimIO CLI at: ${white().bold(process.cwd())}\n`);
     if (argv.has("init")) {
         await commands.initAgent(argv.get("init"));
     }
