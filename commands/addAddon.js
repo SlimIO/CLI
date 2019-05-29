@@ -1,15 +1,5 @@
-// Require Node.js Dependencies
-const { rename } = require("fs").promises;
-const { join } = require("path");
-
-// Require Third-party Dependencies
-const { yellow, grey } = require("kleur");
-
 // Require Internal Dependencies
-const {
-    installAddon,
-    checkBeInAgentDir
-} = require("../src/utils");
+const { installAddon, checkBeInAgentDir } = require("../src/utils");
 
 async function addAddon(add) {
     checkBeInAgentDir();
