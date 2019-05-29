@@ -40,40 +40,26 @@ if (cwd === __dirname) {
     process.exit(0);
 }
 
-console.log(`Executing script at: ${cwd} \n`);
-
+/**
+ * @async
+ * @func main
+ * @returns {Promise<void>}
+ */
 async function main() {
+    console.log(`Executing script at: ${cwd} \n`);
     if (argv.has("init")) {
         await commands.initAgent(argv.get("init"));
-
-        return;
     }
-
-    if (argv.has("add")) {
+    else if (argv.has("add")) {
         await commands.addAddon(argv.get("add"));
-
-        return;
     }
-
-    if (argv.get("create") === true) {
+    else if (argv.get("create")) {
         await commands.create();
-
-        return;
     }
-
-    if (argv.has("service") === true) {
+    else if (argv.has("service")) {
         await commands.service(argv.get("service"));
-
-        return;
     }
-
-    // if (argv.get("build") === true) {
-    //     await commands.build();
-
-    //     return;
-    // }
-
-    if (argv.has("connect")) {
+    else if (argv.has("connect")) {
         const [host, port] = argv.get("connect").split(":");
         await commands.connectAgent({ host, port: Number(port) });
     }
