@@ -4,6 +4,8 @@ const { installAddon, checkBeInAgentDir } = require("../src/utils");
 async function addAddon(add) {
     checkBeInAgentDir();
     process.chdir("addons");
+
+    /** @type {URL} */
     let myurl;
     try {
         myurl = new URL(add);
@@ -15,14 +17,12 @@ async function addAddon(add) {
     }
 
     const { hostname, pathname } = myurl;
-
-    const spliteHostname = hostname.split(".");
-    const ext = spliteHostname.pop();
-    const host = spliteHostname.pop();
+    const [ext, host] = hostname.split(".").slice(-2);
 
     if (`${host}.${ext}` !== "github.com") {
         throw new Error("URL hostname must be github.com");
     }
+
     const [, orga, addon] = pathname.split("/");
     if (orga !== "SlimIO") {
         throw new Error("At this time, organisation must be SlimIO");
