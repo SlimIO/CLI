@@ -60,16 +60,16 @@ async function installAddon(addonName, dlDir = process.cwd()) {
         spinner.text = "Installing dependencies";
         await new Promise((resolve, reject) => {
             const subProcess = npmInstall(join(dlDir, addonDir));
-            subProcess.on("close", (code) => {
-                spinner.succeed("Node dependencies installed");
+            subProcess.once("close", (code) => {
+                spinner.succeed(`Node dependencies installed, code => ${code}`);
                 resolve();
             });
-            subProcess.on("error", reject);
+            subProcess.once("error", reject);
         });
     }
     catch (err) {
         spinner.failed("Something wrong append !");
-        throw Error(err);
+        throw err;
     }
 }
 
