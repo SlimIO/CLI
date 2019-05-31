@@ -7,6 +7,8 @@ declare namespace CLI {
         connect: string;
         help: boolean;
         addons: string[];
+        build: boolean;
+        type: string;
     }
 
     interface REPLOptions {
