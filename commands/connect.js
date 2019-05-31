@@ -1,8 +1,9 @@
 // Require Third-party Dependencies
 const TcpSdk = require("@slimio/tcp-sdk");
 const qoa = require("qoa");
-const { grey, yellow, white } = require("kleur");
+const { grey, yellow, white, cyan, red } = require("kleur");
 const prettyJSON = require("@slimio/pretty-json");
+const levenshtein = require("fast-levenshtein");
 
 // Require Internal Dependencies
 const create = require("./create");
@@ -19,6 +20,7 @@ const REPL_COMMANDS = new Map([
     ["help", "Display all commands"],
     ["quit", "Quit prompt"]
 ]);
+const CMD_ARR = [...REPL_COMMANDS.keys()];
 
 function showREPLCommands() {
     console.log(`\n${white().bold("commands :")}`);
@@ -51,7 +53,7 @@ async function connectAgent(options = Object.create(null)) {
         process.chdir(location);
     }
 
-    console.log(yellow(`Connected on '${host}' agent !\n`));
+    console.log(yellow().bold(`Connected on '${host}' agent !\n`));
     const query = grey(`${host}:${port} >`);
     replWhile: while (true) {
         const { command } = await qoa.prompt([{
@@ -59,6 +61,19 @@ async function connectAgent(options = Object.create(null)) {
         }]);
 
         if (!REPL_COMMANDS.has(command)) {
+            const isMatching = [];
+            for (const item of CMD_ARR) {
+                const count = levenshtein.get(item, command);
+                if (count <= 2) {
+                    isMatching.push(item);
+                }
+            }
+
+            console.log(red().bold(`\nUnknown command '${yellow().bold(command)}'`));
+            if (isMatching.length > 0) {
+                const words = isMatching.map((row) => cyan().bold(row)).join(",");
+                console.log(white().bold(`Did you mean: ${words} ?\n`));
+            }
             continue;
         }
 
