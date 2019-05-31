@@ -1,58 +1,50 @@
 // Require Node.js Dependencies
 const { join } = require("path");
+const { promisify } = require("util");
 
 // Require Third-party Dependencies
+const { yellow, red, white } = require("kleur");
 const osService = require("os-service");
 const { checkBeInAgentDir } = require("../src/utils");
+const isElevated = require("is-elevated");
 
+// CONSTANTS
 const SERVICE_NAME = "SlimIO";
 
-function service(arg) {
-    checkBeInAgentDir();
+// ASYNC METHODS
+const add = promisify(osService.add);
+const remove = promisify(osService.remove);
 
+async function service(action = "add") {
+    checkBeInAgentDir();
+    console.log(white().bold(`Service command triggered with action: ${yellow().bold(action)}`));
+
+    const isAdministrator = await isElevated();
+    if (!isAdministrator) {
+        console.log(red().bold("Terminal must be run as Administrator to register a Service on the system!"));
+
+        return;
+    }
+
+    // Service options
     const options = {
         programPath: join(process.cwd(), "index.js")
     };
 
-    if (arg === "add") {
-        osService.add(SERVICE_NAME, options, (err) => {
-            if (err) {
-                console.trace(err);
-            }
-            else {
-                console.log("added");
-                osService.run(() => {
-                    osService.stop(0);
-                });
-                // service.remove("service1", (err) => {
-                //     if (err) {
-                //         console.trace(err);
-                //     }
-                // });
-            }
-        });
-    }
-    else if (arg === "rm") {
-        osService.remove(SERVICE_NAME, (err) => {
-            if (err) {
-                console.trace(err);
-            }
-            else {
-                console.log("removed");
-            }
-        });
-    }
-    // else if (arg === "run") {
-    //     console.log("start run");
-    //     osService.run(() => {
-    //         osService.stop(0);
-    //     });
-    // }
-    // else if (arg === "stop") {
-    //     osService.stop(0);
-    // }
-    else {
-        console.log("no valid arg");
+    switch (action) {
+        case "add":
+            await add(SERVICE_NAME, options);
+            // osService.run(() => {
+            //     osService.stop(0);
+            // });
+            break;
+        case "rm":
+        case "remove":
+            await remove(SERVICE_NAME);
+            break;
+        default:
+            console.log(red().bold(`Unknown action '${yellow().bold(action)}'`));
+            break;
     }
 }
 
