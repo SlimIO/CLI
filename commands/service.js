@@ -5,11 +5,13 @@ const { promisify } = require("util");
 // Require Third-party Dependencies
 const { yellow, red, white } = require("kleur");
 const osService = require("os-service");
-const { checkBeInAgentDir } = require("../src/utils");
 const isElevated = require("is-elevated");
 
+// Require Internal Dependencies
+const { checkBeInAgentDir } = require("../src/utils");
+
 // CONSTANTS
-const SERVICE_NAME = "SlimIO";
+const SERVICE_NAME = "SlimIO Agent";
 
 // ASYNC METHODS
 const add = promisify(osService.add);
@@ -34,9 +36,6 @@ async function service(action = "add") {
     switch (action) {
         case "add":
             await add(SERVICE_NAME, options);
-            // osService.run(() => {
-            //     osService.stop(0);
-            // });
             break;
         case "rm":
         case "remove":
