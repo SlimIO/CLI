@@ -23,7 +23,7 @@ let argv;
         argDefinition("--create", "Create bunch of files for the agent"),
         argDefinition("-s --service [string=add]", "Create an agent service"),
         argDefinition("--addons [array]", "A list of addons"),
-        argDefinition("-b --build", "Build the agent"),
+        argDefinition("-b --build [boolean=false]", "Build the agent"),
         argDefinition("-t --type [string=core]", "type for build"),
         argDefinition("-c --connect [string=localhost:1337]", "Connect CLI to a local or remote SlimIO Agent"),
         argDefinition("-h --help", "Show help")
@@ -62,12 +62,12 @@ async function main() {
     else if (argv.has("service")) {
         await commands.service(argv.get("service"));
     }
-    else if (argv.has("build")) {
-        await commands.build(argv.get("type"));
-    }
     else if (argv.has("connect")) {
         const [host, port] = argv.get("connect").split(":");
         await commands.connectAgent({ host, port: Number(port) });
+    }
+    else if (argv.has("build")) {
+        await commands.build(argv.get("type"));
     }
 }
 main().catch(console.error);
