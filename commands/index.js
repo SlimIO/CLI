@@ -8,7 +8,7 @@ commands.set("initAgent", () => require("./init"));
 commands.set("addAddon", () => require("./addAddon"));
 commands.set("create", () => require("./create"));
 commands.set("service", () => require("./service"));
-// commands.set("build", () => require("./build"));
+commands.set("build", () => require("./build"));
 commands.set("connectAgent", () => require("./connect"));
 
 module.exports = commands.value;
