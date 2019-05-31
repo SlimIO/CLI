@@ -23,7 +23,7 @@ let argv;
         argDefinition("--create", "Create bunch of files for the agent"),
         argDefinition("-s --service [string=add]", "Create an agent service"),
         argDefinition("--addons [array]", "A list of addons"),
-        argDefinition("-b --build [boolean=false]", "Build the agent"),
+        argDefinition("-b --build", "Build the agent"),
         argDefinition("-t --type [string=core]", "type for build"),
         argDefinition("-c --connect [string=localhost:1337]", "Connect CLI to a local or remote SlimIO Agent"),
         argDefinition("-h --help", "Show help")
