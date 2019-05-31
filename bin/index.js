@@ -57,7 +57,7 @@ async function main() {
         await commands.addAddon(argv.get("add"));
     }
     else if (argv.get("create")) {
-        await commands.create();
+        await commands.create(void 0, void 0);
     }
     else if (argv.has("service")) {
         await commands.service(argv.get("service"));
