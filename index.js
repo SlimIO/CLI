@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const commands = require("./commands");
 Reflect.deleteProperty(commands, "connectAgent");
 
