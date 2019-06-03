@@ -117,18 +117,18 @@ Connect CLI to a local or remote SlimIO Agent:
 
 |Name|Refactoring|Security Risk|Usage|
 |---|---|---|---|
-|[@slimio/addon-factory](https://github.com/SlimIO/AddonFactory#readme)|Minor|High|Addon default initializer|
+|[@slimio/addon-factory](https://github.com/SlimIO/AddonFactory#readme)|Minor|Low|Addon default initializer|
 |[@slimio/arg-parser](https://github.com/SlimIO/ArgParser#readme)|Minor|Low|Command line parser|
 |[@slimio/async-cli-spinner](https://github.com/SlimIO/async-cli-spinner#readme)|Minor|Low|Multi Cli Spinner|
 |[@slimio/github](https://github.com/SlimIO/github-download#readme)|Minor|High|Github API|
 |[@slimio/lazy](https://github.com/SlimIO/Lazy#readme)|Minor|Low|Lazy loader|
-|[@slimio/manifest](https://github.com/SlimIO/Manifester#readme)|Minor|High|Manifest|
-|[@slimio/pretty-json](https://github.com/SlimIO/Pretty-JSON#readme)|Minor|High|JSON CLI beautifer|
-|[@slimio/tcp-sdk](https://github.com/SlimIO/TCP-SDK#readme)|Minor|High|TCP sdk|
-|[@slimio/utils](https://github.com/SlimIO/Utils#readme)|Minor|High|Bunch of useful functions|
+|[@slimio/manifest](https://github.com/SlimIO/Manifester#readme)|Minor|Low|Manifest|
+|[@slimio/pretty-json](https://github.com/SlimIO/Pretty-JSON#readme)|Minor|Low|JSON CLI beautifer|
+|[@slimio/tcp-sdk](https://github.com/SlimIO/TCP-SDK#readme)|Minor|Low|TCP sdk|
+|[@slimio/utils](https://github.com/SlimIO/Utils#readme)|Minor|Low|Bunch of useful functions|
 |[dotenv](https://github.com/motdotla/dotenv#readme)|⚠️Major|Low|Env file|
 |[kleur](https://github.com/lukeed/kleur#readme)|⚠️Major|Low|CLI color|
-|[make-promises-safe](https://github.com/mcollina/make-promises-safe#readme)|⚠️Major|Medium|Promise without end process|
+|[make-promises-safe](https://github.com/mcollina/make-promises-safe#readme)|⚠️Major|Medium|Force Node.js [DEP00018](https://nodejs.org/dist/latest-v8.x/docs/api/deprecations.html#deprecations_dep0018_unhandled_promise_rejections)|
 |[os-service](https://github.com/nospaceships/node-os-service#readme)|⚠️Major|High|Services manager|
 |[qoa](https://github.com/klaussinani/qoa#readme)|⚠️Major|Low|Interactive CLI prompt|
 
