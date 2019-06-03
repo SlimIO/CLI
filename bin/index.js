@@ -2,9 +2,6 @@
 require("make-promises-safe");
 const { join } = require("path");
 const dotenv = require("dotenv").config({ path: join(__dirname, "..", ".env") });
-if (dotenv.error) {
-    throw dotenv.error;
-}
 
 // Require Third-party Dependencies
 const { parseArg, argDefinition, help } = require("@slimio/arg-parser");
