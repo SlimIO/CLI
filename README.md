@@ -51,6 +51,9 @@ $ slimio <command> <value>
 |--create|||Create bunch of files for the agent|
 |--service|string|add|Create an agent service|
 |--connect -c|String|localhost:1337|Connect CLI to a local or remote SlimIO Agent|
+|--build -b|boolean|false|Bundle/Build Core & SlimIO Addons|
+|--addons|array|`[]`|Additionals addons for --init command|
+|--type|string|core|Bundle/Build type|
 
 <br/>
 <details>
