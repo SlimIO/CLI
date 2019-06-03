@@ -1,4 +1,8 @@
 # CLI
+![version](https://img.shields.io/badge/version-0.1.1-blue.svg)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/SlimIO/is/commit-activity)
+![MIT](https://img.shields.io/github/license/mashape/apistatus.svg)
+
 SlimIO Command Line Interface.  
 This tools aim to simplify integration and development.
 
@@ -13,6 +17,11 @@ This package is available in the Node Package Repository and can be easily insta
 $ npm i @slimio/cli
 # or
 $ yarn add @slimio/cli
+```
+
+If you download private package, you need to create a `.env` file with a Github token
+```
+GIT_TOKEN=
 ```
 
 ## Usage Exemple
