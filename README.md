@@ -3,11 +3,11 @@
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/SlimIO/is/commit-activity)
 ![MIT](https://img.shields.io/github/license/mashape/apistatus.svg)
 
-SlimIO Command Line Interface.  
-This tools aim to simplify integration and development.
+SlimIO Command Line Interface. This tool has been created to help Developer and Integrator to work, design and scale the product easily.
 
 ## Requirements
-- Node.js v11 or higher
+- [Node.js](https://nodejs.org/en/) version 10 or higher
+- Administrative privilege for some commands.
 
 ## Getting Started
 
@@ -19,10 +19,14 @@ $ npm i @slimio/cli
 $ yarn add @slimio/cli
 ```
 
-If you download private package, you need to create a `.env` file with a Github token
+---
+
+If you want to download private SlimIO package, create a local `.env` file with the following content:
 ```
 GIT_TOKEN=
 ```
+
+If you dont known how to get a personal access token, please check this [guide](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line).
 
 ## Usage Exemple
 
@@ -67,7 +71,7 @@ The value define the name of the agent folder
 <summary>--add</summary>
 <br/>
 
-Add an addon to the agent with the name or an Url from github.  
+Add an addon to the agent with the name or an Url from github.
 Currently, it's only take from SlimIO organization.
 </details>
 
@@ -86,7 +90,7 @@ Create bunch of files for the agent:
 <summary>--service</summary>
 <br/>
 
->You must be in an agent folder !  
+>You must be in an agent folder !
 >Default value: `add`
 
 Create a service of the Agent
