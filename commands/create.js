@@ -56,7 +56,7 @@ async function create(type, config = {}) {
             try {
                 const stats = await stat("slimio.toml");
                 if (stats.isFile()) {
-                    throw new Error(`File ${init} already exist`);
+                    throw new Error("File slimio.toml already exist");
                 }
             }
             catch (err) {
