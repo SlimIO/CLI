@@ -7,12 +7,13 @@ const { performance } = require("perf_hooks");
 const { createDirectory } = require("@slimio/utils");
 const { white, yellow, red, grey, green } = require("kleur");
 const jsonDiff = require("json-diff");
+const Spinner = require("@slimio/async-cli-spinner");
 
 // Require Internal Dependencies
 const { installAddon, checkBeInAgentDir } = require("../src/utils");
 
 async function writeToAgent(addonName, active = false) {
-    const agentConfig = join(process.cwd(), "..", "agent.json");
+    const agentConfig = join(process.cwd(), "agent.json");
     console.log(white().bold(`\nWriting addon in the local configuration '${yellow().bold(agentConfig)}'`));
 
     const configExist = existsSync(agentConfig);
@@ -39,42 +40,45 @@ async function writeToAgent(addonName, active = false) {
     }
 }
 
-async function addAddon(add) {
+async function addAddon(addons) {
     checkBeInAgentDir();
+    const addonsChecked = [];
 
     const startTime = performance.now();
-    console.log(white().bold(`Adding addon '${yellow().bold(add)}'`));
-    await createDirectory(join(process.cwd(), "addons"));
-    process.chdir("addons");
+    for (const addon of addons) {
+        console.log(white().bold(`Adding addon '${yellow().bold(addon)}'`));
+        await createDirectory(join(process.cwd(), "addons"));
+        // process.chdir("addons");
 
-    /** @type {URL} */
-    let myurl;
-    try {
-        myurl = new URL(add);
-        console.log("\n");
-    }
-    catch (error) {
-        console.log(grey().bold("(!) Not detected as an URL.\n"));
-        await installAddon(add);
-        await writeToAgent(add);
+        /** @type {URL} */
+        let myurl;
+        try {
+            myurl = new URL(addon);
+            console.log("\n");
 
-        const executeTimeMs = (performance.now() - startTime) / 1000;
-        console.log(green().bold(`\nInstallation completed in ${yellow().bold(executeTimeMs.toFixed(2))} seconds`));
+            if (myurl.host !== "github.com") {
+                throw new Error("URL hostname must be github.com");
+            }
 
-        return;
-    }
-
-    if (myurl.host !== "github.com") {
-        throw new Error("URL hostname must be github.com");
-    }
-
-    const [, orga, addon] = myurl.pathname.split("/");
-    if (orga !== "SlimIO") {
-        throw new Error("At this time, organisation must be SlimIO");
+            const [, orga, add] = myurl.pathname.split("/");
+            if (orga !== "SlimIO") {
+                throw new Error("At this time, organisation must be SlimIO");
+            }
+            addonsChecked.push(add);
+        }
+        catch (error) {
+            console.log(grey().bold("(!) Not detected as an URL.\n"));
+            addonsChecked.push(addon);
+        }
     }
 
-    await installAddon(addon);
-    await writeToAgent(addon);
+    await Spinner.startAll([
+        ...addonsChecked.map((addonName) => Spinner.create(installAddon, addonName, join(process.cwd(), "addons")))
+    ]);
+    // await installAddon(addon);
+    for (const addonName of addonsChecked) {
+        await writeToAgent(addonName);
+    }
 
     const executeTimeMs = (performance.now() - startTime) / 1000;
     console.log(green().bold(`\nInstallation completed in ${yellow().bold(executeTimeMs.toFixed(2))} seconds`));

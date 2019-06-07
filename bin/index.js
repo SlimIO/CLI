@@ -16,7 +16,7 @@ let argv;
     // Retrieve Script arguments
     const argDefs = [
         argDefinition("-i --init [string=agent]", "Initialize a new SlimIO Agent"),
-        argDefinition("-a --add [string]", "Add an addon to the agent"),
+        argDefinition("-a --add [array]", "Add an addon to the agent"),
         argDefinition("--create", "Create bunch of files for the agent"),
         argDefinition("-s --service [string=add]", "Create an agent service"),
         argDefinition("--addons [array]", "A list of addons"),
