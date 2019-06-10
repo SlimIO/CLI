@@ -1,7 +1,6 @@
 // Require Node.js Dependencies
 const { join } = require("path");
-const { readFile, stat } = require("fs").promises;
-const { strictEqual } = require("assert").strict;
+const { readFile } = require("fs").promises;
 
 // Require Third-party Dependencies
 const qoa = require("qoa");
