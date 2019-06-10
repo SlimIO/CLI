@@ -1,6 +1,6 @@
 // Require Node.js Dependencies
 const { strictEqual } = require("assert").strict;
-const { rename, stat, mkdir } = require("fs").promises;
+const { rename, mkdir } = require("fs").promises;
 const { join } = require("path");
 const { performance } = require("perf_hooks");
 
@@ -10,6 +10,7 @@ const Spinner = require("@slimio/async-cli-spinner");
 
 // Require Internal Dependencies
 const {
+    directoryExist,
     githubDownload,
     installAgentDep,
     installAddon
@@ -22,17 +23,7 @@ async function initAgent(init, additionalAddons = []) {
     console.log(white().bold("Initialize new SlimIO Agent!"));
     strictEqual(init.length !== 0, true, new Error("directoryName length must be 1 or more"));
 
-    try {
-        const stats = await stat(init);
-        if (stats.isDirectory()) {
-            throw new Error(`Directory ${init} already exist`);
-        }
-    }
-    catch (err) {
-        if (err.code !== "ENOENT") {
-            throw err;
-        }
-    }
+    await directoryExist(init);
 
     const startTime = performance.now();
     const agentDir = join(process.cwd(), init);

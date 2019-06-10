@@ -1,6 +1,6 @@
 // Require Node.js Dependencies
 const { spawn } = require("child_process");
-const { rename } = require("fs").promises;
+const { rename, stat } = require("fs").promises;
 const { join } = require("path");
 
 // Require Third-party Dependencies
@@ -11,6 +11,34 @@ const Spinner = require("@slimio/async-cli-spinner");
 
 // CONSTANTS
 const EXEC_SUFFIX = process.platform === "win32";
+
+async function directoryExist(dir) {
+    try {
+        const stats = await stat(dir);
+        if (stats.isDirectory()) {
+            throw new Error(`Directory ${init} already exist`);
+        }
+    }
+    catch (err) {
+        if (err.code !== "ENOENT") {
+            throw err;
+        }
+    }
+}
+
+async function fileExist(file) {
+    try {
+        const stats = await stat(file);
+        if (stats.isFile()) {
+            throw new Error(`File ${file} already exist`);
+        }
+    }
+    catch (err) {
+        if (err.code !== "ENOENT") {
+            throw err;
+        }
+    }
+}
 
 function githubDownload(path, dest = process.cwd()) {
     return download(path, {
@@ -102,6 +130,8 @@ function checkBeInAgentDir() {
 }
 
 module.exports = {
+    directoryExist,
+    fileExist,
     githubDownload,
     npmInstall,
     npmCI,

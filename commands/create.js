@@ -53,17 +53,7 @@ async function create(type, config = {}) {
             break;
         }
         case "Manifest": {
-            try {
-                const stats = await stat("slimio.toml");
-                if (stats.isFile()) {
-                    throw new Error("File slimio.toml already exist");
-                }
-            }
-            catch (err) {
-                if (err.code !== "ENOENT") {
-                    throw err;
-                }
-            }
+            await fileExist("slimio.toml");
 
             let tomlType = config.type;
             if (!Reflect.has(config, "type")) {
