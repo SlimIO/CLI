@@ -40,12 +40,12 @@ async function writeToAgent(addonName, active = false) {
     }
 }
 
-async function addAddon(addons) {
+async function addAddon(addons = [], nonActif = []) {
     checkBeInAgentDir();
     const addonsChecked = [];
-
+    const addonNonActif = new Set([...nonActif]);
     const startTime = performance.now();
-    for (const addon of addons) {
+    for (const addon of [...addons, ...nonActif]) {
         console.log(white().bold(`Adding addon '${yellow().bold(addon)}'`));
         await createDirectory(join(process.cwd(), "addons"));
         // process.chdir("addons");
@@ -72,13 +72,14 @@ async function addAddon(addons) {
         }
     }
 
-    await Spinner.startAll([
+    const addonInstalled = await Spinner.startAll([
         ...addonsChecked.map((addonName) => Spinner.create(installAddon, addonName, join(process.cwd(), "addons")))
     ]);
-    // await installAddon(addon);
-    for (const addonName of addonsChecked) {
-        await writeToAgent(addonName);
+
+    for (const addonName of addonInstalled.filter((addon) => addon !== undefined)) {
+        await writeToAgent(addonName, !addonNonActif.has(addonName));
     }
+
 
     const executeTimeMs = (performance.now() - startTime) / 1000;
     console.log(green().bold(`\nInstallation completed in ${yellow().bold(executeTimeMs.toFixed(2))} seconds`));

@@ -1,6 +1,6 @@
 // Require Node.js Dependencies
 const { spawn } = require("child_process");
-const { rename, stat } = require("fs").promises;
+const { rename, stat, rmdir } = require("fs").promises;
 const { join } = require("path");
 
 // Require Third-party Dependencies
@@ -83,7 +83,15 @@ async function installAddon(addonName, dlDir = process.cwd()) {
         const dirName = await githubDownload(`SlimIO.${addonName}`, dlDir);
 
         spinner.text = "Renaming folder from manifest";
-        const addonDir = await renameDirFromManifest(dirName);
+        let addonDir;
+        try {
+            addonDir = await renameDirFromManifest(dirName);
+        }
+        catch (err) {
+            console.log("rmdir:", dirName);
+            await rmdir(dirName);
+            throw err;
+        }
 
         spinner.text = "Installing dependencies";
         await new Promise((resolve, reject) => {
@@ -94,9 +102,12 @@ async function installAddon(addonName, dlDir = process.cwd()) {
             });
             subProcess.once("error", reject);
         });
+
+        return addonName;
     }
     catch (err) {
-        spinner.failed("Something wrong append !");
+        // spinner.failed("Something wrong append !");
+        spinner.failed();
         throw err;
     }
 }
@@ -106,11 +117,11 @@ async function installAgentDep(agentDir) {
         const spinner = new Spinner({ prefixText: cyan().bold("Agent"), spinner: "dots" });
         spinner.start("Installing dependencies");
         const subProcess = npmCI(agentDir);
-        subProcess.on("close", (code) => {
+        subProcess.once("close", (code) => {
             spinner.succeed("Node dependencies installed");
             resolve();
         });
-        subProcess.on("error", (err) => {
+        subProcess.once("error", (err) => {
             spinner.failed("Something wrong append !");
             reject(err);
         });

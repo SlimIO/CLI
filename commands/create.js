@@ -9,7 +9,7 @@ const { AddonFactory } = require("@slimio/addon-factory");
 const is = require("@slimio/is");
 
 // Require Internal Dependencies
-const { checkBeInAgentDir } = require("../src/utils");
+const { fileExist, checkBeInAgentDir } = require("../src/utils");
 
 // CONSTANTS
 const E_TYPES = new Set(["Addon", "Manifest"]);
