@@ -1,6 +1,6 @@
 // Require Node.js Dependencies
 const { spawn } = require("child_process");
-const { rename, stat, rmdir } = require("fs").promises;
+const { rename, stat } = require("fs").promises;
 const { join } = require("path");
 
 // Require Third-party Dependencies
@@ -8,6 +8,7 @@ const download = require("@slimio/github");
 const Manifest = require("@slimio/manifest");
 const { yellow, cyan } = require("kleur");
 const Spinner = require("@slimio/async-cli-spinner");
+const premove = require("premove");
 
 // CONSTANTS
 const EXEC_SUFFIX = process.platform === "win32";
@@ -69,7 +70,18 @@ async function renameDirFromManifest(dir = process.cwd(), fileName = "slimio.tom
         return addonName;
     }
 
-    await rename(dir, join(dir, "..", name));
+    try {
+        await rename(dir, join(dir, "..", name));
+    }
+    catch (err) {
+        try {
+            await premove(dir);
+        }
+        catch (err) {
+            throw err;
+        }
+        throw err;
+    }
 
     return name;
 }
@@ -83,15 +95,7 @@ async function installAddon(addonName, dlDir = process.cwd()) {
         const dirName = await githubDownload(`SlimIO.${addonName}`, dlDir);
 
         spinner.text = "Renaming folder from manifest";
-        let addonDir;
-        try {
-            addonDir = await renameDirFromManifest(dirName);
-        }
-        catch (err) {
-            console.log("rmdir:", dirName);
-            await rmdir(dirName);
-            throw err;
-        }
+        const addonDir = await renameDirFromManifest(dirName);
 
         spinner.text = "Installing dependencies";
         await new Promise((resolve, reject) => {
