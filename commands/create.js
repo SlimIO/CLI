@@ -7,6 +7,7 @@ const qoa = require("qoa");
 const Manifest = require("@slimio/manifest");
 const { AddonFactory } = require("@slimio/addon-factory");
 const is = require("@slimio/is");
+const { yellow, white } = require("kleur");
 
 // Require Internal Dependencies
 const { fileExist, checkBeInAgentDir } = require("../src/utils");
@@ -43,12 +44,14 @@ async function create(type, config = {}) {
             const { addonName } = await qoa.prompt([
                 {
                     type: "input",
-                    query: "Give a name for the Addon",
+                    query: "Give a name for the Addon:",
                     handle: "addonName"
                 }
             ]);
 
             await (new AddonFactory(addonName)).generate(process.cwd());
+            console.log(white().bold(`\n--> Default ${yellow().bold(addonName)} addon created`));
+
             break;
         }
         case "Manifest": {
@@ -74,6 +77,7 @@ async function create(type, config = {}) {
             const options = { name: realName, version, type: tomlType };
 
             Manifest.create(options, join(process.cwd(), "slimio.toml"), true);
+            console.log(white().bold(`Manifest slimio.toml created in ${yellow().bold(process.cwd())}`));
             break;
         }
     }
