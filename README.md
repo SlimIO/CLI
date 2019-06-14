@@ -43,7 +43,7 @@ Example :
 $ slimio <command> {option} <value>
 ```
 
-| Command & Shortcut| Type | Default value | Description |
+| Command | Type | Default value | Description |
 | --- | --- | --- | --- |
 |init|string|agent|Initialize a new SlimIO Agent|
 |add|string||Add an addon to the agent|
@@ -64,10 +64,11 @@ Initialize a new SlimIO Agent:
 
 The value define the name of the agent folder..
 
-Additional option for ***init*** command :
-| Command & Shortcut| Type | Default value | Description | Values |
-| --- | --- | --- | --- |
-|--addons|array|`[]`| Additionals addons||
+***option*** for ***init*** command :
+
+| Command | Type | Default value | Description | Values |
+| --- | --- | --- | --- | --- |
+| --add | array|`[]`| Additionals addons| `"AddonName"` |
 </details>
 
 
@@ -124,23 +125,23 @@ Connect CLI to a local or remote SlimIO Agent:
 <details>
 <summary>build</summary>
 <br/>
+
 >Default value: `false`
 
-Additional option for ***build*** command :
-| Command & Shortcut| Type | Default value | Description | Values |
-| --- | --- | --- | --- |
+***option*** for ***build*** command :
+| Command | Type | Default value | Description | Values |
+| --- | --- | --- | --- | --- |
 |--type|string|core|Bundle/Build type| core, addon |
 
  - ***core*** Bundle/Build Core
- - ***addon*** Bundle/Build SlimIO Addons
+ - ***addon*** Build SlimIO Addons
 
- ## Exemple
+ ### Exemple
  ```bash
 $ slimio build --type core
-# or
-$ slimio build --type addon
 ```
 </details>
+
 ## Dependencies
 
 |Name|Refactoring|Security Risk|Usage|
