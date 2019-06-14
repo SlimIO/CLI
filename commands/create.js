@@ -10,7 +10,7 @@ const is = require("@slimio/is");
 const { yellow, white } = require("kleur");
 
 // Require Internal Dependencies
-const { fileExist, checkBeInAgentDir } = require("../src/utils");
+const { fileExist, checkBeInAgentOrAddonDir } = require("../src/utils");
 
 // CONSTANTS
 const E_TYPES = new Set(["Addon", "Manifest"]);
@@ -34,11 +34,10 @@ async function create(type, config = {}) {
 
     switch (type) {
         case "Addon": {
-            checkBeInAgentDir();
-            process.chdir("addons");
-
+            checkBeInAgentOrAddonDir();
+            const path = join(process.cwd(), "addons");
             if (is.string(config.name)) {
-                await (new AddonFactory(config.name)).generate(process.cwd());
+                await (new AddonFactory(config.name)).generate(path);
                 break;
             }
             const { addonName } = await qoa.prompt([
@@ -49,8 +48,8 @@ async function create(type, config = {}) {
                 }
             ]);
 
-            await (new AddonFactory(addonName)).generate(process.cwd());
-            console.log(white().bold(`\n--> Default ${yellow().bold(addonName)} addon created`));
+            await (new AddonFactory(addonName)).generate(path);
+            console.log(white().bold(`\n--> Default ${yellow().bold(addonName)} addon created in ${yellow().bold(path)}`));
 
             break;
         }

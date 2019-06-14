@@ -47,7 +47,7 @@ async function build(type = "core") {
         case "addon": {
             const man = Manifest.open();
             if (man.type !== "Addon") {
-                console.log(red().bold("Current working dir not detected as a Addon!"));
+                console.log(red().bold("Current working dir not detected as an Addon!"));
 
                 return;
             }

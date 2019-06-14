@@ -10,7 +10,7 @@ const jsonDiff = require("json-diff");
 const Spinner = require("@slimio/async-cli-spinner");
 
 // Require Internal Dependencies
-const { installAddon, checkBeInAgentDir } = require("../src/utils");
+const { installAddon, checkBeInAgentOrAddonDir } = require("../src/utils");
 
 async function writeToAgent(addonName, active = false) {
     const agentConfig = join(process.cwd(), "agent.json");
@@ -41,7 +41,7 @@ async function writeToAgent(addonName, active = false) {
 }
 
 async function addAddon(addons = [], nonActif = []) {
-    checkBeInAgentDir();
+    checkBeInAgentOrAddonDir();
     const addonsChecked = [];
     const addonNonActif = new Set([...nonActif]);
     const startTime = performance.now();

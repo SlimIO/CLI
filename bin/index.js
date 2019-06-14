@@ -25,7 +25,7 @@ prog
 prog
     .command("add [addons]")
     .describe("Add an addon to the agent")
-    .option("-n", "Non-Actif addons")
+    .option("-d", "Disabled addons")
     .action(async(addons, options) => {
         const opts = typeof options.n === "undefined" ? [] : options.n.split(",");
         const adds = typeof addons === "undefined" ? [] : addons.split(",");

@@ -135,11 +135,30 @@ function checkBeInAgentDir() {
     try {
         const { name, type } = Manifest.open();
         if (name !== "agent" && type !== "Service") {
-            throw Error();
+            throw new Error();
         }
     }
     catch (err) {
         throw new Error("You must be in an Agent directory");
+    }
+}
+
+function checkBeInAgentOrAddonDir() {
+    try {
+        checkBeInAgentDir();
+    }
+    catch (err) {
+        try {
+            const { name, type } = Manifest.open(join(process.cwd(), "..", "slimio.toml"));
+            if (name !== "agent" && type !== "Service") {
+                throw new Error("You must be in an Agent or addons directory");
+            }
+            // always start from agent dir
+            process.chdir("..");
+        }
+        catch (err) {
+            throw new Error("You must be in an Agent or addons directory");
+        }
     }
 }
 
@@ -152,5 +171,6 @@ module.exports = {
     renameDirFromManifest,
     installAddon,
     installAgentDep,
-    checkBeInAgentDir
+    checkBeInAgentDir,
+    checkBeInAgentOrAddonDir
 };
