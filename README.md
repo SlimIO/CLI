@@ -58,17 +58,17 @@ $ slimio <command> {option} <value>
 
 >Default value: `agent`
 
-Initialize a new SlimIO Agent:
-- Install Agent folder
-- Install Built-in addons
-
-The value define the name of the agent folder..
+The value define the name of the agent folder
 
 ***option*** for ***init*** command :
 
 | Command | Type | Default value | Description | Values |
 | --- | --- | --- | --- | --- |
 | --add | array|`[]`| Additionals addons| `"AddonName"` |
+
+*Initialize* a new SlimIO Agent:
+- Install Agent folder
+- Install Built-in addons
 </details>
 
 
