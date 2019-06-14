@@ -1,6 +1,6 @@
 // Require Node.js Dependencies
 const { join } = require("path");
-const { readFile } = require("fs").promises;
+const { createReadStream, promises: { readFile } } = require("fs");
 
 // Require Third-party Dependencies
 const qoa = require("qoa");
@@ -14,6 +14,12 @@ const { fileExist, checkBeInAgentOrAddonDir } = require("../src/utils");
 
 // CONSTANTS
 const E_TYPES = new Set(["Addon", "Manifest"]);
+
+async function generateAndLogAddon(name, path) {
+    await (new AddonFactory(name)).generate(path);
+    console.log(white().bold(`\n--> Default ${yellow().bold(name)} addon created in ${yellow().bold(path)}\n`));
+    createReadStream(join(path, name, "index.js")).pipe(process.stdout);
+}
 
 async function create(type, config = {}) {
     if (is.nullOrUndefined(type)) {
@@ -37,8 +43,7 @@ async function create(type, config = {}) {
             checkBeInAgentOrAddonDir();
             const path = join(process.cwd(), "addons");
             if (is.string(config.name)) {
-                await (new AddonFactory(config.name)).generate(path);
-                console.log(white().bold(`\n--> Default ${yellow().bold(addonName)} addon created in ${yellow().bold(path)}`));
+                await generateAndLogAddon(config.name, path);
                 break;
             }
             const { addonName } = await qoa.prompt([
@@ -49,8 +54,7 @@ async function create(type, config = {}) {
                 }
             ]);
 
-            await (new AddonFactory(addonName)).generate(path);
-            console.log(white().bold(`\n--> Default ${yellow().bold(addonName)} addon created in ${yellow().bold(path)}`));
+            await generateAndLogAddon(addonName, path);
 
             break;
         }
