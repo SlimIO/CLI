@@ -53,9 +53,7 @@ async function create(type, config = {}) {
                     handle: "addonName"
                 }
             ]);
-
             await generateAndLogAddon(addonName, path);
-
             break;
         }
         case "Manifest": {
@@ -79,9 +77,10 @@ async function create(type, config = {}) {
 
             const realName = name.charAt(0) === "@" ? name.split("/")[1] : name;
             const options = { name: realName, version, type: tomlType };
-
-            Manifest.create(options, join(process.cwd(), "slimio.toml"), true);
-            console.log(white().bold(`Manifest slimio.toml created in ${yellow().bold(process.cwd())}`));
+            const path = join(process.cwd(), "slimio.toml");
+            Manifest.create(options, path, true);
+            console.log(white().bold(`Manifest slimio.toml created in ${yellow().bold(process.cwd())}\n`));
+            createReadStream(path).pipe(process.stdout);
             break;
         }
     }
