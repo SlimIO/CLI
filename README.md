@@ -132,11 +132,11 @@ Connect CLI to a local or remote SlimIO Agent:
 |[@slimio/pretty-json](https://github.com/SlimIO/Pretty-JSON#readme)|Minor|Low|JSON CLI beautifer|
 |[@slimio/tcp-sdk](https://github.com/SlimIO/TCP-SDK#readme)|Minor|Low|TCP sdk|
 |[@slimio/utils](https://github.com/SlimIO/Utils#readme)|Minor|Low|Bunch of useful functions|
-|[dotenv](https://github.com/motdotla/dotenv#readme)|⚠️Major|Low|Env file|
-|[kleur](https://github.com/lukeed/kleur#readme)|⚠️Major|Low|CLI color|
-|[make-promises-safe](https://github.com/mcollina/make-promises-safe#readme)|⚠️Major|Medium|Force Node.js [DEP00018](https://nodejs.org/dist/latest-v8.x/docs/api/deprecations.html#deprecations_dep0018_unhandled_promise_rejections)|
-|[os-service](https://github.com/nospaceships/node-os-service#readme)|⚠️Major|High|Services manager|
-|[qoa](https://github.com/klaussinani/qoa#readme)|⚠️Major|Low|Interactive CLI prompt|
+|[dotenv](https://github.com/motdotla/dotenv#readme)|??Major|Low|Env file|
+|[kleur](https://github.com/lukeed/kleur#readme)|??Major|Low|CLI color|
+|[make-promises-safe](https://github.com/mcollina/make-promises-safe#readme)|??Major|Medium|Force Node.js [DEP00018](https://nodejs.org/dist/latest-v8.x/docs/api/deprecations.html#deprecations_dep0018_unhandled_promise_rejections)|
+|[os-service](https://github.com/nospaceships/node-os-service#readme)|??Major|High|Services manager|
+|[qoa](https://github.com/klaussinani/qoa#readme)|??Major|Low|Interactive CLI prompt|
 
 > Recheck !
 
