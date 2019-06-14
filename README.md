@@ -31,16 +31,16 @@ If you dont known how to get a personal access token, please check this [guide](
 ## Usage Exemple
 
 ```bash
-$ npm slimio --help
+$ slimio --help
 # or
-$ npm slimio -h
+$ slimio -h
 ```
 ## API
 
 Example :
 
 ```bash
-$ slimio <command> <value>
+$ slimio <command> {option} <value>
 ```
 
 | Command & Shortcut| Type | Default value | Description |
@@ -51,9 +51,6 @@ $ slimio <command> <value>
 |service|string|add|Create an agent service|
 |connect|String|localhost:1337|Connect CLI to a local or remote SlimIO Agent|
 |build|boolean|false|Bundle/Build Core & SlimIO Addons|
-|--addons|array|`[]`|Additionals addons for ***init*** command|
-|--type|string|core|Bundle/Build type for ***build*** command|
-
 <br/>
 <details>
 <summary>init</summary>
@@ -65,12 +62,17 @@ Initialize a new SlimIO Agent:
 - Install Agent folder
 - Install Built-in addons
 
-The value define the name of the agent folder
+The value define the name of the agent folder..
+
+Additional option for ***init*** command :
+| Command & Shortcut| Type | Default value | Description | Values |
+| --- | --- | --- | --- |
+|--addons|array|`[]`| Additionals addons||
 </details>
 
 
 <details>
-<summary>--add</summary>
+<summary>add</summary>
 <br/>
 
 Add an addon to the agent with the name or an Url from github.
@@ -78,7 +80,7 @@ Currently, it's only take from SlimIO organization.
 </details>
 
 <details>
-<summary>--create</summary>
+<summary>create</summary>
 <br/>
 
 >You must be in an agent folder !
@@ -89,7 +91,7 @@ Create bunch of files for the agent:
 </details>
 
 <details>
-<summary>--service</summary>
+<summary>service</summary>
 <br/>
 
 >You must be in an agent folder !
@@ -104,7 +106,7 @@ Create a service of the Agent
 </details>
 
 <details>
-<summary>--connect, -c</summary>
+<summary>connect</summary>
 <br/>
 
 >Default value: `localhost:1337`
@@ -119,6 +121,26 @@ Connect CLI to a local or remote SlimIO Agent:
 |quit|Exit agent connection|
 </details>
 
+<details>
+<summary>build</summary>
+<br/>
+>Default value: `false`
+
+Additional option for ***build*** command :
+| Command & Shortcut| Type | Default value | Description | Values |
+| --- | --- | --- | --- |
+|--type|string|core|Bundle/Build type| core, addon |
+
+ - ***core*** Bundle/Build Core
+ - ***addon*** Bundle/Build SlimIO Addons
+
+ ## Exemple
+ ```bash
+$ slimio build --type core
+# or
+$ slimio build --type addon
+```
+</details>
 ## Dependencies
 
 |Name|Refactoring|Security Risk|Usage|
@@ -132,11 +154,11 @@ Connect CLI to a local or remote SlimIO Agent:
 |[@slimio/pretty-json](https://github.com/SlimIO/Pretty-JSON#readme)|Minor|Low|JSON CLI beautifer|
 |[@slimio/tcp-sdk](https://github.com/SlimIO/TCP-SDK#readme)|Minor|Low|TCP sdk|
 |[@slimio/utils](https://github.com/SlimIO/Utils#readme)|Minor|Low|Bunch of useful functions|
-|[dotenv](https://github.com/motdotla/dotenv#readme)|??Major|Low|Env file|
-|[kleur](https://github.com/lukeed/kleur#readme)|??Major|Low|CLI color|
-|[make-promises-safe](https://github.com/mcollina/make-promises-safe#readme)|??Major|Medium|Force Node.js [DEP00018](https://nodejs.org/dist/latest-v8.x/docs/api/deprecations.html#deprecations_dep0018_unhandled_promise_rejections)|
-|[os-service](https://github.com/nospaceships/node-os-service#readme)|??Major|High|Services manager|
-|[qoa](https://github.com/klaussinani/qoa#readme)|??Major|Low|Interactive CLI prompt|
+|[dotenv](https://github.com/motdotla/dotenv#readme)|⚠️Major|Low|Env file|
+|[kleur](https://github.com/lukeed/kleur#readme)|⚠️Major|Low|CLI color|
+|[make-promises-safe](https://github.com/mcollina/make-promises-safe#readme)|⚠️Major|Medium|Force Node.js [DEP00018](https://nodejs.org/dist/latest-v8.x/docs/api/deprecations.html#deprecations_dep0018_unhandled_promise_rejections)|
+|[os-service](https://github.com/nospaceships/node-os-service#readme)|⚠️Major|High|Services manager|
+|[qoa](https://github.com/klaussinani/qoa#readme)|⚠️Major|Low|Interactive CLI prompt|
 
 > Recheck !
 
