@@ -38,6 +38,7 @@ async function create(type, config = {}) {
             const path = join(process.cwd(), "addons");
             if (is.string(config.name)) {
                 await (new AddonFactory(config.name)).generate(path);
+                console.log(white().bold(`\n--> Default ${yellow().bold(addonName)} addon created in ${yellow().bold(path)}`));
                 break;
             }
             const { addonName } = await qoa.prompt([

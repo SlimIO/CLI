@@ -48,7 +48,6 @@ async function addAddon(addons = [], nonActif = []) {
     for (const addon of [...addons, ...nonActif]) {
         console.log(white().bold(`Adding addon '${yellow().bold(addon)}'`));
         await createDirectory(join(process.cwd(), "addons"));
-        // process.chdir("addons");
 
         /** @type {URL} */
         let myurl;

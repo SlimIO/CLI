@@ -34,10 +34,15 @@ prog
     });
 
 prog
-    .command("create")
+    .command("create [type]")
     .describe("Create bunch of files for the agent")
-    .action(async() => {
-        await commands.create(void 0, void 0);
+    .option("-n", "Addon name")
+    .action(async(type, opts) => {
+        const config = {};
+        if (typeof opts.n !== "undefined") {
+            Reflect.set(config, "name", opts.n);
+        }
+        await commands.create(type, config);
     });
 
 prog
@@ -57,7 +62,7 @@ prog
 
 prog
     .command("connect [agent]")
-    .describe("Build the agent")
+    .describe("Connect to an agent local/remote")
     .action(async(agent = "localhost:1337") => {
         const [host, port] = agent.split(":");
         await commands.connectAgent({ host, port: Number(port) });
