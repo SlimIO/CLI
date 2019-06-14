@@ -35,7 +35,6 @@ $ npm slimio --help
 # or
 $ npm slimio -h
 ```
-
 ## API
 
 Example :
@@ -46,18 +45,18 @@ $ slimio <command> <value>
 
 | Command & Shortcut| Type | Default value | Description |
 | --- | --- | --- | --- |
-|--init -i|string|agent|Initialize a new SlimIO Agent|
-|--add|string||Add an addon to the agent|
-|--create|||Create bunch of files for the agent|
-|--service|string|add|Create an agent service|
-|--connect -c|String|localhost:1337|Connect CLI to a local or remote SlimIO Agent|
-|--build -b|boolean|false|Bundle/Build Core & SlimIO Addons|
-|--addons|array|`[]`|Additionals addons for --init command|
-|--type|string|core|Bundle/Build type|
+|init|string|agent|Initialize a new SlimIO Agent|
+|add|string||Add an addon to the agent|
+|create|||Create bunch of files for the agent|
+|service|string|add|Create an agent service|
+|connect|String|localhost:1337|Connect CLI to a local or remote SlimIO Agent|
+|build|boolean|false|Bundle/Build Core & SlimIO Addons|
+|--addons|array|`[]`|Additionals addons for ***init*** command|
+|--type|string|core|Bundle/Build type for ***build*** command|
 
 <br/>
 <details>
-<summary>--init, -i</summary>
+<summary>init</summary>
 <br/>
 
 >Default value: `agent`
