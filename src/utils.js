@@ -107,7 +107,7 @@ async function installAddon(addonName, dlDir = process.cwd()) {
             subProcess.once("error", reject);
         });
 
-        return addonName;
+        return addonDir.split("/");
     }
     catch (err) {
         spinner.failed("Something wrong append !");

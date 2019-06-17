@@ -67,7 +67,16 @@ async function addAddon(addons = [], nonActif = []) {
         }
         catch (error) {
             console.log(grey().bold("(!) Not detected as an URL.\n"));
-            addonsChecked.push(addon);
+            if (addon.split("/").length === 2) {
+                const [orga, add] = addon.split("/");
+                if (orga !== "SlimIO") {
+                    throw new Error("At this time, organisation must be SlimIO");
+                }
+                addonsChecked.push(add);
+            }
+            else {
+                addonsChecked.push(addon);
+            }
         }
     }
 
