@@ -6,10 +6,9 @@ const { join } = require("path");
 // Require Third-party Dependencies
 const download = require("@slimio/github");
 const Manifest = require("@slimio/manifest");
-const { yellow, cyan, red } = require("kleur");
+const { cyan } = require("kleur");
 const Spinner = require("@slimio/async-cli-spinner");
 const premove = require("premove");
-const levenshtein = require("fast-levenshtein");
 
 // CONSTANTS
 const EXEC_SUFFIX = process.platform === "win32";
@@ -206,28 +205,6 @@ function checkBeInAgentOrAddonDir() {
     }
 }
 
-function commandReplExist(commands, command) {
-    if (!commands.has(command)) {
-        const isMatching = [];
-        for (const item of commands.keys()) {
-            const count = levenshtein.get(item, command);
-            if (count <= 2) {
-                isMatching.push(item);
-            }
-        }
-
-        console.log(red().bold(`\nUnknown command '${yellow().bold(command)}'`));
-        if (isMatching.length > 0) {
-            const words = isMatching.map((row) => cyan().bold(row)).join(",");
-            console.log(white().bold(`Did you mean: ${words} ?\n`));
-        }
-
-        return false;
-    }
-
-    return true;
-}
-
 module.exports = Object.freeze({
     BUILT_IN_ADDONS,
     directoryExist,
@@ -236,6 +213,5 @@ module.exports = Object.freeze({
     renameDirFromManifest,
     installAddon,
     checkBeInAgentDir,
-    checkBeInAgentOrAddonDir,
-    commandReplExist
+    checkBeInAgentOrAddonDir
 });
