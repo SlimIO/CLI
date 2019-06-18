@@ -16,12 +16,17 @@ const DEFAULT_OPTIONS = {
 };
 const CMD = new REPL();
 
-async function tcpSendMessage(client, addonCallback) {
+/**
+ * @async
+ * @func tcpSendMessage
+ * @param {TcpClient} client TcpClient
+ * @param {!String} callback callback
+ * @returns {Promise<any>}
+ */
+async function tcpSendMessage(client, callback) {
     await client.connect(TCP_CONNECT_TIMEOUT_MS);
 
-    const result = await new Promise((resolve, reject) => {
-        client.sendMessage(addonCallback).subscribe(resolve, reject);
-    });
+    const result = await client.sendOne(callback);
     client.close();
 
     return result;
