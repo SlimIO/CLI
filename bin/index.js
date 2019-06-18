@@ -24,8 +24,8 @@ prog
 
 prog
     .command("add [addons]")
-    .describe("Add an addon to the agent")
-    .option("-d", "Disabled addons")
+    .describe("Add an addon to the agent (will be activated by default).")
+    .option("-d , --disabled", "Add an addon as disabled by default.")
     .action(async(addons, options) => {
         const opts = typeof options.d === "undefined" ? [] : options.d.split(",");
         const adds = typeof addons === "undefined" ? [] : addons.split(",");
@@ -35,8 +35,8 @@ prog
 
 prog
     .command("create [type]")
-    .describe("Create bunch of files for the agent")
-    .option("-n", "Addon name")
+    .describe("Create and generate SlimIO Manifest and Addon")
+    .option("-n , --name", "Addon name (only when Addon type is Addon)")
     .action(async(type, opts) => {
         const config = {};
         if (typeof opts.n !== "undefined") {
@@ -54,7 +54,7 @@ prog
 
 prog
     .command("build")
-    .describe("Build the agent")
+    .describe("Build the agent or a given addon")
     .option("-t, --type", "Type of build")
     .action(async(options) => {
         await commands.build(options.t);
@@ -62,7 +62,7 @@ prog
 
 prog
     .command("connect [agent]")
-    .describe("Connect to an agent local/remote")
+    .describe("Connect to a local or remote running agent")
     .action(async(agent = "localhost:1337") => {
         const [host, port] = agent.split(":");
         await commands.connectAgent({ host, port: Number(port) });
@@ -70,7 +70,7 @@ prog
 
 prog
     .command("configure [cmd] [addon]")
-    .describe("Connect to an agent local/remote")
+    .describe("Configure a local agent or a remote running agent")
     .action(async(cmd, addon) => {
         await commands.configure(cmd, addon);
     });
