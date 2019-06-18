@@ -163,7 +163,7 @@ async function configure(cmd, addons = "") {
     };
 
     if (typeof cmd === "string") {
-        ctx.args = addons.trim();
+        ctx.args = [addons.trim()];
         await CMD.callHandler(cmd, ctx);
     }
     else {
