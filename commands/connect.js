@@ -1,7 +1,7 @@
 // Require Third-party Dependencies
 const TcpSdk = require("@slimio/tcp-sdk");
 const qoa = require("qoa");
-const { grey, yellow, white } = require("kleur");
+const { grey, yellow, white, red } = require("kleur");
 const prettyJSON = require("@slimio/pretty-json");
 
 // Require Internal Dependencies
@@ -57,6 +57,24 @@ CMD.addCommand("addons", "Call an addon's callback", async({ client }) => {
     const callbackResult = await tcpSendMessage(client, `${addon}.${callback}`);
     prettyJSON(callbackResult);
     console.log("");
+});
+
+CMD.addCommand("callback", "trigger a callback yourself on the remote agent", async({ args, client }) => {
+    const [target, ...rest] = args;
+    if (typeof target === "undefined") {
+        console.log(red().bold(" > Callback target can't be undefined"));
+
+        return void 0;
+    }
+    const options = rest.length === 0 ? [] : JSON.parse(rest.join(""));
+
+    await client.connect(TCP_CONNECT_TIMEOUT_MS);
+    const result = await client.sendOne(target, options);
+    prettyJSON(result);
+    console.log("");
+    client.close();
+
+    return void 0;
 });
 
 CMD.addCommand("create", "Create a default addon or manifest", async() => {
