@@ -60,6 +60,7 @@ function npmCI(cwd = process.cwd()) {
 }
 
 async function renameDirFromManifest(dir = process.cwd(), fileName = "slimio.toml") {
+    /** @type {String} */
     let name;
     try {
         const manifest = Manifest.open(join(dir, fileName));
@@ -76,12 +77,7 @@ async function renameDirFromManifest(dir = process.cwd(), fileName = "slimio.tom
         await rename(dir, join(dir, "..", name));
     }
     catch (err) {
-        try {
-            await premove(dir);
-        }
-        catch (err) {
-            throw err;
-        }
+        await premove(dir);
         throw err;
     }
 
@@ -89,9 +85,11 @@ async function renameDirFromManifest(dir = process.cwd(), fileName = "slimio.tom
 }
 
 async function installAddon(addonName, dlDir = process.cwd()) {
-    // console.log(yellow().green(dlDir));
-    const spinner = new Spinner({ prefixText: cyan().bold(addonName), spinner: "dots" });
-    spinner.start("Installation started");
+    const spinner = new Spinner({
+        prefixText: cyan().bold(addonName),
+        spinner: "dots"
+    }).start("Installation started");
+
     try {
         spinner.text = "Cloning from GitHub";
         const dirName = await githubDownload(`SlimIO.${addonName}`, dlDir);
@@ -102,8 +100,8 @@ async function installAddon(addonName, dlDir = process.cwd()) {
         spinner.text = "Installing dependencies";
         await new Promise((resolve, reject) => {
             const subProcess = npmInstall(join(dlDir, addonDir));
-            subProcess.once("close", (code) => {
-                spinner.succeed(`Node dependencies installed, code => ${code}`);
+            subProcess.once("close", () => {
+                spinner.succeed("Node dependencies installed");
                 resolve();
             });
             subProcess.once("error", reject);
@@ -117,10 +115,12 @@ async function installAddon(addonName, dlDir = process.cwd()) {
     }
 }
 
-async function installAgentDep(agentDir) {
+function installAgentDep(agentDir) {
     return new Promise((resolve, reject) => {
-        const spinner = new Spinner({ prefixText: cyan().bold("Agent"), spinner: "dots" });
-        spinner.start("Installing dependencies");
+        const spinner = new Spinner({
+            prefixText: cyan().bold("Agent"),
+            spinner: "dots"
+        }).start("Installing dependencies");
         const subProcess = npmCI(agentDir);
         subProcess.once("close", (code) => {
             spinner.succeed("Node dependencies installed");
