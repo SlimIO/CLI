@@ -31,7 +31,7 @@
         "@slimio/github": "^0.5.0",
         "@slimio/is": "^1.5.1",
         "@slimio/lazy": "^1.2.0",
-        "@slimio/manifest": "^0.5.0",
+        "@slimio/manifest": "^0.6.0",
         "@slimio/pretty-json": "^1.0.1",
         "@slimio/tcp-sdk": "^0.4.0",
         "@slimio/utils": "^0.9.0",
