@@ -8,6 +8,7 @@ const Manifest = require("@slimio/manifest");
 const { AddonFactory } = require("@slimio/addon-factory");
 const is = require("@slimio/is");
 const { yellow, white } = require("kleur");
+const { highlightAuto } = require("emphasize");
 
 // Require Internal Dependencies
 const { fileExist, checkBeInAgentOrAddonDir } = require("../src/utils");
@@ -17,8 +18,10 @@ const E_TYPES = new Set(["Addon", "Manifest"]);
 
 async function generateAndLogAddon(name, path) {
     await (new AddonFactory(name)).generate(path);
-    console.log(white().bold(`\n--> Default ${yellow().bold(name)} addon created in ${yellow().bold(path)}\n`));
-    createReadStream(join(path, name, "index.js")).pipe(process.stdout);
+    console.log(white().bold(`\n > '${yellow().bold(name)}' addon generated at ${yellow().bold(path)}\n`));
+
+    const str = await readFile(join(path, name, "index.js"), "utf-8");
+    console.log(highlightAuto(str).value);
 }
 
 async function create(type, config = {}) {
@@ -79,8 +82,10 @@ async function create(type, config = {}) {
             const options = { name: realName, version, type: tomlType };
             const path = join(process.cwd(), "slimio.toml");
             Manifest.create(options, path, true);
-            console.log(white().bold(`Manifest slimio.toml created in ${yellow().bold(process.cwd())}\n`));
-            createReadStream(path).pipe(process.stdout);
+            console.log(white().bold(`\n > slimio.toml Manifest created at ${yellow().bold(process.cwd())}\n`));
+
+            const str = await readFile(path, "utf-8");
+            console.log(highlightAuto(str).value);
             break;
         }
     }
