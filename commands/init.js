@@ -6,16 +6,41 @@ const { performance } = require("perf_hooks");
 
 // Require Third-party Dependencies
 const { yellow, white, green, red } = require("kleur");
+const download = require("@slimio/github");
 const Spinner = require("@slimio/async-cli-spinner");
 
 // Require Internal Dependencies
 const {
     BUILT_IN_ADDONS,
     directoryExist,
-    githubDownload,
-    installAgentDep,
+    npmInstall,
     installAddon
 } = require("../src/utils");
+
+/**
+ * @func installAgentDep
+ * @desc Install SlimIO Agent
+ * @param {!String} agentDir agent directory location
+ * @returns {Promise<void>}
+ */
+function installAgentDep(agentDir) {
+    return new Promise((resolve, reject) => {
+        const spinner = new Spinner({
+            prefixText: cyan().bold("Agent"),
+            spinner: "dots"
+        }).start("Installing dependencies");
+
+        const subProcess = npmInstall(agentDir, true);
+        subProcess.once("close", (code) => {
+            spinner.succeed("Node dependencies installed");
+            resolve();
+        });
+        subProcess.once("error", (err) => {
+            spinner.failed("Something wrong append !");
+            reject(err);
+        });
+    });
+}
 
 async function initAgent(init, additionalAddons = []) {
     console.log(white().bold("Initialize new SlimIO Agent!"));
@@ -27,7 +52,11 @@ async function initAgent(init, additionalAddons = []) {
     const agentDir = join(process.cwd(), init);
     const addonDir = join(agentDir, "addons");
     {
-        const dirName = await githubDownload("SlimIO.Agent");
+        const dirName = await download("SlimIO.Agent", {
+            dest: process.cwd(),
+            auth: process.env.GIT_TOKEN,
+            extract: true
+        });
         await rename(dirName, agentDir);
 
         console.log(`Agent successfully cloned at ${yellow().bold(agentDir)}`);

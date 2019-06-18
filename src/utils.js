@@ -13,8 +13,22 @@ const levenshtein = require("fast-levenshtein");
 
 // CONSTANTS
 const EXEC_SUFFIX = process.platform === "win32";
-const BUILT_IN_ADDONS = ["Events", "Socket", "Gate", "Alerting"];
+const BUILT_IN_ADDONS = Object.freeze(["Events", "Socket", "Gate", "Alerting"]);
 
+/**
+ * @namespace Utils
+ */
+
+/**
+ * @async
+ * @func directoryExist
+ * @desc Check if a given directory exist (and throw Error if diferent of ENOENT).
+ * @memberof Utils#
+ * @param {!String} dir directory location
+ * @returns {Promise<void>}
+ *
+ * @throws {Error}
+ */
 async function directoryExist(dir) {
     try {
         const stats = await stat(dir);
@@ -29,6 +43,16 @@ async function directoryExist(dir) {
     }
 }
 
+/**
+ * @async
+ * @func fileExist
+ * @desc Check if a given file exist (and throw Error if diferent of ENOENT).
+ * @memberof Utils#
+ * @param {!String} file file path
+ * @returns {Promise<void>}
+ *
+ * @throws {Error}
+ */
 async function fileExist(file) {
     try {
         const stats = await stat(file);
@@ -43,22 +67,30 @@ async function fileExist(file) {
     }
 }
 
-function githubDownload(path, dest = process.cwd()) {
-    return download(path, {
-        dest,
-        auth: process.env.GIT_TOKEN,
-        extract: true
+/**
+ * @func npmInstall
+ * @memberof Utils#
+ * @param {!String} cwd working dir where we need to run the npm install cmd
+ * @param {Boolean} [lock=false] install with package.lock (npm ci)
+ * @returns {NodeJS.ReadableStream}
+ */
+function npmInstall(cwd = process.cwd(), lock = false) {
+    const ci = lock ? ["ci"] : ["install", "--production"];
+
+    return spawn(`npm${EXEC_SUFFIX ? ".cmd" : ""}`, ci, {
+        cwd, stdio: "pipe"
     });
 }
 
-function npmInstall(cwd = process.cwd()) {
-    return spawn(`npm${EXEC_SUFFIX ? ".cmd" : ""}`, ["install", "--production"], { cwd, stdio: "pipe" });
-}
-
-function npmCI(cwd = process.cwd()) {
-    return spawn(`npm${EXEC_SUFFIX ? ".cmd" : ""}`, ["ci"], { cwd, stdio: "pipe" });
-}
-
+/**
+ * @async
+ * @func renameDirFromManifest
+ * @desc Rename cloned addon repository by retrieving the real name in the SlimIO manifest.
+ * @memberof Utils#
+ * @param {!String} dir location of the directory to rename
+ * @param {!String} fileName manifest file name
+ * @returns {Promise<String>}
+ */
 async function renameDirFromManifest(dir = process.cwd(), fileName = "slimio.toml") {
     /** @type {String} */
     let name;
@@ -84,6 +116,14 @@ async function renameDirFromManifest(dir = process.cwd(), fileName = "slimio.tom
     return name;
 }
 
+/**
+ * @async
+ * @func installAddon
+ * @memberof Utils#
+ * @param {!String} addonName addon name
+ * @param {String=} dlDir download location
+ * @returns {Promise<void>}
+ */
 async function installAddon(addonName, dlDir = process.cwd()) {
     const spinner = new Spinner({
         prefixText: cyan().bold(addonName),
@@ -92,7 +132,11 @@ async function installAddon(addonName, dlDir = process.cwd()) {
 
     try {
         spinner.text = "Cloning from GitHub";
-        const dirName = await githubDownload(`SlimIO.${addonName}`, dlDir);
+        const dirName = await download(`SlimIO.${addonName}`, {
+            dest: dlDir,
+            auth: process.env.GIT_TOKEN,
+            extract: true
+        });
 
         spinner.text = "Renaming folder from manifest";
         const addonDir = await renameDirFromManifest(dirName);
@@ -115,24 +159,14 @@ async function installAddon(addonName, dlDir = process.cwd()) {
     }
 }
 
-function installAgentDep(agentDir) {
-    return new Promise((resolve, reject) => {
-        const spinner = new Spinner({
-            prefixText: cyan().bold("Agent"),
-            spinner: "dots"
-        }).start("Installing dependencies");
-        const subProcess = npmCI(agentDir);
-        subProcess.once("close", (code) => {
-            spinner.succeed("Node dependencies installed");
-            resolve();
-        });
-        subProcess.once("error", (err) => {
-            spinner.failed("Something wrong append !");
-            reject(err);
-        });
-    });
-}
-
+/**
+ * @func checkBeInAgentDir
+ * @desc check if we are at the root of the agent
+ * @memberof Utils#
+ * @returns {void}
+ *
+ * @throws {Error}
+ */
 function checkBeInAgentDir() {
     try {
         const { name, type } = Manifest.open();
@@ -145,6 +179,14 @@ function checkBeInAgentDir() {
     }
 }
 
+/**
+ * @func checkBeInAgentOrAddonDir
+ * @desc check if we are at the root of the agent or at the root of addons dir
+ * @memberof Utils#
+ * @returns {void}
+ *
+ * @throws {Error}
+ */
 function checkBeInAgentOrAddonDir() {
     try {
         checkBeInAgentDir();
@@ -186,17 +228,14 @@ function commandReplExist(commands, command) {
     return true;
 }
 
-module.exports = {
+module.exports = Object.freeze({
     BUILT_IN_ADDONS,
     directoryExist,
     fileExist,
-    githubDownload,
     npmInstall,
-    npmCI,
     renameDirFromManifest,
     installAddon,
-    installAgentDep,
     checkBeInAgentDir,
     checkBeInAgentOrAddonDir,
     commandReplExist
-};
+});
