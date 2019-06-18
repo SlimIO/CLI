@@ -4,25 +4,16 @@ const { join } = require("path");
 
 // Require Third-party Dependencies
 const qoa = require("qoa");
-const { grey, yellow, white } = require("kleur");
-const prettyJSON = require("@slimio/pretty-json");
+const { grey, yellow, white, red, cyan } = require("kleur");
+const jsonDiff = require("json-diff");
+const cloneDeep = require("lodash.clonedeep");
 
 // Require Internal Dependencies
 const {
     BUILT_IN_ADDONS,
-    checkBeInAgentOrAddonDir,
-    commandReplExist
+    checkBeInAgentOrAddonDir
 } = require("../src/utils");
-
-// CONSTANTS
-const REPL_COMMANDS = new Map([
-    ["sync", "sync agent.json with addons folder"],
-    ["addons", "Show all installed addons"],
-    ["enable", "Switch on addons"],
-    ["disable", "Switch off addons"],
-    ["help", "Display all commands"],
-    ["quit", "Quit prompt"]
-]);
+const REPL = require("../src/REPL");
 
 async function getFileAddon() {
     try {
@@ -62,184 +53,122 @@ async function getLocalAddons() {
     return ret;
 }
 
-async function fnExport(cmd, addons) {
-    checkBeInAgentOrAddonDir();
+async function splitAddons(ctx) {
+    if (ctx.args.length > 0) {
+        const addons = ctx.args.map((arg) => arg.split(",")).flat();
+        console.log("");
 
-    const JSON_FILE = await getFileAddon();
-    const ADDONS_FILE = new Set([...Object.keys(JSON_FILE)]);
-    console.log("\n > Registered addons");
-    prettyJSON([...ADDONS_FILE].sort());
+        return addons.filter((addon) => {
+            const exist = ctx.localAddons.has(addon) || ctx.addons.has(addon);
+            if (!exist) {
+                console.log(red().bold(` > Unable to found '${yellow().bold(addon)}' addon`));
+            }
 
-    const ADDONS_FROM_DIR = await getLocalAddons();
-    console.log("\n > Local addons");
-    prettyJSON([...ADDONS_FROM_DIR].sort());
+            return exist;
+        });
+    }
+
+    const { addon } = await qoa.prompt([{
+        type: "interactive",
+        query: "Choose an addon",
+        handle: "addon",
+        menu: [...ctx.localAddons]
+    }]);
     console.log("");
 
-    function showREPLCommands() {
-        console.log(`\n${white().bold("commands :")}`);
-        for (const [command, desc] of REPL_COMMANDS) {
-            console.log(`${yellow(command)}: ${desc}`);
-        }
-        console.log();
-    }
-
-    async function writeOnDisk() {
-        await writeFile("agent.json", JSON.stringify({ addons: JSON_FILE }, null, 4));
-    }
-
-    async function splitAddons(command, ADDONS_FROM_DIR) {
-        let addons;
-        if (command.split(" ").length === 2) {
-            [, addons] = command.split(" ");
-
-            addons = addons.split(",").filter((add) => {
-                const result = ADDONS_FROM_DIR.has(add) || ADDONS_FILE.has(add);
-                if (!result) {
-                    console.log(`${add} addon is not referenced`);
-                }
-
-                return result;
-            });
-        }
-        else {
-            const { addon } = await qoa.prompt([{
-                type: "interactive",
-                query: "Choose an addon",
-                handle: "addon",
-                menu: [...ADDONS_FROM_DIR]
-            }]);
-            addons = [addon];
-            console.log("");
-        }
-
-        return addons;
-    }
-
-    async function activeSwitch(command, switcher) {
-        const addons = await splitAddons(command, ADDONS_FROM_DIR);
-        for (const addon of addons) {
-            console.log(ADDONS_FILE);
-            if (!ADDONS_FILE.has(addon)) {
-                console.log(`unknow ${addon} addon`);
-                continue;
-            }
-            Reflect.set(Reflect.get(JSON_FILE, addon), "active", switcher);
-        }
-        await writeOnDisk();
-    }
-
-    async function sync(command) {
-        if (command.split(" ").length === 2) {
-            const addons = await splitAddons(command, ADDONS_FROM_DIR);
-            console.log(addons);
-            console.log("");
-
-            for (const addon of addons) {
-                if (!ADDONS_FROM_DIR.has(addon)) {
-                    Reflect.deleteProperty(JSON_FILE, addon);
-                    console.log(`Remove ${addon} addon from agent.json`);
-                    ADDONS_FILE.delete(addon);
-                }
-                else if (!ADDONS_FILE.has(addon)) {
-                    Reflect.set(JSON_FILE, addon, { active: false });
-                    ADDONS_FILE.add(addon);
-                    console.log(`Create ${addon} addon in agent.json as active false`);
-                }
-            }
-            await writeOnDisk();
-        }
-        else {
-            console.log("Sync all dir");
-            for (const addon of ADDONS_FILE) {
-                if (!ADDONS_FROM_DIR.has(addon)) {
-                    Reflect.deleteProperty(JSON_FILE, addon);
-                    console.log(`Remove ${addon} addon from agent.json`);
-                    ADDONS_FILE.delete(addon);
-                }
-            }
-            for (const addon of ADDONS_FROM_DIR) {
-                if (!ADDONS_FILE.has(addon)) {
-                    Reflect.set(JSON_FILE, addon, { active: false });
-                    ADDONS_FILE.add(addon);
-                    console.log(`Create ${addon} addon in agent.json as active false`);
-                }
-            }
-            await writeOnDisk();
-        }
-    }
-
-    async function configure(cmd = null, addons = null) {
-        if (cmd !== null) {
-            // if (addons === null && cmd !== "sync") {
-            //     throw new Error("Need addon name");
-            // }
-            const fullCommand = [cmd, addons].join(" ").trim();
-
-            switch (cmd) {
-                case "sync": {
-                    await sync(fullCommand);
-                    break;
-                }
-                case "enable": {
-                    await activeSwitch(fullCommand, true);
-                    break;
-                }
-
-                case "disable": {
-                    await activeSwitch(fullCommand, false);
-                    break;
-                }
-                case "addons": {
-                    console.log(ADDONS_FROM_DIR);
-                    break;
-                }
-            }
-
-            return;
-        }
-
-        const query = grey("agent.json >");
-        replWhile: while (true) {
-            let { command } = await qoa.prompt([{
-                type: "input", query, handle: "command"
-            }]);
-            command = command.trim();
-            // console.log(`split command: ${command.split(" ")}`);
-            if (!commandReplExist(REPL_COMMANDS, command.split(" ")[0])) {
-                continue;
-            }
-
-            const cmd = command.split(" ").length === 2 ? command.split(" ")[0] : command;
-
-            switch (cmd) {
-                case "help":
-                    showREPLCommands();
-                    break;
-                case "quit":
-                    break replWhile;
-                case "sync": {
-                    await sync(command);
-                    break;
-                }
-                case "enable": {
-                    await activeSwitch(command, true);
-                    break;
-                }
-
-                case "disable": {
-                    await activeSwitch(command, false);
-                    break;
-                }
-                case "addons": {
-                    console.log(ADDONS_FROM_DIR);
-                    break;
-                }
-            }
-        }
-
-        console.log(`REPL Connection to ${query} closed\n`);
-    }
-    await configure(cmd, addons);
+    return [addon];
 }
 
-module.exports = fnExport;
+async function activeSwitch(ctx, switcher = false) {
+    const addons = await splitAddons(ctx);
+    const agentBeforeUpdate = cloneDeep(ctx.agentConfig);
+    for (const addon of addons) {
+        Reflect.set(ctx.agentConfig[addon], "active", switcher);
+    }
+
+    console.log(grey().bold(jsonDiff.diffString(agentBeforeUpdate, ctx.agentConfig)));
+    await writeFile("agent.json", JSON.stringify({ addons: ctx.agentConfig }, null, 4));
+    console.log("");
+}
+
+const CMD = new REPL();
+
+CMD.addCommand("enable", "Enable a given addon", async(ctx) => {
+    await activeSwitch(ctx, true);
+});
+
+CMD.addCommand("disable", "Disable a given addon", async(ctx) => {
+    await activeSwitch(ctx, false);
+});
+
+CMD.addCommand("sync", "sync agent.json with addons folder", async(ctx) => {
+    const agentBeforeUpdate = cloneDeep(ctx.agentConfig);
+
+    if (ctx.args.length > 0) {
+        const addons = await splitAddons(ctx);
+
+        for (const addon of addons) {
+            if (!ctx.localAddons.has(addon)) {
+                Reflect.deleteProperty(ctx.agentConfig, addon);
+                ctx.addons.delete(addon);
+                console.log(white().bold(`> Removing addon '${cyan().bold(addon)}'`));
+            }
+            else if (!ctx.addons.has(addon)) {
+                Reflect.set(ctx.agentConfig, addon, { active: false });
+                ctx.addons.add(addon);
+                console.log(white().bold(`> Adding missing addon '${cyan().bold(addon)}' (as active: ${red().bold("false")})`));
+            }
+        }
+    }
+    else {
+        console.log("");
+        for (const addon of ctx.addons) {
+            if (!ctx.localAddons.has(addon)) {
+                Reflect.deleteProperty(ctx.agentConfig, addon);
+                ctx.addons.delete(addon);
+                console.log(white().bold(`> Removing addon '${cyan().bold(addon)}'`));
+            }
+        }
+        for (const addon of ctx.localAddons) {
+            if (!ctx.addons.has(addon)) {
+                Reflect.set(ctx.agentConfig, addon, { active: false });
+                ctx.addons.add(addon);
+                console.log(white().bold(`> Adding missing addon '${cyan().bold(addon)}'`));
+            }
+        }
+    }
+
+    console.log("");
+    console.log(grey().bold(jsonDiff.diffString(agentBeforeUpdate, ctx.agentConfig)));
+    await writeFile("agent.json", JSON.stringify({ addons: ctx.agentConfig }, null, 4));
+});
+
+CMD.addCommand("addons", "Show all installed addons", (ctx) => {
+    console.log(ctx.localAddons);
+});
+
+async function configure(cmd, addons = "") {
+    checkBeInAgentOrAddonDir();
+    const [agentConfig, localAddons] = await Promise.all([
+        getFileAddon(),
+        getLocalAddons()
+    ]);
+    console.log("");
+
+    // Define context
+    const ctx = {
+        agentConfig,
+        addons: new Set([...Object.keys(agentConfig)]),
+        localAddons
+    };
+
+    if (typeof cmd === "string") {
+        ctx.args = addons.trim();
+        await CMD.callHandler(cmd, ctx);
+    }
+    else {
+        await CMD.init(grey("agent.json >"), ctx);
+    }
+}
+
+module.exports = configure;

@@ -54,6 +54,23 @@ class REPL {
 
     /**
      * @async
+     * @method callHandler
+     * @memberof REPL#
+     * @param {!String} name command name
+     * @param {Object=} ctx context
+     * @returns {Promise<any>}
+     */
+    async callHandler(name, ctx = {}) {
+        if (!this.commands.has(name)) {
+            return void 0;
+        }
+        const { handler } = this.commands.get(name);
+
+        return handler(ctx);
+    }
+
+    /**
+     * @async
      * @method init
      * @memberof REPL#
      * @param {!String} title REPL title
@@ -92,14 +109,7 @@ class REPL {
                 case "quit":
                     break replWhile;
                 default: {
-                    const { handler } = this.commands.get(first);
-                    const subCtx = Object.assign({}, ctx, { args });
-                    if (is.asyncFunction(handler)) {
-                        await handler(subCtx);
-                    }
-                    else {
-                        handler(subCtx);
-                    }
+                    await this.callHandler(first, Object.assign({}, ctx, { args }));
                     break;
                 }
             }
