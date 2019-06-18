@@ -7,6 +7,7 @@ const qoa = require("qoa");
 const { grey, yellow, white, red, cyan } = require("kleur");
 const jsonDiff = require("json-diff");
 const cloneDeep = require("lodash.clonedeep");
+const prettyJSON = require("@slimio/pretty-json");
 
 // Require Internal Dependencies
 const {
@@ -143,8 +144,8 @@ CMD.addCommand("sync", "sync agent.json with addons folder", async(ctx) => {
     await writeFile("agent.json", JSON.stringify({ addons: ctx.agentConfig }, null, 4));
 });
 
-CMD.addCommand("addons", "Show all installed addons", (ctx) => {
-    console.log(ctx.localAddons);
+CMD.addCommand("addons", "Show the list of addons registered in agent.json", (ctx) => {
+    prettyJSON([...ctx.localAddons]);
 });
 
 async function configure(cmd, addons = "") {
