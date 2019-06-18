@@ -1,10 +1,11 @@
 // Require Node.js Dependencies
-const { readFile, writeFile, readdir } = require("fs").promises;
+const { readFile, writeFile, readdir, access } = require("fs").promises;
 const { join } = require("path");
 
 // Require Third-party Dependencies
 const qoa = require("qoa");
-const { grey, yellow, white, cyan, red } = require("kleur");
+const { grey, yellow, white } = require("kleur");
+const prettyJSON = require("@slimio/pretty-json");
 
 // Require Internal Dependencies
 const {
@@ -23,34 +24,56 @@ const REPL_COMMANDS = new Map([
     ["quit", "Quit prompt"]
 ]);
 
+async function getFileAddon() {
+    try {
+        const file = await readFile("agent.json", { encoding: "utf8" });
+
+        return JSON.parse(file).addons;
+    }
+    catch (err) {
+        const addons = {};
+        for (const addon of BUILT_IN_ADDONS) {
+            Reflect.set(addons, addon.toLowerCase(), { active: true });
+        }
+        await writeFile("agent.json", JSON.stringify({ addons }, null, 4));
+
+        return addons;
+    }
+}
+
+async function getLocalAddons() {
+    const addonsDir = join(process.cwd(), "addons");
+    const ret = new Set();
+
+    const dirents = await readdir(addonsDir, { encoding: "utf8", withFileTypes: true });
+    for (const dirent of dirents) {
+        try {
+            if (!dirent.isDirectory()) {
+                continue;
+            }
+            await access(join(addonsDir, dirent.name, "index.js"));
+            ret.add(dirent.name);
+        }
+        catch (err) {
+            continue;
+        }
+    }
+
+    return ret;
+}
 
 async function fnExport(cmd, addons) {
     checkBeInAgentOrAddonDir();
 
     const JSON_FILE = await getFileAddon();
     const ADDONS_FILE = new Set([...Object.keys(JSON_FILE)]);
-    console.log("ADDONS_FILE");
-    console.log(ADDONS_FILE);
-    const addonsDir = join(process.cwd(), "addons");
+    console.log("\n > Registered addons");
+    prettyJSON([...ADDONS_FILE].sort());
 
-    const ADDONS_FROM_DIR = new Set();
-    const dirents = await readdir(addonsDir, { encoding: "utf8", withFileTypes: true });
-    for (const dirent of dirents) {
-        if (!dirent.isDirectory()) {
-            continue;
-        }
-        const name = dirent.name;
-
-        try {
-            await readFile(join(addonsDir, name, "index.js"), { encoding: "utf8" });
-        }
-        catch (err) {
-            continue;
-        }
-        ADDONS_FROM_DIR.add(name);
-    }
-    console.log("ADDONS_FROM_DIR");
-    console.log(ADDONS_FROM_DIR);
+    const ADDONS_FROM_DIR = await getLocalAddons();
+    console.log("\n > Local addons");
+    prettyJSON([...ADDONS_FROM_DIR].sort());
+    console.log("");
 
     function showREPLCommands() {
         console.log(`\n${white().bold("commands :")}`);
@@ -58,25 +81,6 @@ async function fnExport(cmd, addons) {
             console.log(`${yellow(command)}: ${desc}`);
         }
         console.log();
-    }
-
-    async function getFileAddon() {
-        try {
-            const file = await readFile("agent.json", { encoding: "utf8" });
-            console.log("agent.json readed");
-
-            return JSON.parse(file).addons;
-        }
-        catch (err) {
-            const addons = {};
-            for (const addon of BUILT_IN_ADDONS) {
-                Reflect.set(addons, addon.toLowerCase(), { active: true });
-            }
-            await writeFile("agent.json", JSON.stringify({ addons }, null, 4));
-            console.log("agent.json write");
-
-            return addons;
-        }
     }
 
     async function writeOnDisk() {
