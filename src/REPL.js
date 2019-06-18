@@ -62,20 +62,22 @@ class REPL {
      */
     async init(title = grey(" > "), ctx = {}) {
         replWhile: while (true) {
-            const { command } = await qoa.prompt([{
+            let { command } = await qoa.prompt([{
                 type: "input", query: title, handle: "command"
             }]);
+            command = command.trim().normalize();
+            const [first, ...args] = command.split(" ");
 
-            if (!this.commands.has(command)) {
+            if (!this.commands.has(first)) {
                 const isMatching = [];
                 for (const item of this.commands.keys()) {
-                    const count = levenshtein.get(item, command);
+                    const count = levenshtein.get(item, first);
                     if (count <= 2) {
                         isMatching.push(item);
                     }
                 }
 
-                console.log(red().bold(`\nUnknown command '${yellow().bold(command)}'`));
+                console.log(red().bold(`\nUnknown command '${yellow().bold(first)}'`));
                 if (isMatching.length > 0) {
                     const words = isMatching.map((row) => cyan().bold(row)).join(",");
                     console.log(white().bold(`Did you mean: ${words} ?\n`));
@@ -83,19 +85,20 @@ class REPL {
                 continue;
             }
 
-            switch (command) {
+            switch (first) {
                 case "help":
                     this.showAvailableCommands();
                     break;
                 case "quit":
                     break replWhile;
                 default: {
-                    const { handler } = this.commands.get(command);
+                    const { handler } = this.commands.get(first);
+                    const subCtx = Object.assign({}, ctx, { args });
                     if (is.asyncFunction(handler)) {
-                        await handler(ctx);
+                        await handler(subCtx);
                     }
                     else {
-                        handler(ctx);
+                        handler(subCtx);
                     }
                     break;
                 }
