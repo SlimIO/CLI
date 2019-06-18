@@ -5,7 +5,7 @@ const { join } = require("path");
 const { performance } = require("perf_hooks");
 
 // Require Third-party Dependencies
-const { yellow, white, green, red } = require("kleur");
+const { yellow, white, green, red, cyan } = require("kleur");
 const download = require("@slimio/github");
 const Spinner = require("@slimio/async-cli-spinner");
 
@@ -23,13 +23,13 @@ const {
  * @param {!String} agentDir agent directory location
  * @returns {Promise<void>}
  */
-function installAgentDep(agentDir) {
-    return new Promise((resolve, reject) => {
-        const spinner = new Spinner({
-            prefixText: cyan().bold("Agent"),
-            spinner: "dots"
-        }).start("Installing dependencies");
+async function installAgentDep(agentDir) {
+    const spinner = new Spinner({
+        prefixText: cyan().bold("Agent"),
+        spinner: "dots"
+    }).start("Installing dependencies");
 
+    await new Promise((resolve, reject) => {
         const subProcess = npmInstall(agentDir, true);
         subProcess.once("close", (code) => {
             spinner.succeed("Node dependencies installed");
