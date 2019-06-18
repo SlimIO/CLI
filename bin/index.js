@@ -68,4 +68,11 @@ prog
         await commands.connectAgent({ host, port: Number(port) });
     });
 
+prog
+    .command("configure [cmd] [addon]")
+    .describe("Connect to an agent local/remote")
+    .action(async(cmd, addon) => {
+        await commands.configure(cmd, addon);
+    });
+
 prog.parse(process.argv);

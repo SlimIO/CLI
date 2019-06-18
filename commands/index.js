@@ -10,5 +10,6 @@ commands.set("create", () => require("./create"));
 commands.set("service", () => require("./service"));
 commands.set("build", () => require("./build"));
 commands.set("connectAgent", () => require("./connect"));
+commands.set("configure", () => require("./configure"));
 
 module.exports = commands.value;

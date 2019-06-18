@@ -10,14 +10,12 @@ const Spinner = require("@slimio/async-cli-spinner");
 
 // Require Internal Dependencies
 const {
+    BUILT_IN_ADDONS,
     directoryExist,
     githubDownload,
     installAgentDep,
     installAddon
 } = require("../src/utils");
-
-// CONSTANT
-const BUILT_IN_ADDONS = ["Events", "Socket", "Gate", "Alerting"];
 
 async function initAgent(init, additionalAddons = []) {
     console.log(white().bold("Initialize new SlimIO Agent!"));
