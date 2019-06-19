@@ -55,7 +55,7 @@ async function build(type = "core") {
             // Create ./build directory (on the agent)
             const cwd = process.cwd();
             const buildPath = join(cwd, "..", "..", "build");
-            await createDirectory(cwd);
+            await createDirectory(buildPath);
             process.chdir(buildPath);
 
             try {
