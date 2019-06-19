@@ -145,7 +145,14 @@ CMD.addCommand("sync", "sync agent.json with addons folder", async(ctx) => {
 });
 
 CMD.addCommand("addons", "Show the list of addons registered in agent.json", (ctx) => {
-    prettyJSON([...ctx.localAddons]);
+    console.log("");
+    if (CMD.json) {
+        console.log(JSON.stringify([...ctx.localAddons], null, 4));
+    }
+    else {
+        prettyJSON([...ctx.localAddons]);
+    }
+    console.log("");
 });
 
 async function configure(cmd, addons = "") {

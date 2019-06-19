@@ -55,7 +55,12 @@ CMD.addCommand("addons", "Call an addon's callback", async({ client }) => {
 
     console.log("");
     const callbackResult = await tcpSendMessage(client, `${addon}.${callback}`);
-    prettyJSON(callbackResult);
+    if (CMD.json) {
+        console.log(JSON.stringify(callbackResult, null, 4));
+    }
+    else {
+        prettyJSON(callbackResult);
+    }
     console.log("");
 });
 
@@ -70,7 +75,12 @@ CMD.addCommand("callback", "trigger a callback yourself on the remote agent", as
 
     await client.connect(TCP_CONNECT_TIMEOUT_MS);
     const result = await client.sendOne(target, options);
-    prettyJSON(result);
+    if (CMD.json) {
+        console.log(JSON.stringify(result, null, 4));
+    }
+    else {
+        prettyJSON(result);
+    }
     console.log("");
     client.close();
 
