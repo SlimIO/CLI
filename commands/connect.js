@@ -84,6 +84,7 @@ async function connectAgent(options = Object.create(null)) {
     const { host, port } = Object.assign({}, DEFAULT_OPTIONS, options);
 
     const client = new TcpSdk({ host, port });
+    client.catch((err) => console.error(err));
     await client.once("connect", TCP_CONNECT_TIMEOUT_MS);
     client.close();
 
