@@ -1,8 +1,11 @@
 // Require Third-party Dependencies
 const qoa = require("qoa");
-const { grey, yellow, white, cyan, red } = require("kleur");
+const { grey, yellow, white, cyan, red, green } = require("kleur");
 const levenshtein = require("fast-levenshtein");
 const is = require("@slimio/is");
+
+// Symbols
+const symJSON = Symbol("symJSON");
 
 /**
  * @class REPL
@@ -14,8 +17,19 @@ class REPL {
      */
     constructor() {
         this.commands = new Map();
+        Object.defineProperty(this, symJSON, { value: false, writable: true });
+
         this.addCommand("help", "display all available commands in the REPL");
         this.addCommand("quit", "exit the current REPL");
+        this.addCommand("json", "enable or disable json output");
+    }
+
+    /**
+     * @member {Boolean} json
+     * @memberof REPL#
+     */
+    get json() {
+        return this[symJSON];
     }
 
     /**
@@ -108,6 +122,13 @@ class REPL {
                     break;
                 case "quit":
                     break replWhile;
+                case "json": {
+                    const state = args[0] || "off";
+                    this[symJSON] = state === "on";
+                    console.log(`\n${white().bold("JSON output ")} ${green().bold(this[symJSON] ? "Enabled" : "Disabled")}\n`);
+
+                    break;
+                }
                 default: {
                     await this.callHandler(first, Object.assign({}, ctx, { args }));
                     break;
