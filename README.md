@@ -45,9 +45,9 @@ $ slimio <command> {option} <value>
 
 | Command | Type | Default value | Description |
 | --- | --- | --- | --- |
-|init|string|agent|Initialize a new SlimIO Agent|
-|add|string||Add an addon to the agent|
-|create|||Create bunch of files for the agent|
+|init|string|agent|Initialize a new SlimIO Agent/Install Built-in addons|
+|add|string|N/A|Add an addon to the agent|
+|create|string|N/A|Create bunch of files for the agent : Addon/Manifest|
 |service|string|add|Create an agent service|
 |connect|String|localhost:1337|Connect CLI to a local or remote SlimIO Agent|
 |build|boolean|false|Bundle/Build Core & SlimIO Addons|
@@ -76,13 +76,26 @@ The value define the name of the agent folder
 <summary>add</summary>
 <br/>
 
+>Default value: `N/A`
+
+The value define the name/url of the addon you want to add
+
 Add an addon to the agent with the name or an Url from github.
 Currently, it's only take from SlimIO organization.
+
+Example of adding the ihm addon :
+
+```bash
+$ slimio add ihm
+```
+
 </details>
 
 <details>
 <summary>create</summary>
 <br/>
+
+>Default value: `N/A`
 
 >You must be in an agent folder !
 
@@ -95,8 +108,9 @@ Create bunch of files for the agent:
 <summary>service</summary>
 <br/>
 
->You must be in an agent folder !
 >Default value: `add`
+
+>You must be in an agent folder !
 
 Create a service of the Agent
 
