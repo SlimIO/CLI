@@ -147,7 +147,7 @@ CMD.addCommand("addons", "Show the list of addons registered in agent.json", (ct
     CMD.stdout([...ctx.localAddons], true);
 });
 
-async function configure(cmd, addons = "") {
+async function configure(cmd, addons = null) {
     checkBeInAgentOrAddonDir();
     const [agentConfig, localAddons] = await Promise.all([
         getFileAddon(),
@@ -163,7 +163,7 @@ async function configure(cmd, addons = "") {
     };
 
     if (typeof cmd === "string") {
-        ctx.args = [addons.trim()];
+        ctx.args = addons === null ? [] : [addons.trim()];
         await CMD.callHandler(cmd, ctx);
     }
     else {
