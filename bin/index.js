@@ -5,13 +5,18 @@ require("dotenv").config({ path: join(__dirname, "..", ".env") });
 
 // Require Third-party Dependencies
 const sade = require("sade");
+const cacache = require("cacache");
+const { red, yellow, white, green, cyan, grey } = require("kleur");
+const prettyJSON = require("@slimio/pretty-json");
 
 // Require Internal Dependencies
 const commands = require("../commands");
 
-const prog = sade("slimio");
-prog
-    .version("0.1.1");
+// CONSTANTS
+const CACHE_PATH = "/tmp/slimio-cli";
+const SETTINGS_KEYS = new Set(["json_tab"]);
+
+const prog = sade("slimio").version("0.2.0");
 
 prog
     .command("init [dirName]")
@@ -73,6 +78,45 @@ prog
     .describe("Configure a local agent or a remote running agent")
     .action(async(cmd, addon) => {
         await commands.configure(cmd, addon);
+    });
+
+prog
+    .command("set <key> <value>")
+    .describe("Setup a new settings in the local cache")
+    .action(async(key, value) => {
+        console.log("");
+        if (!SETTINGS_KEYS.has(key)) {
+            console.log(red().bold(` > Unknown settings key '${yellow().bold(key)}' !`));
+            console.log(white().bold("\nAvailable keys are:"));
+            prettyJSON([...SETTINGS_KEYS]);
+
+            return;
+        }
+
+        await cacache.put(CACHE_PATH, key, value);
+        console.log(white().bold(`Successfully writed ${green().bold(key)} = ${cyan().bold(value)} in the local cache!`));
+    });
+
+prog
+    .command("get [key]")
+    .describe("Get one or all keys stored in the local cache")
+    .action(async(key) => {
+        console.log("");
+
+        if (typeof key === "string") {
+            const { data } = await cacache.get(CACHE_PATH, key);
+            console.log(white().bold(` ${key}: '${green().bold(data.toString())}'`));
+        }
+        else {
+            const entries = await cacache.ls(CACHE_PATH);
+            const keys = {};
+            for (const key of Object.keys(entries)) {
+                keys[key] = (await cacache.get(CACHE_PATH, key)).data.toString();
+            }
+
+            console.log(grey().bold(" - Local settings -\n"));
+            prettyJSON(keys);
+        }
     });
 
 prog.parse(process.argv);
