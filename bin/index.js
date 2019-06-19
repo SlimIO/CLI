@@ -60,7 +60,7 @@ prog
 prog
     .command("build")
     .describe("Build the agent or a given addon")
-    .option("-t, --type", "Type of build")
+    .option("-t, --type", "Type of build (addon or core)")
     .action(async(options) => {
         await commands.build(options.t);
     });
