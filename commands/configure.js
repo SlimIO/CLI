@@ -7,7 +7,6 @@ const qoa = require("qoa");
 const { grey, yellow, white, red, cyan } = require("kleur");
 const jsonDiff = require("json-diff");
 const cloneDeep = require("lodash.clonedeep");
-const prettyJSON = require("@slimio/pretty-json");
 
 // Require Internal Dependencies
 const {

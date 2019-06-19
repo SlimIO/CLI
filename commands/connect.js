@@ -2,7 +2,6 @@
 const TcpSdk = require("@slimio/tcp-sdk");
 const qoa = require("qoa");
 const { grey, yellow, white, red } = require("kleur");
-const prettyJSON = require("@slimio/pretty-json");
 
 // Require Internal Dependencies
 const create = require("./create");
