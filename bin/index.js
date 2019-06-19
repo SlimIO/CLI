@@ -14,7 +14,7 @@ const commands = require("../commands");
 
 // CONSTANTS
 const CACHE_PATH = "/tmp/slimio-cli";
-const SETTINGS_KEYS = new Set(["json_tab"]);
+const SETTINGS_KEYS = new Set(["json_tab", "json_stdout"]);
 
 const prog = sade("slimio").version("0.2.0");
 

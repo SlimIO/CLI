@@ -3,9 +3,16 @@ const qoa = require("qoa");
 const { grey, yellow, white, cyan, red, green } = require("kleur");
 const levenshtein = require("fast-levenshtein");
 const is = require("@slimio/is");
+const cacache = require("cacache");
+const prettyJSON = require("@slimio/pretty-json");
+
+// CONSTANTS
+const CACHE_PATH = "/tmp/slimio-cli";
+const DEFAULT_JSON_TAB = 4;
 
 // Symbols
 const symJSON = Symbol("symJSON");
+const symTAB = Symbol("symTAB");
 
 /**
  * @class REPL
@@ -18,6 +25,7 @@ class REPL {
     constructor() {
         this.commands = new Map();
         Object.defineProperty(this, symJSON, { value: false, writable: true });
+        Object.defineProperty(this, symTAB, { value: DEFAULT_JSON_TAB, writable: true });
 
         this.addCommand("help", "display all available commands in the REPL");
         this.addCommand("quit", "exit the current REPL");
@@ -84,6 +92,28 @@ class REPL {
     }
 
     /**
+     * @method stdout
+     * @memberof REPL#
+     * @param {any} obj obj
+     * @param {Boolean} [addSpace=false] addSpace
+     * @returns {void}
+     */
+    stdout(obj, addSpace = false) {
+        if (addSpace) {
+            console.log("");
+        }
+        if (this[symJSON]) {
+            console.log(JSON.stringify(obj, null, this[symTAB]));
+        }
+        else {
+            prettyJSON(obj);
+        }
+        if (addSpace) {
+            console.log("");
+        }
+    }
+
+    /**
      * @async
      * @method init
      * @memberof REPL#
@@ -92,6 +122,25 @@ class REPL {
      * @returns {Promise<void>}
      */
     async init(title = grey(" > "), ctx = {}) {
+        try {
+            const jsonStdout = await cacache.get(CACHE_PATH, "json_stdout");
+            this[symJSON] = jsonStdout.data.toString().trim().toLowerCase() === "true";
+        }
+        catch (err) {
+            // Ignore
+        }
+
+        try {
+            const jsonStdout = await cacache.get(CACHE_PATH, "json_tab");
+            const value = Number(jsonStdout.data.toString());
+            if (!Number.isNaN(value)) {
+                this[symTAB] = value;
+            }
+        }
+        catch (err) {
+            // Ignore
+        }
+
         replWhile: while (true) {
             let { command } = await qoa.prompt([{
                 type: "input", query: title, handle: "command"
