@@ -1,4 +1,5 @@
 // Require Node.js Dependencies
+const { access } = require("fs").promises;
 const { join } = require("path");
 
 // Require Third-party Dependencies
@@ -8,12 +9,21 @@ const Manifest = require("@slimio/manifest");
 const { createDirectory } = require("@slimio/utils");
 
 // Require Internal Dependencies
-const { checkBeInAgentDir } = require("../src/utils");
+const { checkBeInAgentDir, checkBeInAgentOrAddonDir } = require("../src/utils");
 
 // CONSTANTS
 const E_TYPES = new Set(["core", "addon"]);
 
-async function build(type = "core") {
+async function createAddonArchive(cwd, dest, addonName) {
+    await createDirectory(dest);
+    const location = await bundler.createArchive(cwd, { dest });
+
+    console.log(
+        white().bold(`Successfully created ${cyan().bold(addonName)} addon archive at '${yellow().bold(location)}'`)
+    );
+}
+
+async function build(type = "core", addon) {
     if (typeof type !== "string") {
         throw new TypeError("type must be a string");
     }
@@ -45,28 +55,23 @@ async function build(type = "core") {
             break;
         }
         case "addon": {
-            const man = Manifest.open();
-            if (man.type !== "Addon") {
-                console.log(red().bold("Current working dir not detected as an Addon!"));
+            if (typeof addon === "string") {
+                checkBeInAgentOrAddonDir();
 
-                return;
+                const addonDir = join(process.cwd(), "addons", addon);
+                await access(addonDir);
+                await access(join(addonDir, "index.js"));
+                await createAddonArchive(addonDir, join(process.cwd(), "build"), addon);
             }
-
-            // Create ./build directory (on the agent)
-            const cwd = process.cwd();
-            const buildPath = join(cwd, "..", "..", "build");
-            await createDirectory(buildPath);
-            process.chdir(buildPath);
-
-            try {
-                const location = await bundler.createArchive(cwd);
-                // eslint-disable-next-line
-                console.log(white().bold(`Successfully created ${cyan().bold(man.name)} addon archive at '${yellow().bold(location)}'`));
+            else {
+                const { type, name } = Manifest.open();
+                if (type === "Addon") {
+                    await createAddonArchive(process.cwd(), join(process.cwd(), "..", "..", "build"), name);
+                }
+                else {
+                    console.log(red().bold("Current working dir not detected as an Addon!"));
+                }
             }
-            finally {
-                process.chdir(cwd);
-            }
-
             break;
         }
     }
