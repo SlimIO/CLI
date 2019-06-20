@@ -103,6 +103,7 @@ CMD.addCommand("disable", "Disable a given addon", async(ctx) => {
 
 CMD.addCommand("sync", "sync agent.json with addons folder", async(ctx) => {
     const agentBeforeUpdate = cloneDeep(ctx.agentConfig);
+    let udpateCount = 0;
 
     if (ctx.args.length > 0) {
         const addons = await splitAddons(ctx);
@@ -112,11 +113,13 @@ CMD.addCommand("sync", "sync agent.json with addons folder", async(ctx) => {
                 Reflect.deleteProperty(ctx.agentConfig, addon);
                 ctx.addons.delete(addon);
                 console.log(white().bold(`> Removing addon '${cyan().bold(addon)}'`));
+                udpateCount++;
             }
             else if (!ctx.addons.has(addon)) {
                 Reflect.set(ctx.agentConfig, addon, { active: false });
                 ctx.addons.add(addon);
                 console.log(white().bold(`> Adding missing addon '${cyan().bold(addon)}' (as active: ${red().bold("false")})`));
+                udpateCount++;
             }
         }
     }
@@ -127,6 +130,7 @@ CMD.addCommand("sync", "sync agent.json with addons folder", async(ctx) => {
                 Reflect.deleteProperty(ctx.agentConfig, addon);
                 ctx.addons.delete(addon);
                 console.log(white().bold(`> Removing addon '${cyan().bold(addon)}'`));
+                udpateCount++;
             }
         }
         for (const addon of ctx.localAddons) {
@@ -134,13 +138,20 @@ CMD.addCommand("sync", "sync agent.json with addons folder", async(ctx) => {
                 Reflect.set(ctx.agentConfig, addon, { active: false });
                 ctx.addons.add(addon);
                 console.log(white().bold(`> Adding missing addon '${cyan().bold(addon)}'`));
+                udpateCount++;
             }
         }
     }
 
-    console.log("");
-    console.log(grey().bold(jsonDiff.diffString(agentBeforeUpdate, ctx.agentConfig)));
-    await writeFile("agent.json", JSON.stringify({ addons: ctx.agentConfig }, null, 4));
+    if (udpateCount === 0) {
+        // TODO: remove the line before ?
+        console.log(white().bold(" > No synchronization required."));
+    }
+    else {
+        console.log("");
+        console.log(grey().bold(jsonDiff.diffString(agentBeforeUpdate, ctx.agentConfig)));
+        await writeFile("agent.json", JSON.stringify({ addons: ctx.agentConfig }, null, 4));
+    }
 });
 
 CMD.addCommand("addons", "Show the list of addons registered in agent.json", (ctx) => {
