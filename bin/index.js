@@ -50,12 +50,12 @@ prog
         await commands.create(type, config);
     });
 
-prog
-    .command("service [action]")
-    .describe("Create an agent service")
-    .action(async(action) => {
-        await commands.service(action);
-    });
+// prog
+//     .command("service [action]")
+//     .describe("Create an agent service")
+//     .action(async(action) => {
+//         await commands.service(action);
+//     });
 
 prog
     .command("build")
