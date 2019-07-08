@@ -21,12 +21,14 @@ const {
  * @func installAgentDep
  * @desc Install SlimIO Agent
  * @param {!String} agentDir agent directory location
+ * @param {?Boolean} verbose Display spinners
  * @returns {Promise<void>}
  */
-async function installAgentDep(agentDir) {
+async function installAgentDep(agentDir, verbose = false) {
     const spinner = new Spinner({
         prefixText: cyan().bold("Agent"),
-        spinner: "dots"
+        spinner: "dots",
+        verbose
     }).start("Installing dependencies");
 
     await new Promise((resolve, reject) => {
