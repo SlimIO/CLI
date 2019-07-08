@@ -21,10 +21,10 @@ const {
  * @func installAgentDep
  * @desc Install SlimIO Agent
  * @param {!String} agentDir agent directory location
- * @param {?Boolean} verbose Display spinners
+ * @param {Boolean} [verbose=true] Display spinners
  * @returns {Promise<void>}
  */
-async function installAgentDep(agentDir, verbose = false) {
+async function installAgentDep(agentDir, verbose = true) {
     const spinner = new Spinner({
         prefixText: cyan().bold("Agent"),
         spinner: "dots",
@@ -44,7 +44,8 @@ async function installAgentDep(agentDir, verbose = false) {
     });
 }
 
-async function initAgent(init, additionalAddons = []) {
+async function initAgent(init, options = Object.create(null)) {
+    const { additionalAddons = [], verbose = true } = options;
     console.log(white().bold("Initialize new SlimIO Agent!"));
     strictEqual(init.length !== 0, true, new Error("directoryName length must be 1 or more"));
 
@@ -75,8 +76,8 @@ async function initAgent(init, additionalAddons = []) {
 
     const toInstall = [...new Set([...BUILT_IN_ADDONS, ...additionalAddons])];
     await Spinner.startAll([
-        Spinner.create(installAgentDep, agentDir),
-        ...toInstall.map((addonName) => Spinner.create(installAddon, addonName, addonDir))
+        Spinner.create(installAgentDep, agentDir, verbose),
+        ...toInstall.map((addonName) => Spinner.create(installAddon, addonName, { dlDir: addonDir, verbose }))
     ]);
 
     const executeTimeMs = (performance.now() - startTime) / 1000;

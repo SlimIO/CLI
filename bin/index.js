@@ -23,8 +23,8 @@ prog
     .describe("Initialize a new SlimIO Agent")
     .option("-a , --add", "List to add addons with initialization")
     .action(async(dirName = "agent", opts) => {
-        const addons = typeof opts.a === "undefined" ? [] : opts.a.split(",");
-        await commands.initAgent(dirName, addons);
+        const additionalAddons = typeof opts.a === "undefined" ? [] : opts.a.split(",");
+        await commands.initAgent(dirName, { additionalAddons });
     });
 
 prog
