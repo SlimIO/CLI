@@ -32,7 +32,7 @@ async function directoryExist(dir) {
     try {
         const stats = await stat(dir);
         if (stats.isDirectory()) {
-            throw new Error(`Directory ${init} already exist`);
+            throw new Error(`Directory ${dir} already exist`);
         }
     }
     catch (err) {
