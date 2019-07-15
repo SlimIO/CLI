@@ -1,3 +1,5 @@
+"use strict";
+
 // Require Third-party Dependencies
 const qoa = require("qoa");
 const { grey, yellow, white, cyan, red, green } = require("kleur");
@@ -14,12 +16,9 @@ const DEFAULT_JSON_TAB = 4;
 const symJSON = Symbol("symJSON");
 const symTAB = Symbol("symTAB");
 
-/**
- * @class REPL
- */
 class REPL {
     /**
-     * @constructor
+     * @class REPL
      * @memberof REPL#
      */
     constructor() {
@@ -33,18 +32,19 @@ class REPL {
     }
 
     /**
-     * @member {Boolean} json
+     * @member {boolean} json
      * @memberof REPL#
+     * @returns {boolean}
      */
     get json() {
         return this[symJSON];
     }
 
     /**
-     * @method addCommand
+     * @function addCommand
      * @memberof REPL#
-     * @param {!String} name command name
-     * @param {String} [description=""] command description
+     * @param {!string} name command name
+     * @param {string} [description=""] command description
      * @param {*} handler handler
      * @returns {this}
      */
@@ -61,7 +61,7 @@ class REPL {
     }
 
     /**
-     * @method showAvailableCommands
+     * @function showAvailableCommands
      * @memberof REPL#
      * @returns {void}
      */
@@ -76,10 +76,10 @@ class REPL {
 
     /**
      * @async
-     * @method callHandler
+     * @function callHandler
      * @memberof REPL#
-     * @param {!String} name command name
-     * @param {Object=} ctx context
+     * @param {!string} name command name
+     * @param {object=} ctx context
      * @returns {Promise<any>}
      */
     async callHandler(name, ctx = {}) {
@@ -92,10 +92,10 @@ class REPL {
     }
 
     /**
-     * @method stdout
+     * @function stdout
      * @memberof REPL#
      * @param {any} obj obj
-     * @param {Boolean} [addSpace=false] addSpace
+     * @param {boolean} [addSpace=false] addSpace
      * @returns {void}
      */
     stdout(obj, addSpace = false) {
@@ -115,10 +115,10 @@ class REPL {
 
     /**
      * @async
-     * @method init
+     * @function init
      * @memberof REPL#
-     * @param {!String} title REPL title
-     * @param {Object} ctx Command context
+     * @param {!string} title REPL title
+     * @param {object} ctx Command context
      * @returns {Promise<void>}
      */
     async init(title = grey(" > "), ctx = {}) {

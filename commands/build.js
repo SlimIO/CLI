@@ -1,3 +1,5 @@
+"use strict";
+
 // Require Node.js Dependencies
 const { access } = require("fs").promises;
 const { join } = require("path");
@@ -14,6 +16,14 @@ const { checkBeInAgentDir, checkBeInAgentOrAddonDir } = require("../src/utils");
 // CONSTANTS
 const E_TYPES = new Set(["core", "addon"]);
 
+/**
+ * @async
+ * @function createAddonArchive
+ * @param {!string} cwd
+ * @param {!string} dest
+ * @param {!string} addonName
+ * @returns {Promise<void>}
+ */
 async function createAddonArchive(cwd, dest, addonName) {
     await createDirectory(dest);
     const location = await bundler.createArchive(cwd, { dest });
@@ -23,6 +33,13 @@ async function createAddonArchive(cwd, dest, addonName) {
     );
 }
 
+/**
+ * @async
+ * @function build
+ * @param {string} [type="core"]
+ * @param {string} [addon]
+ * @returns {Promise<void>}
+ */
 async function build(type = "core", addon) {
     if (typeof type !== "string") {
         throw new TypeError("type must be a string");

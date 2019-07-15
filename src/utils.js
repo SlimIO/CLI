@@ -1,3 +1,5 @@
+"use strict";
+
 // Require Node.js Dependencies
 const { spawn } = require("child_process");
 const { rename, stat } = require("fs").promises;
@@ -20,10 +22,10 @@ const BUILT_IN_ADDONS = Object.freeze(["Events", "Socket", "Gate", "Alerting"]);
 
 /**
  * @async
- * @func directoryExist
- * @desc Check if a given directory exist (and throw Error if diferent of ENOENT).
+ * @function directoryExist
+ * @description Check if a given directory exist (and throw Error if diferent of ENOENT).
  * @memberof Utils#
- * @param {!String} dir directory location
+ * @param {!string} dir directory location
  * @returns {Promise<void>}
  *
  * @throws {Error}
@@ -44,10 +46,10 @@ async function directoryExist(dir) {
 
 /**
  * @async
- * @func fileExist
- * @desc Check if a given file exist (and throw Error if diferent of ENOENT).
+ * @function fileExist
+ * @description Check if a given file exist (and throw Error if diferent of ENOENT).
  * @memberof Utils#
- * @param {!String} file file path
+ * @param {!string} file file path
  * @returns {Promise<void>}
  *
  * @throws {Error}
@@ -67,10 +69,10 @@ async function fileExist(file) {
 }
 
 /**
- * @func npmInstall
+ * @function npmInstall
  * @memberof Utils#
- * @param {!String} cwd working dir where we need to run the npm install cmd
- * @param {Boolean} [lock=false] install with package.lock (npm ci)
+ * @param {!string} cwd working dir where we need to run the npm install cmd
+ * @param {boolean} [lock=false] install with package.lock (npm ci)
  * @returns {NodeJS.ReadableStream}
  */
 function npmInstall(cwd = process.cwd(), lock = false) {
@@ -83,15 +85,15 @@ function npmInstall(cwd = process.cwd(), lock = false) {
 
 /**
  * @async
- * @func renameDirFromManifest
- * @desc Rename cloned addon repository by retrieving the real name in the SlimIO manifest.
+ * @function renameDirFromManifest
+ * @description Rename cloned addon repository by retrieving the real name in the SlimIO manifest.
  * @memberof Utils#
- * @param {!String} dir location of the directory to rename
- * @param {!String} fileName manifest file name
- * @returns {Promise<String>}
+ * @param {!string} dir location of the directory to rename
+ * @param {!string} fileName manifest file name
+ * @returns {Promise<string>}
  */
 async function renameDirFromManifest(dir = process.cwd(), fileName = "slimio.toml") {
-    /** @type {String} */
+    /** @type {string} */
     let name;
     try {
         const manifest = Manifest.open(join(dir, fileName));
@@ -117,12 +119,12 @@ async function renameDirFromManifest(dir = process.cwd(), fileName = "slimio.tom
 
 /**
  * @async
- * @func installAddon
+ * @function installAddon
  * @memberof Utils#
- * @param {!String} addonName addon name
- * @param {Object} options options
- * @param {String} [options.dlDir] download location
- * @param {String} [options.verbose=true] Display spinner
+ * @param {!string} addonName addon name
+ * @param {object} options options
+ * @param {string} [options.dlDir] download location
+ * @param {string} [options.verbose=true] Display spinner
  * @returns {Promise<void>}
  */
 async function installAddon(addonName, options = Object.create(null)) {
@@ -163,8 +165,8 @@ async function installAddon(addonName, options = Object.create(null)) {
 }
 
 /**
- * @func checkBeInAgentDir
- * @desc check if we are at the root of the agent
+ * @function checkBeInAgentDir
+ * @description check if we are at the root of the agent
  * @memberof Utils#
  * @returns {void}
  *
@@ -183,8 +185,8 @@ function checkBeInAgentDir() {
 }
 
 /**
- * @func checkBeInAgentOrAddonDir
- * @desc check if we are at the root of the agent or at the root of addons dir
+ * @function checkBeInAgentOrAddonDir
+ * @description check if we are at the root of the agent or at the root of addons dir
  * @memberof Utils#
  * @returns {void}
  *

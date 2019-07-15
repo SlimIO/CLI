@@ -1,3 +1,5 @@
+"use strict";
+
 // Require Node.js Dependencies
 const { readFile, writeFile, readdir, access } = require("fs").promises;
 const { join } = require("path");
@@ -15,6 +17,11 @@ const {
 } = require("../src/utils");
 const REPL = require("../src/REPL");
 
+/**
+ * @async
+ * @function getFileAddon
+ * @returns {Promise<object>}
+ */
 async function getFileAddon() {
     try {
         const file = await readFile("agent.json", { encoding: "utf8" });
@@ -32,6 +39,11 @@ async function getFileAddon() {
     }
 }
 
+/**
+ * @async
+ * @function getLocalAddons
+ * @returns {Promise<Set<string>>}
+ */
 async function getLocalAddons() {
     const addonsDir = join(process.cwd(), "addons");
     const ret = new Set();
@@ -53,6 +65,12 @@ async function getLocalAddons() {
     return ret;
 }
 
+/**
+ * @async
+ * @function splitAddons
+ * @param {*} ctx
+ * @returns {string[]}
+ */
 async function splitAddons(ctx) {
     if (ctx.args.length > 0) {
         const addons = ctx.args.map((arg) => arg.split(",")).flat();
@@ -79,6 +97,13 @@ async function splitAddons(ctx) {
     return [addon];
 }
 
+/**
+ * @async
+ * @function activeSwitch
+ * @param {*} ctx
+ * @param {*} switcher
+ * @returns {Promise<void>}
+ */
 async function activeSwitch(ctx, switcher = false) {
     const addons = await splitAddons(ctx);
     const agentBeforeUpdate = cloneDeep(ctx.agentConfig);
@@ -158,6 +183,13 @@ CMD.addCommand("addons", "Show the list of addons registered in agent.json", (ct
     CMD.stdout([...ctx.localAddons], true);
 });
 
+/**
+ * @async
+ * @function configure
+ * @param {!string} cmd
+ * @param {string[] | null} addons
+ * @returns {Promise<void>}
+ */
 async function configure(cmd, addons = null) {
     checkBeInAgentOrAddonDir();
     const [agentConfig, localAddons] = await Promise.all([

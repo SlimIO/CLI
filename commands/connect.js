@@ -1,3 +1,5 @@
+"use strict";
+
 // Require Third-party Dependencies
 const TcpSdk = require("@slimio/tcp-sdk");
 const qoa = require("qoa");
@@ -17,9 +19,9 @@ const CMD = new REPL();
 
 /**
  * @async
- * @func tcpSendMessage
+ * @function tcpSendMessage
  * @param {TcpClient} client TcpClient
- * @param {!String} callback callback
+ * @param {!string} callback callback
  * @returns {Promise<any>}
  */
 async function tcpSendMessage(client, callback) {
@@ -80,6 +82,14 @@ CMD.addCommand("create", "Create a default addon or manifest", async() => {
     await create();
 });
 
+/**
+ * @async
+ * @function connectAgent
+ * @param {object} [options]
+ * @param {string} [options.host]
+ * @param {string | number} [options.port]
+ * @returns {Promise<void>}
+ */
 async function connectAgent(options = Object.create(null)) {
     const { host, port } = Object.assign({}, DEFAULT_OPTIONS, options);
 

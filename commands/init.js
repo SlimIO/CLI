@@ -1,3 +1,5 @@
+"use strict";
+
 // Require Node.js Dependencies
 const { strictEqual } = require("assert").strict;
 const { rename, mkdir } = require("fs").promises;
@@ -18,10 +20,10 @@ const {
 } = require("../src/utils");
 
 /**
- * @func installAgentDep
- * @desc Install SlimIO Agent
- * @param {!String} agentDir agent directory location
- * @param {Boolean} [verbose=true] Display spinners
+ * @function installAgentDep
+ * @description Install SlimIO Agent
+ * @param {!string} agentDir agent directory location
+ * @param {boolean} [verbose=true] Display spinners
  * @returns {Promise<void>}
  */
 async function installAgentDep(agentDir, verbose = true) {
@@ -44,6 +46,15 @@ async function installAgentDep(agentDir, verbose = true) {
     });
 }
 
+/**
+ * @async
+ * @function initAgent
+ * @param {!string} init initial directory
+ * @param {object} [options]
+ * @param {string[]} [options.additionalAddons]
+ * @param {boolean} [options.verbose]
+ * @returns {Promise<void>}
+ */
 async function initAgent(init, options = Object.create(null)) {
     const { additionalAddons = [], verbose = true } = options;
     console.log(white().bold("Initialize new SlimIO Agent!"));

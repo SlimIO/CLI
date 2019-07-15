@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+"use strict";
+
 require("make-promises-safe");
 const { join } = require("path");
 require("dotenv").config({ path: join(__dirname, "..", ".env") });

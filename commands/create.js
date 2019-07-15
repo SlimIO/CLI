@@ -1,3 +1,5 @@
+"use strict";
+
 // Require Node.js Dependencies
 const { join } = require("path");
 const { createReadStream, promises: { readFile } } = require("fs");
@@ -16,6 +18,13 @@ const { fileExist, checkBeInAgentOrAddonDir } = require("../src/utils");
 // CONSTANTS
 const E_TYPES = new Set(["Addon", "Manifest"]);
 
+/**
+ * @async
+ * @function generateAndLogAddon
+ * @param {string} name
+ * @param {string} path
+ * @returns {Promise<void>}
+ */
 async function generateAndLogAddon(name, path) {
     await (new AddonFactory(name)).generate(path);
     console.log(white().bold(`\n > '${yellow().bold(name)}' addon generated at ${yellow().bold(path)}\n`));
@@ -24,6 +33,13 @@ async function generateAndLogAddon(name, path) {
     console.log(highlightAuto(str).value);
 }
 
+/**
+ * @async
+ * @function create
+ * @param {string} [type]
+ * @param {*} config
+ * @returns {Promise<void>}
+ */
 async function create(type, config = {}) {
     if (is.nullOrUndefined(type)) {
         const { createFile } = await qoa.prompt([

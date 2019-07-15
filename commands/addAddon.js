@@ -1,3 +1,5 @@
+"use strict";
+
 // Require Node.js Dependencies
 const { existsSync, promises: { writeFile, readFile } } = require("fs");
 const { join } = require("path");
@@ -12,6 +14,13 @@ const Spinner = require("@slimio/async-cli-spinner");
 // Require Internal Dependencies
 const { installAddon, checkBeInAgentOrAddonDir } = require("../src/utils");
 
+/**
+ * @async
+ * @function writeToAgent
+ * @param {!string} addonName
+ * @param {boolean} [active=false]
+ * @returns {Promise<void>}
+ */
 async function writeToAgent(addonName, active = false) {
     const agentConfig = join(process.cwd(), "agent.json");
     console.log(white().bold(`\nWriting addon in the local configuration '${yellow().bold(agentConfig)}'`));
@@ -40,6 +49,13 @@ async function writeToAgent(addonName, active = false) {
     }
 }
 
+/**
+ * @async
+ * @function addAddon
+ * @param {string[]} [addons]
+ * @param {string[]} [nonActif]
+ * @returns {Promise<void>}
+ */
 async function addAddon(addons = [], nonActif = []) {
     checkBeInAgentOrAddonDir();
     const addonsChecked = [];
