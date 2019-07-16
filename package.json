@@ -39,7 +39,6 @@
         "dotenv": "^8.0.0",
         "emphasize": "^2.1.0",
         "fast-levenshtein": "^2.0.6",
-        "is-elevated": "^3.0.0",
         "json-diff": "^0.5.4",
         "kleur": "^3.0.3",
         "lodash.clonedeep": "^4.5.0",
