@@ -7,6 +7,7 @@
     },
     "source": {
         "include": [
+            "index.js",
             "bin/index.js",
             "commands/index.js",
             "commands/addAddon.js",
@@ -15,6 +16,8 @@
             "commands/init.js",
             "commands/service.js",
             "commands/connect.js",
+            "commands/configure.js",
+            "src/REPL.js",
             "src/utils.js"
         ],
         "exclude": [
