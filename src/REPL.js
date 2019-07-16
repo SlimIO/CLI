@@ -79,7 +79,7 @@ class REPL {
      * @function callHandler
      * @memberof REPL#
      * @param {!string} name command name
-     * @param {object=} ctx context
+     * @param {object} [ctx] context
      * @returns {Promise<any>}
      */
     async callHandler(name, ctx = {}) {
