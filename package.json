@@ -36,7 +36,7 @@
         "@slimio/pretty-json": "^1.0.1",
         "@slimio/tcp-sdk": "^0.4.6",
         "@slimio/utils": "^0.9.0",
-        "cacache": "^11.3.3",
+        "cacache": "^12.0.0",
         "dotenv": "^8.0.0",
         "emphasize": "^2.1.0",
         "fast-levenshtein": "^2.0.6",
