@@ -27,7 +27,7 @@
     "homepage": "https://github.com/SlimIO/CLI#readme",
     "dependencies": {
         "@slimio/addon-factory": "^0.4.0",
-        "@slimio/async-cli-spinner": "^0.2.1",
+        "@slimio/async-cli-spinner": "^0.2.2",
         "@slimio/bundler": "^0.3.0",
         "@slimio/github": "^0.5.0",
         "@slimio/is": "^1.5.1",
