@@ -25,12 +25,17 @@ const CMD = new REPL();
  * @returns {Promise<any>}
  */
 async function tcpSendMessage(client, callback) {
-    await client.connect(TCP_CONNECT_TIMEOUT_MS);
+    try {
+        await client.connect(TCP_CONNECT_TIMEOUT_MS);
 
-    const result = await client.sendOne(callback);
-    client.close();
-
-    return result;
+        return client.sendOne(callback);
+    }
+    catch (err) {
+        return null;
+    }
+    finally {
+        client.close();
+    }
 }
 
 CMD.addCommand("addons", "Call an addon's callback", async({ client }) => {
@@ -69,11 +74,18 @@ CMD.addCommand("callback", "trigger a callback yourself on the remote agent", as
     }
     const options = rest.length === 0 ? [] : JSON.parse(rest.join(""));
 
-    await client.connect(TCP_CONNECT_TIMEOUT_MS);
-    const result = await client.sendOne(target, options);
-    CMD.stdout(result);
-    console.log("");
-    client.close();
+    try {
+        await client.connect(TCP_CONNECT_TIMEOUT_MS);
+        const result = await client.sendOne(target, options);
+        CMD.stdout(result);
+        console.log("");
+    }
+    catch (err) {
+        console.error(err);
+    }
+    finally {
+        client.close();
+    }
 
     return void 0;
 });
