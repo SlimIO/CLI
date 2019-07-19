@@ -8,6 +8,7 @@ const { join } = require("path");
 // Require Third-party Dependencies
 const download = require("@slimio/github");
 const Manifest = require("@slimio/manifest");
+const Lock = require("@slimio/lock");
 const { cyan } = require("kleur");
 const Spinner = require("@slimio/async-cli-spinner");
 const premove = require("premove");
@@ -15,6 +16,7 @@ const premove = require("premove");
 // CONSTANTS
 const EXEC_SUFFIX = process.platform === "win32";
 const BUILT_IN_ADDONS = Object.freeze(["Events", "Socket", "Gate", "Alerting"]);
+const ADDON_LOCK = new Lock({ max: 3 });
 
 /**
  * @namespace Utils
@@ -129,6 +131,8 @@ async function renameDirFromManifest(dir = process.cwd(), fileName = "slimio.tom
  */
 async function installAddon(addonName, options = Object.create(null)) {
     const { dlDir = process.cwd(), verbose = true } = options;
+
+    const free = await ADDON_LOCK.lock();
     const spinner = new Spinner({
         prefixText: cyan().bold(addonName),
         spinner: "dots",
@@ -161,6 +165,9 @@ async function installAddon(addonName, options = Object.create(null)) {
     catch (err) {
         spinner.failed("Something wrong append !");
         throw err;
+    }
+    finally {
+        free();
     }
 }
 
