@@ -84,6 +84,13 @@ prog
     });
 
 prog
+    .command("start")
+    .describe("Start a local agent")
+    .action(async() => {
+        await commands.start();
+    });
+
+prog
     .command("set <key> <value>")
     .describe("Setup a new settings in the local cache")
     .action(async(key, value) => {
