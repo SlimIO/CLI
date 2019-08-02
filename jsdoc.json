@@ -17,6 +17,7 @@
             "commands/service.js",
             "commands/connect.js",
             "commands/configure.js",
+            "commands/start.js",
             "src/REPL.js",
             "src/utils.js"
         ],
