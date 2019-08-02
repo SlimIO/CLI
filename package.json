@@ -19,6 +19,13 @@
         "SlimIO",
         "monitoring"
     ],
+    "files": [
+        "index.ts",
+        "index.d.ts",
+        "bin/index.js",
+        "commands/*.js",
+        "src/*.js"
+    ],
     "author": "SlimIO",
     "license": "MIT",
     "bugs": {
