@@ -55,7 +55,7 @@
         "make-promises-safe": "^5.0.0",
         "premove": "^1.0.0",
         "qoa": "^0.2.0",
-        "sade": "^1.6.0"
+        "sade": "^1.6.1"
     },
     "devDependencies": {
         "@commitlint/cli": "^8.1.0",
