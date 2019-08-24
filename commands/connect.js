@@ -27,8 +27,9 @@ const CMD = new REPL();
 async function tcpSendMessage(client, callback) {
     try {
         await client.connect(TCP_CONNECT_TIMEOUT_MS);
+        const res = await client.sendOne(callback);
 
-        return client.sendOne(callback);
+        return res;
     }
     catch (err) {
         return null;
@@ -40,8 +41,13 @@ async function tcpSendMessage(client, callback) {
 
 CMD.addCommand("addons", "Call an addon's callback", async({ client }) => {
     await client.connect(TCP_CONNECT_TIMEOUT_MS);
-    const addons = await client.getActiveAddons();
-    client.close();
+    let addons;
+    try {
+        addons = await client.getActiveAddons();
+    }
+    finally {
+        client.close();
+    }
 
     const { addon } = await qoa.prompt([{
         type: "interactive",
