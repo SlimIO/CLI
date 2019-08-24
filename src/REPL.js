@@ -105,9 +105,13 @@ class REPL {
         if (this[symJSON]) {
             console.log(JSON.stringify(obj, null, this[symTAB]));
         }
-        else {
+        else if (typeof obj === "object" && obj !== null) {
             prettyJSON(obj);
         }
+        else {
+            console.log(obj);
+        }
+
         if (addSpace) {
             console.log("");
         }
