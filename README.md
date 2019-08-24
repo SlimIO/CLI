@@ -160,22 +160,29 @@ $ slimio build --type core
 
 |Name|Refactoring|Security Risk|Usage|
 |---|---|---|---|
-|[@slimio/addon-factory](https://github.com/SlimIO/AddonFactory#readme)|Minor|Low|Addon default initializer|
-|[@slimio/arg-parser](https://github.com/SlimIO/ArgParser#readme)|Minor|Low|Command line parser|
-|[@slimio/async-cli-spinner](https://github.com/SlimIO/async-cli-spinner#readme)|Minor|Low|Multi Cli Spinner|
-|[@slimio/github](https://github.com/SlimIO/github-download#readme)|Minor|High|Github API|
-|[@slimio/lazy](https://github.com/SlimIO/Lazy#readme)|Minor|Low|Lazy loader|
-|[@slimio/manifest](https://github.com/SlimIO/Manifester#readme)|Minor|Low|Manifest|
-|[@slimio/pretty-json](https://github.com/SlimIO/Pretty-JSON#readme)|Minor|Low|JSON CLI beautifer|
-|[@slimio/tcp-sdk](https://github.com/SlimIO/TCP-SDK#readme)|Minor|Low|TCP sdk|
+|[@slimio/addon-factory](https://github.com/SlimIO/AddonFactory#readme)|Minor|Low|Programmatically generate a SlimIO Addon|
+|[@slimio/async-cli-spinner](https://github.com/SlimIO/async-cli-spinner#readme)|Minor|Low|Elegant Asynchronous Terminal (CLI) Spinner for Node.js|
+|[@slimio/bundler](https://github.com/SlimIO/Bundler#readme)|Minor|High|Core & Addons Archives bundler|
+|[@slimio/core](https://github.com/SlimIO/Core#readme)|Minor|High|SlimIO Core|
+|[@slimio/github](https://github.com/SlimIO/github-download#readme)|Minor|High|Download and extract github repository archive.|
+|[@slimio/is](https://github.com/SlimIO/is)|Minor|Low|JavaScript Type checker|
+|[@slimio/lazy](https://github.com/SlimIO/Lazy#readme)|Minor|Low|Lazy evaluation on JavaScript Objects|
+|[@slimio/lock](https://github.com/SlimIO/Lock#readme)|Minor|High|Node.js Semaphore for async/await|
+|[@slimio/manifest](https://github.com/SlimIO/Manifester#readme)|Minor|Low|Manage SlimIO manifest files|
+|[@slimio/pretty-json](https://github.com/SlimIO/Pretty-JSON#readme)|Minor|Low|Stdout beautified JSON in your terminal with colors|
+|[@slimio/tcp-sdk](https://github.com/SlimIO/TCP-SDK#readme)|Minor|Low|Communicate to the Socket Addon with TCP/IP|
 |[@slimio/utils](https://github.com/SlimIO/Utils#readme)|Minor|Low|Bunch of useful functions|
-|[dotenv](https://github.com/motdotla/dotenv#readme)|⚠️Major|Low|Env file|
-|[kleur](https://github.com/lukeed/kleur#readme)|⚠️Major|Low|CLI color|
+|[cacache](https://github.com/npm/cacache#readme)|Minor|High|Managing local key and content address caches|
+|[dotenv](https://github.com/motdotla/dotenv#readme)|⚠️Major|Low|Dotenv is a zero-dependency module that loads environment variables|
+|[emphasize](https://github.com/wooorm/emphasize#readme)|Minor|High|Syntax highlighting in ANSI (for CLI)|
+|[fast-levenshtein](https://github.com/hiddentao/fast-levenshtein#readme)|Minor|Low|An efficient Javascript implementation of the Levenshtein algorithm|
+|[json-diff](https://github.com/andreyvit/json-diff)|Minor|High|Structural diff for JSON files|
+|[kleur](https://github.com/lukeed/kleur#readme)|⚠️Major|Low|The fastest Node.js library for formatting terminal text with ANSI colors~!|
+|[lodash.clonedeep](https://github.com/lodash/lodash)|Minor|Low|Clone deep Objects|
 |[make-promises-safe](https://github.com/mcollina/make-promises-safe#readme)|⚠️Major|Medium|Force Node.js [DEP00018](https://nodejs.org/dist/latest-v8.x/docs/api/deprecations.html#deprecations_dep0018_unhandled_promise_rejections)|
-|[os-service](https://github.com/nospaceships/node-os-service#readme)|⚠️Major|High|Services manager|
+|[premove](https://github.com/lukeed/premove#readme)|Minor|Low|Light rm -rf implementation for Node.js|
 |[qoa](https://github.com/klaussinani/qoa#readme)|⚠️Major|Low|Interactive CLI prompt|
-
-> Recheck !
+|[sade](https://github.com/lukeed/sade#readme)|Minor|High|Sade is a small but powerful tool for building command-line interface (CLI)|
 
 ## License
 
