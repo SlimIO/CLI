@@ -2,7 +2,7 @@
 
 // Require Node.js Dependencies
 const { join } = require("path");
-const { createReadStream, promises: { readFile } } = require("fs");
+const { promises: { readFile } } = require("fs");
 
 // Require Third-party Dependencies
 const qoa = require("qoa");
