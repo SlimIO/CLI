@@ -132,7 +132,7 @@ async function renameDirFromManifest(dir = process.cwd(), fileName = "slimio.tom
 async function installAddon(addonName, options = Object.create(null)) {
     const { dlDir = process.cwd(), verbose = true } = options;
 
-    const free = await ADDON_LOCK.lock();
+    const free = await ADDON_LOCK.acquireOne();
     const spinner = new Spinner({
         prefixText: cyan().bold(addonName),
         spinner: "dots",
