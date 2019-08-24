@@ -86,12 +86,11 @@ async function splitAddons(ctx) {
         });
     }
 
-    const { addon } = await qoa.prompt([{
-        type: "interactive",
+    const { addon } = await qoa.interactive({
         query: "Choose an addon",
         handle: "addon",
         menu: [...ctx.localAddons]
-    }]);
+    });
     console.log("");
 
     return [addon];

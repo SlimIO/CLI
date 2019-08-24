@@ -42,14 +42,11 @@ async function generateAndLogAddon(name, path) {
  */
 async function create(type, config = {}) {
     if (is.nullOrUndefined(type)) {
-        const { createFile } = await qoa.prompt([
-            {
-                type: "interactive",
-                query: "What do you want to create ?",
-                handle: "createFile",
-                menu: ["Addon", "Manifest"]
-            }
-        ]);
+        const { createFile } = await qoa.interactive({
+            query: "What do you want to create ?",
+            handle: "createFile",
+            menu: ["Addon", "Manifest"]
+        });
         // eslint-disable-next-line
         type = createFile;
     }
@@ -65,13 +62,10 @@ async function create(type, config = {}) {
                 await generateAndLogAddon(config.name, path);
                 break;
             }
-            const { addonName } = await qoa.prompt([
-                {
-                    type: "input",
-                    query: "Give a name for the Addon:",
-                    handle: "addonName"
-                }
-            ]);
+            const { addonName } = await qoa.input({
+                query: "Give a name for the Addon:",
+                handle: "addonName"
+            });
             await generateAndLogAddon(addonName, path);
             break;
         }
@@ -80,14 +74,11 @@ async function create(type, config = {}) {
 
             let tomlType = config.type;
             if (!Reflect.has(config, "type")) {
-                const res = await qoa.prompt([
-                    {
-                        type: "interactive",
-                        query: "Choose the project type",
-                        handle: "type",
-                        menu: [...Manifest.TYPES]
-                    }
-                ]);
+                const res = await qoa.interactive({
+                    query: "Choose the project type",
+                    handle: "type",
+                    menu: [...Manifest.TYPES]
+                });
                 tomlType = res.type;
             }
 

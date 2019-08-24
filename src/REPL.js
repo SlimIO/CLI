@@ -146,9 +146,9 @@ class REPL {
         }
 
         replWhile: while (true) {
-            let { command } = await qoa.prompt([{
-                type: "input", query: title, handle: "command"
-            }]);
+            let { command } = await qoa.input({
+                query: title, handle: "command"
+            });
             command = command.trim().normalize();
             const [first, ...args] = command.split(" ");
 
