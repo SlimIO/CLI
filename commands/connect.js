@@ -31,9 +31,6 @@ async function tcpSendMessage(client, callback) {
 
         return res;
     }
-    catch (err) {
-        return null;
-    }
     finally {
         client.close();
     }
@@ -41,33 +38,36 @@ async function tcpSendMessage(client, callback) {
 
 CMD.addCommand("addons", "Call an addon's callback", async({ client }) => {
     await client.connect(TCP_CONNECT_TIMEOUT_MS);
-    let addons;
+    let menu;
     try {
-        addons = await client.getActiveAddons();
+        menu = await client.getActiveAddons();
     }
     finally {
         client.close();
     }
 
-    const { addon } = await qoa.prompt([{
-        type: "interactive",
+    const { addon } = await qoa.interactive({
         query: "Choose an active addon",
         handle: "addon",
-        menu: addons
-    }]);
+        menu
+    });
     console.log("");
 
     const addonInfo = await tcpSendMessage(client, `${addon}.get_info`);
-    const { callback } = await qoa.prompt([{
-        type: "interactive",
+    const { callback } = await qoa.interactive({
         query: "Choose a callback",
         handle: "callback",
         menu: addonInfo.callbacks
-    }]);
+    });
 
     console.log("");
-    const callbackResult = await tcpSendMessage(client, `${addon}.${callback}`);
-    CMD.stdout(callbackResult);
+    try {
+        const callbackResult = await tcpSendMessage(client, `${addon}.${callback}`);
+        CMD.stdout(callbackResult);
+    }
+    catch (err) {
+        console.log(red().bold(`${addon}.${callback} Error: ${err}`));
+    }
     console.log("");
 });
 
