@@ -1,14 +1,13 @@
 "use strict";
 
 // Require Node.js Dependencies
-const { access } = require("fs").promises;
+const { access, mkdir } = require("fs").promises;
 const { join } = require("path");
 
 // Require Third-party Dependencies
 const bundler = require("@slimio/bundler");
 const { red, yellow, white, cyan } = require("kleur");
 const Manifest = require("@slimio/manifest");
-const { createDirectory } = require("@slimio/utils");
 
 // Require Internal Dependencies
 const { checkBeInAgentDir, checkBeInAgentOrAddonDir } = require("../src/utils");
@@ -25,8 +24,8 @@ const E_TYPES = new Set(["core", "addon"]);
  * @returns {Promise<void>}
  */
 async function createAddonArchive(cwd, dest, addonName) {
-    await createDirectory(dest);
-    const location = await bundler.createArchive(cwd, { dest });
+    await mkdir(dest, { recursive: true });
+    const location = await bundler.generateAddonArchive(cwd, { dest });
 
     console.log(
         white().bold(`Successfully created ${cyan().bold(addonName)} addon archive at '${yellow().bold(location)}'`)
@@ -55,13 +54,10 @@ async function build(type = "core", addon) {
         case "core": {
             checkBeInAgentDir();
 
-            // Create ./build directory
-            const cwd = join(process.cwd(), "build");
-            await createDirectory(cwd);
-
             try {
-                const location = await bundler.compileCore(process.cwd(), {
-                    debug: true, cwd
+                const location = await bundler.generateCoreExecutable(process.cwd(), {
+                    debug: true,
+                    cwd: join(process.cwd(), "build")
                 });
                 console.log(white().bold(`\nCore succesfully generated at: ${yellow().bold(location)}`));
             }
