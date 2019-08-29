@@ -7,7 +7,7 @@ const commands = lazy.of({});
 
 /* eslint-disable global-require */
 commands.set("initAgent", () => require("./init"));
-commands.set("addAddon", () => require("./addAddon"));
+commands.set("add", () => require("./add"));
 commands.set("create", () => require("./create"));
 commands.set("build", () => require("./build"));
 commands.set("connectAgent", () => require("./connect"));

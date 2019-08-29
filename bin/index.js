@@ -37,7 +37,7 @@ prog
         const opts = typeof options.d === "undefined" ? [] : options.d.split(",");
         const adds = typeof addons === "undefined" ? [] : addons.split(",");
 
-        await commands.addAddon(adds, opts);
+        await commands.add(adds, opts);
     });
 
 prog
