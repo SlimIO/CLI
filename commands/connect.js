@@ -1,9 +1,12 @@
 "use strict";
 
+// Require Node.js Dependencies
+const { promisify } = require("util");
+
 // Require Third-party Dependencies
 const TcpSdk = require("@slimio/tcp-sdk");
 const qoa = require("qoa");
-const { grey, yellow, white, red } = require("kleur");
+const { grey, yellow, white, red, cyan } = require("kleur");
 
 // Require Internal Dependencies
 const create = require("./create");
@@ -16,6 +19,9 @@ const DEFAULT_OPTIONS = {
     host: "localhost"
 };
 const CMD = new REPL();
+
+// Vars
+const sleep = promisify(setTimeout);
 
 /**
  * @async
@@ -35,6 +41,31 @@ async function tcpSendMessage(client, callback) {
         client.close();
     }
 }
+
+CMD.addCommand("reload", "reload a given addon", async({ client, args }) => {
+    await client.connect(TCP_CONNECT_TIMEOUT_MS);
+    const activeAddons = new Set(await client.getActiveAddons());
+
+    try {
+        for (const addonName of args) {
+            if (!activeAddons.has(addonName)) {
+                console.log(red().bold(`Unable to found any addon with name '${yellow().bold(addonName)}'`));
+                continue;
+            }
+
+            const info = await client.sendOne(`${addonName}.get_info`);
+            if (info.started) {
+                await client.sendOne(`${addonName}.stop`);
+                await sleep(10);
+            }
+            await client.sendOne("gate.start_addon", addonName);
+            console.log(white().bold(`addon '${cyan().bold(addonName)}' succesfully restarted!`));
+        }
+    }
+    finally {
+        client.close();
+    }
+});
 
 CMD.addCommand("addons", "Call an addon's callback", async({ client }) => {
     await client.connect(TCP_CONNECT_TIMEOUT_MS);
