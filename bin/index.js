@@ -31,13 +31,21 @@ prog
 
 prog
     .command("add [addons]")
-    .describe("Add an addon to the agent (will be activated by default).")
+    .describe("Add one or many addon(s) to the local agent (they will be activated by default).")
     .option("-d , --disabled", "Add an addon as disabled by default.")
     .action(async(addons, options) => {
         const opts = typeof options.d === "undefined" ? [] : options.d.split(",");
         const adds = typeof addons === "undefined" ? [] : addons.split(",");
 
         await commands.add(adds, opts);
+    });
+
+prog
+    .command("remove [addons]")
+    .describe("Remove one or many addons from the local agent (Erase them from the disk)")
+    .action(async(addons) => {
+        const toRemove = typeof addons === "undefined" ? [] : addons.split(",");
+        await commands.remove(toRemove);
     });
 
 prog

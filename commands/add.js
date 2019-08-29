@@ -51,12 +51,12 @@ async function writeToAgent(addonName, active = false) {
 
 /**
  * @async
- * @function addAddon
+ * @function add
  * @param {string[]} [addons]
  * @param {string[]} [nonActif]
  * @returns {Promise<void>}
  */
-async function addAddon(addons = [], nonActif = []) {
+async function add(addons = [], nonActif = []) {
     checkBeInAgentOrAddonDir();
     const addonsChecked = [];
     const addonNonActif = new Set([...nonActif]);
@@ -109,4 +109,4 @@ async function addAddon(addons = [], nonActif = []) {
     console.log(green().bold(`\nInstallation completed in ${yellow().bold(executeTimeMs.toFixed(2))} seconds`));
 }
 
-module.exports = addAddon;
+module.exports = add;
