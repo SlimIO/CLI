@@ -104,7 +104,6 @@ async function add(addons = [], nonActif = []) {
         await writeToAgent(addonName, !addonNonActif.has(addonName));
     }
 
-
     const executeTimeMs = (performance.now() - startTime) / 1000;
     console.log(green().bold(`\nInstallation completed in ${yellow().bold(executeTimeMs.toFixed(2))} seconds`));
 }
