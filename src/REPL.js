@@ -63,11 +63,21 @@ class REPL {
     /**
      * @function showAvailableCommands
      * @memberof REPL#
+     * @param {boolean} [breakLine=true]
      * @returns {void}
      */
-    showAvailableCommands() {
-        console.log(`\n${white().bold("available commands")}`);
-        for (const [name, options] of this.commands.entries()) {
+    showAvailableCommands(breakLine = true) {
+        console.log(`${breakLine ? "\n" : ""}${white().bold("available commands")}`);
+        const commands = [...this.commands.keys()].sort((first, second) => {
+            if (first === second) {
+                return 0;
+            }
+
+            return first > second ? 1 : -1;
+        });
+
+        for (const name of commands) {
+            const options = this.commands.get(name);
             const flySpace = 10 - name.length;
             console.log(`${cyan().bold(name)}${" ".repeat(flySpace)} ${options.description}`);
         }
@@ -144,6 +154,7 @@ class REPL {
         catch (err) {
             // Ignore
         }
+        this.showAvailableCommands(false);
 
         replWhile: while (true) {
             let { command } = await qoa.input({
