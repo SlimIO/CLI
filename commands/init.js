@@ -2,7 +2,7 @@
 
 // Require Node.js Dependencies
 const { strictEqual } = require("assert").strict;
-const { rename, mkdir } = require("fs").promises;
+const { rename, mkdir, writeFile } = require("fs").promises;
 const { join } = require("path");
 const { performance } = require("perf_hooks");
 
@@ -93,6 +93,13 @@ async function initAgent(init, options = Object.create(null)) {
 
     const executeTimeMs = (performance.now() - startTime) / 1000;
     console.log(green().bold(`\nInstallation completed in ${yellow().bold(executeTimeMs.toFixed(2))} seconds`));
+
+    // Write agent.json
+    const localConfig = { addons: {} };
+    for (const addonName of toInstall) {
+        localConfig.addons[addonName.toLowerCase()] = { active: true };
+    }
+    await writeFile(join(agentDir, "agent.json"), JSON.stringify(localConfig, null, 4));
 }
 
 module.exports = initAgent;
