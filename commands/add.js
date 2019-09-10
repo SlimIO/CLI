@@ -57,7 +57,16 @@ async function writeToAgent(addonName, active = false) {
  * @returns {Promise<void>}
  */
 async function add(addons = [], nonActif = []) {
-    checkBeInAgentOrAddonDir();
+    try {
+        checkBeInAgentOrAddonDir();
+    }
+    catch (err) {
+        console.log(grey().bold(`\n > ${red().bold("Current working dir as not been detected as a SlimIO Agent")}`));
+        console.log(grey().bold(` > ${yellow().bold(process.cwd())}`));
+
+        return;
+    }
+
     const addonsChecked = [];
     const addonNonActif = new Set([...nonActif]);
     const startTime = performance.now();

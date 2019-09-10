@@ -9,7 +9,7 @@ const { performance } = require("perf_hooks");
 const premove = require("premove");
 const Spinner = require("@slimio/async-cli-spinner");
 const jsonDiff = require("json-diff");
-const { white, cyan, gray, yellow, green } = require("kleur");
+const { white, cyan, grey, yellow, green } = require("kleur");
 
 // Require Internal Dependencies
 const { checkBeInAgentOrAddonDir } = require("../src/utils");
@@ -46,7 +46,15 @@ async function removeAddon([name, dir]) {
  * @returns {Promise<void>}
  */
 async function remove(addons = []) {
-    checkBeInAgentOrAddonDir();
+    try {
+        checkBeInAgentOrAddonDir();
+    }
+    catch (err) {
+        console.log(grey().bold(`\n > ${red().bold("Current working dir as not been detected as a SlimIO Agent")}`));
+        console.log(grey().bold(` > ${yellow().bold(process.cwd())}`));
+
+        return;
+    }
     console.log("");
 
     const toRemove = [];
@@ -70,7 +78,7 @@ async function remove(addons = []) {
         }
 
         console.log("");
-        console.log(gray().bold(jsonDiff.diffString(JSON.parse(str), config)));
+        console.log(grey().bold(jsonDiff.diffString(JSON.parse(str), config)));
         writeFileSync(agentConfig, JSON.stringify(config, null, 4));
     }
     catch (err) {

@@ -190,7 +190,16 @@ CMD.addCommand("addons", "Show the list of addons registered in agent.json", (ct
  * @returns {Promise<void>}
  */
 async function configure(cmd, addons = null) {
-    checkBeInAgentOrAddonDir();
+    try {
+        checkBeInAgentOrAddonDir();
+    }
+    catch (err) {
+        console.log(grey().bold(`\n > ${red().bold("Current working dir as not been detected as a SlimIO Agent")}`));
+        console.log(grey().bold(` > ${yellow().bold(process.cwd())}`));
+
+        return;
+    }
+
     const [agentConfig, localAddons] = await Promise.all([
         getFileAddon(),
         getLocalAddons()
