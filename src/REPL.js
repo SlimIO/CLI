@@ -1,12 +1,13 @@
 "use strict";
 
 // Require Third-party Dependencies
-const qoa = require("qoa");
 const { grey, yellow, white, cyan, red, green } = require("kleur");
 const levenshtein = require("fast-levenshtein");
 const is = require("@slimio/is");
 const cacache = require("cacache");
 const prettyJSON = require("@slimio/pretty-json");
+const stdin = require("@slimio/stdin");
+const clonedeep = require("lodash.clonedeep");
 
 // CONSTANTS
 const CACHE_PATH = "/tmp/slimio-cli";
@@ -60,6 +61,16 @@ class REPL {
         return this;
     }
 
+    get commandsNames() {
+        return [...this.commands.keys()].sort((first, second) => {
+            if (first === second) {
+                return 0;
+            }
+
+            return first > second ? 1 : -1;
+        });
+    }
+
     /**
      * @function showAvailableCommands
      * @memberof REPL#
@@ -68,15 +79,8 @@ class REPL {
      */
     showAvailableCommands(breakLine = true) {
         console.log(`${breakLine ? "\n" : ""}${white().bold("available commands")}`);
-        const commands = [...this.commands.keys()].sort((first, second) => {
-            if (first === second) {
-                return 0;
-            }
 
-            return first > second ? 1 : -1;
-        });
-
-        for (const name of commands) {
+        for (const name of this.commandsNames) {
             const options = this.commands.get(name);
             const flySpace = 10 - name.length;
             console.log(`${cyan().bold(name)}${" ".repeat(flySpace)} ${options.description}`);
@@ -155,13 +159,24 @@ class REPL {
             // Ignore
         }
         this.showAvailableCommands(false);
+        const history = [];
 
         replWhile: while (true) {
-            let { command } = await qoa.input({
-                query: title, handle: "command"
-            });
-            command = command.trim().normalize();
+            const autocomplete = ctx.autocomplete || [];
+            for (const command of this.commandsNames) {
+                autocomplete.unshift(command);
+            }
+
+            const command = await stdin(title, { autocomplete, history });
+            if (command === null) {
+                break;
+            }
             const [first, ...args] = command.split(" ");
+
+            // Remove top command history if required
+            if (history.length > 15) {
+                history.shift();
+            }
 
             if (!this.commands.has(first)) {
                 const isMatching = [];

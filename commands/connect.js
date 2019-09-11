@@ -145,14 +145,27 @@ async function connectAgent(options = Object.create(null)) {
     const client = new TcpSdk({ host, port });
     client.catch((err) => console.error(err));
     await client.once("connect", TCP_CONNECT_TIMEOUT_MS);
-    client.close();
+
+    /** @type {string[]} */
+    const autocomplete = [];
+    try {
+        const addons = await client.getActiveAddons();
+        const infos = await Promise.all(addons.map((name) => client.sendOne(`${name}.get_info`)));
+        for (const addon of infos) {
+            autocomplete.unshift(`callback ${addon.name}`);
+            autocomplete.push(...addon.callbacks.map((cbName) => `callback ${addon.name}.${cbName}`));
+        }
+    }
+    finally {
+        client.close();
+    }
 
     if (host === "localhost" || host === "127.0.0.1") {
         process.chdir(client.agent.location);
     }
 
     console.log(white().bold(`\n > Connected on '${yellow().bold(host)}' agent !\n`));
-    await CMD.init(grey(`${host}:${port} >`), { client });
+    await CMD.init(grey(`${host}:${port} > `), { client, autocomplete });
     client.close();
 }
 
