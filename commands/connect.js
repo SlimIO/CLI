@@ -152,7 +152,7 @@ async function connectAgent(options = Object.create(null)) {
         const addons = await client.getActiveAddons();
         const infos = await Promise.all(addons.map((name) => client.sendOne(`${name}.get_info`)));
         for (const addon of infos) {
-            autocomplete.unshift(`callback ${addon.name}`);
+            autocomplete.unshift(`callback ${addon.name}.`);
             autocomplete.push(...addon.callbacks.map((cbName) => `callback ${addon.name}.${cbName}`));
         }
     }
