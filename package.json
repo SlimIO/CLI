@@ -40,7 +40,7 @@
         "@slimio/github": "^0.5.0",
         "@slimio/is": "^1.5.1",
         "@slimio/lazy": "^1.2.0",
-        "@slimio/lock": "^0.2.0",
+        "@slimio/lock": "^0.3.0",
         "@slimio/manifest": "^0.7.1",
         "@slimio/pretty-json": "^1.2.0",
         "@slimio/stdin": "^1.0.3",
