@@ -53,8 +53,18 @@ CMD.addCommand("reload", "reload a given addon", async({ client, args }) => {
                 continue;
             }
 
-            const info = await client.sendOne(`${addonName}.get_info`);
-            if (info.started) {
+            let started = false;
+            try {
+                const info = await client.sendOne(`${addonName}.get_info`);
+                started = info.started;
+            }
+            catch (err) {
+                // TODO: search for this addons with gate ?
+                // TODO: catch NotFound and re-throw others ?
+                // Ignore
+            }
+
+            if (started) {
                 await client.sendOne(`${addonName}.stop`);
                 await sleep(10);
             }
