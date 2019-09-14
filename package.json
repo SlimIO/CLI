@@ -42,7 +42,7 @@
         "@slimio/lazy": "^1.2.0",
         "@slimio/lock": "^0.3.0",
         "@slimio/manifest": "^0.7.1",
-        "@slimio/pretty-json": "^1.2.0",
+        "@slimio/pretty-json": "^1.3.0",
         "@slimio/stdin": "^1.0.3",
         "@slimio/tcp-sdk": "^0.4.6",
         "@slimio/utils": "^0.9.0",
