@@ -170,16 +170,18 @@ $ slimio build --type core
 |[@slimio/lock](https://github.com/SlimIO/Lock#readme)|Minor|High|Node.js Semaphore for async/await|
 |[@slimio/manifest](https://github.com/SlimIO/Manifester#readme)|Minor|Low|Manage SlimIO manifest files|
 |[@slimio/pretty-json](https://github.com/SlimIO/Pretty-JSON#readme)|Minor|Low|Stdout beautified JSON in your terminal with colors|
+|[@slimio/stdin](https://github.com/SlimIO/stdin#readme)|Minor|Low|Interactive input crafted for REPL with history & auto-completion|
 |[@slimio/tcp-sdk](https://github.com/SlimIO/TCP-SDK#readme)|Minor|Low|Communicate to the Socket Addon with TCP/IP|
 |[@slimio/utils](https://github.com/SlimIO/Utils#readme)|Minor|Low|Bunch of useful functions|
+|[@slimio/validate-addon-name](https://github.com/SlimIO/validate-addon-name#readme)|Minor|Low|Validate/Sanitize SlimIO Addons names|
 |[cacache](https://github.com/npm/cacache#readme)|Minor|High|Managing local key and content address caches|
 |[dotenv](https://github.com/motdotla/dotenv#readme)|⚠️Major|Low|Dotenv is a zero-dependency module that loads environment variables|
-|[emphasize](https://github.com/wooorm/emphasize#readme)|Minor|High|Syntax highlighting in ANSI (for CLI)|
 |[fast-levenshtein](https://github.com/hiddentao/fast-levenshtein#readme)|Minor|Low|An efficient Javascript implementation of the Levenshtein algorithm|
 |[json-diff](https://github.com/andreyvit/json-diff)|Minor|High|Structural diff for JSON files|
 |[kleur](https://github.com/lukeed/kleur#readme)|⚠️Major|Low|The fastest Node.js library for formatting terminal text with ANSI colors~!|
 |[lodash.clonedeep](https://github.com/lodash/lodash)|Minor|Low|Clone deep Objects|
 |[make-promises-safe](https://github.com/mcollina/make-promises-safe#readme)|⚠️Major|Medium|Force Node.js [DEP00018](https://nodejs.org/dist/latest-v8.x/docs/api/deprecations.html#deprecations_dep0018_unhandled_promise_rejections)|
+|[ms](https://github.com/zeit/ms#readme)|Minor|Low|Convert various time formats to milliseconds.|
 |[premove](https://github.com/lukeed/premove#readme)|Minor|Low|Light rm -rf implementation for Node.js|
 |[qoa](https://github.com/klaussinani/qoa#readme)|⚠️Major|Low|Interactive CLI prompt|
 |[sade](https://github.com/lukeed/sade#readme)|Minor|High|Sade is a small but powerful tool for building command-line interface (CLI)|

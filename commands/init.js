@@ -10,6 +10,7 @@ const { performance } = require("perf_hooks");
 const { yellow, white, green, red, cyan } = require("kleur");
 const download = require("@slimio/github");
 const Spinner = require("@slimio/async-cli-spinner");
+const ms = require("ms");
 
 // Require Internal Dependencies
 const {
@@ -77,7 +78,7 @@ async function initAgent(init, options = Object.create(null)) {
     }
 
     // Create addons directory
-    await mkdir(addonDir);
+    await mkdir(addonDir, { recursive: true });
 
     console.log(`\n${yellow().bold("Installing Built-in addons")} and ${yellow().bold("Install Agent dependencies")}`);
     if (additionalAddons.length > 0) {
@@ -91,12 +92,12 @@ async function initAgent(init, options = Object.create(null)) {
         ...toInstall.map((addonName) => Spinner.create(installAddon, addonName, { dlDir: addonDir, verbose }))
     ]);
 
-    const executeTimeMs = (performance.now() - startTime) / 1000;
-    console.log(green().bold(`\nInstallation completed in ${yellow().bold(executeTimeMs.toFixed(2))} seconds`));
+    const executeTimeMs = ms(performance.now() - startTime, { long: true });
+    console.log(green().bold(`\nInstallation completed in ${yellow().bold(executeTimeMs)}`));
 
     // Write agent.json
     const localConfig = { addons: {} };
-    for (const addonName of toInstall) {
+    for (const addonName of BUILT_IN_ADDONS) {
         localConfig.addons[addonName.toLowerCase()] = { active: true };
     }
     await writeFile(join(agentDir, "agent.json"), JSON.stringify(localConfig, null, 4));
