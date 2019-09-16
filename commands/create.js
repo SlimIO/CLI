@@ -10,6 +10,7 @@ const Manifest = require("@slimio/manifest");
 const { AddonFactory } = require("@slimio/addon-factory");
 const is = require("@slimio/is");
 const { yellow, white } = require("kleur");
+const { validate } = require("@slimio/validate-addon-name");
 
 // Require Internal Dependencies
 const { fileExist, checkBeInAgentOrAddonDir } = require("../src/utils");
@@ -65,7 +66,12 @@ async function create(type, config = {}) {
                 query: "Give a name for the Addon:",
                 handle: "addonName"
             });
+
+            if (!validate(addonName)) {
+                throw new Error(`invalid addon name '${addonName}'`);
+            }
             await generateAndLogAddon(addonName, path);
+
             break;
         }
         case "Manifest": {
