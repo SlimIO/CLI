@@ -1,53 +1,16 @@
 "use strict";
 
 // Require Node.js Dependencies
-const { existsSync, promises: { writeFile, readFile } } = require("fs");
 const { join } = require("path");
 const { performance } = require("perf_hooks");
 
 // Require Third-party Dependencies
 const { createDirectory } = require("@slimio/utils");
 const { white, yellow, red, grey, green } = require("kleur");
-const jsonDiff = require("json-diff");
 const Spinner = require("@slimio/async-cli-spinner");
 
 // Require Internal Dependencies
-const { installAddon, checkBeInAgentOrAddonDir } = require("../src/utils");
-
-/**
- * @async
- * @function writeToAgent
- * @param {!string} addonName
- * @param {boolean} [active=false]
- * @returns {Promise<void>}
- */
-async function writeToAgent(addonName, active = false) {
-    const agentConfig = join(process.cwd(), "agent.json");
-    console.log(white().bold(`\nWriting addon in the local configuration '${yellow().bold(agentConfig)}'`));
-
-    const configExist = existsSync(agentConfig);
-    const addons = { [addonName]: { active } };
-
-    if (configExist) {
-        const buf = await readFile(agentConfig);
-        let str = buf.toString().trim();
-        if (str === "") {
-            str = "{}";
-        }
-        const json = JSON.parse(str);
-        if (!Reflect.has(json, "addons")) {
-            json.addons = {};
-        }
-        Object.assign(json.addons, addons);
-
-        console.log(grey().bold(jsonDiff.diffString(JSON.parse(str), json)));
-        await writeFile(agentConfig, JSON.stringify(json, null, 4));
-    }
-    else {
-        console.log(red().bold("(!) No local configuration detected. Creating one from scratch."));
-        await writeFile(agentConfig, JSON.stringify({ addons }, null, 4));
-    }
-}
+const { installAddon, checkBeInAgentOrAddonDir, writeToAgent } = require("../src/utils");
 
 /**
  * @async

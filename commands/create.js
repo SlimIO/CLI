@@ -13,7 +13,7 @@ const { yellow, white } = require("kleur");
 const { validate } = require("@slimio/validate-addon-name");
 
 // Require Internal Dependencies
-const { fileExist, checkBeInAgentOrAddonDir } = require("../src/utils");
+const { fileExist, checkBeInAgentOrAddonDir, writeToAgent } = require("../src/utils");
 
 // CONSTANTS
 const E_TYPES = new Set(["Addon", "Manifest"]);
@@ -70,6 +70,16 @@ async function create(type, config = {}) {
             if (!validate(addonName)) {
                 throw new Error(`invalid addon name '${addonName}'`);
             }
+
+            const { register } = await qoa.confirm({
+                query: `Do you want to add '${addonName}' to the local agent.json ?`,
+                handle: "register",
+                accept: "y"
+            });
+            if (register) {
+                await writeToAgent(addonName, true);
+            }
+
             await generateAndLogAddon(addonName, path);
 
             break;
