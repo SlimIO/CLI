@@ -92,6 +92,14 @@ prog
     });
 
 prog
+    .command("debug")
+    .describe("debug (navigate through local agent dump files)")
+    .option("-c, --clear", "clear dump files", false)
+    .action(async(options) => {
+        await commands.debug(Boolean(options.clear));
+    });
+
+prog
     .command("start")
     .describe("Start a local agent")
     .action(async() => {
