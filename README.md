@@ -14,19 +14,25 @@ SlimIO Command Line Interface. This tool has been created to help Developer and 
 This package is available in the Node Package Repository and can be easily installed with [npm](https://docs.npmjs.com/getting-started/what-is-npm) or [yarn](https://yarnpkg.com).
 
 ```bash
-$ npm i @slimio/cli
-# or
-$ yarn add @slimio/cli
+$ npm i @slimio/cli -g
 ```
 
----
+Or if you want to link the project yourself
+```bash
+$ git clone https://github.com/SlimIO/CLI.git
+$ cd CLI
+$ npm ci
+$ npm link
+```
 
-If you want to download private SlimIO package, create a local `.env` file with the following content:
+## Environment Variables
+
+To configure the project you have to register (set) environment variables on your system. These variables can be set in a **.env** file (that file must be created at the root of the project).
 ```
 GIT_TOKEN=
 ```
 
-If you dont known how to get a personal access token, please check this [guide](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line).
+To known how to get a **GIT_TOKEN** or how to register environment variables follow our [Governance Guide](https://github.com/SlimIO/Governance/blob/master/docs/tooling.md#environment-variables).
 
 ## Usage Exemple
 
@@ -35,126 +41,9 @@ $ slimio --help
 # or
 $ slimio -h
 ```
+
 ## API
-
-Example :
-
-```bash
-$ slimio <command> {option} <value>
-```
-
-| Command | Type | Default value | Description |
-| --- | --- | --- | --- |
-|init|string|agent|Initialize a new SlimIO Agent/Install Built-in addons|
-|add|string|N/A|Add an addon to the agent|
-|create|string|N/A|Create bunch of files for the agent : Addon/Manifest|
-|service|string|add|Create an agent service|
-|connect|String|localhost:1337|Connect CLI to a local or remote SlimIO Agent|
-|build|boolean|false|Bundle/Build Core & SlimIO Addons|
-<br/>
-<details>
-<summary>init</summary>
-<br/>
-
->Default value: `agent`
-
-The value define the name of the agent folder
-
-***option*** for ***init*** command :
-
-| Command | Type | Default value | Description | Values |
-| --- | --- | --- | --- | --- |
-| --add | array|`[]`| Additionals addons| `"AddonName"` |
-
-*Initialize* a new SlimIO Agent:
-- Install Agent folder
-- Install Built-in addons
-</details>
-
-
-<details>
-<summary>add</summary>
-<br/>
-
->Default value: `N/A`
-
-The value define the name/url of the addon you want to add
-
-Add an addon to the agent with the name or an Url from github.
-Currently, it's only take from SlimIO organization.
-
-Example of adding the ihm addon :
-
-```bash
-$ slimio add ihm
-```
-
-</details>
-
-<details>
-<summary>create</summary>
-<br/>
-
->Default value: `N/A`
-
->You must be in an agent folder !
-
-Create bunch of files for the agent:
-- Addon: default addon for a developper
-- Manifest: file configuration for SlimIO projects
-</details>
-
-<details>
-<summary>service</summary>
-<br/>
-
->Default value: `add`
-
->You must be in an agent folder !
-
-Create a service of the Agent
-
-| Command | Description |
-| --- | --- |
-|add|Add `SlimIO Agent` service|
-|rm|Remove `SlimIO Agent` service|
-</details>
-
-<details>
-<summary>connect</summary>
-<br/>
-
->Default value: `localhost:1337`
-
-Connect CLI to a local or remote SlimIO Agent:
-
-| Command | Description |
-| --- | --- |
-|addons|Call a callback from an addon|
-|create|Create bunch of files for the agent|
-|help|Show all commands|
-|quit|Exit agent connection|
-</details>
-
-<details>
-<summary>build</summary>
-<br/>
-
->Default value: `false`
-
-***option*** for ***build*** command :
-| Command | Type | Default value | Description | Values |
-| --- | --- | --- | --- | --- |
-|--type|string|core|Bundle/Build type| core, addon |
-
- - ***core*** Bundle/Build Core
- - ***addon*** Build SlimIO Addons
-
- ### Exemple
- ```bash
-$ slimio build --type core
-```
-</details>
+A complete CLI API is available on the [Governance](https://github.com/SlimIO/Governance/blob/master/docs/use_cli.md).
 
 ## Dependencies
 
