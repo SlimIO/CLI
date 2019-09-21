@@ -11,59 +11,9 @@ const jsonDiff = require("json-diff");
 const cloneDeep = require("lodash.clonedeep");
 
 // Require Internal Dependencies
-const {
-    BUILT_IN_ADDONS,
-    checkBeInAgentOrAddonDir
-} = require("../src/utils");
+const { checkBeInAgentOrAddonDir } = require("../src/utils");
+const { getFileAddon, getLocalAddons } = require("../src/agent");
 const REPL = require("../src/REPL");
-
-/**
- * @async
- * @function getFileAddon
- * @returns {Promise<object>}
- */
-async function getFileAddon() {
-    try {
-        const file = await readFile("agent.json", { encoding: "utf8" });
-
-        return JSON.parse(file).addons;
-    }
-    catch (err) {
-        const addons = {};
-        for (const addon of BUILT_IN_ADDONS) {
-            Reflect.set(addons, addon.toLowerCase(), { active: true });
-        }
-        await writeFile("agent.json", JSON.stringify({ addons }, null, 4));
-
-        return addons;
-    }
-}
-
-/**
- * @async
- * @function getLocalAddons
- * @returns {Promise<Set<string>>}
- */
-async function getLocalAddons() {
-    const addonsDir = join(process.cwd(), "addons");
-    const ret = new Set();
-
-    const dirents = await readdir(addonsDir, { encoding: "utf8", withFileTypes: true });
-    for (const dirent of dirents) {
-        try {
-            if (!dirent.isDirectory()) {
-                continue;
-            }
-            await access(join(addonsDir, dirent.name, "index.js"));
-            ret.add(dirent.name);
-        }
-        catch (err) {
-            continue;
-        }
-    }
-
-    return ret;
-}
 
 /**
  * @async
