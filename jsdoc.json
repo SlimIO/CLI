@@ -21,7 +21,8 @@
             "commands/start.js",
             "commands/debug.js",
             "src/REPL.js",
-            "src/utils.js"
+            "src/utils.js",
+            "src/agent.js"
         ],
         "exclude": [
             "node_modules",
