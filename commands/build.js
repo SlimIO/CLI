@@ -10,7 +10,7 @@ const { red, yellow, white, cyan } = require("kleur");
 const Manifest = require("@slimio/manifest");
 
 // Require Internal Dependencies
-const { checkBeInAgentDir, checkBeInAgentOrAddonDir } = require("../src/utils");
+const { checkBeInAgentDir, checkBeInAgentOrSubDir } = require("../src/utils");
 
 // CONSTANTS
 const E_TYPES = new Set(["core", "addon"]);
@@ -69,7 +69,7 @@ async function build(type = "core", addon) {
         }
         case "addon": {
             if (typeof addon === "string") {
-                checkBeInAgentOrAddonDir();
+                checkBeInAgentOrSubDir();
 
                 const addonDir = join(process.cwd(), "addons", addon);
                 await access(addonDir);

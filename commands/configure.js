@@ -1,8 +1,7 @@
 "use strict";
 
 // Require Node.js Dependencies
-const { readFile, writeFile, readdir, access } = require("fs").promises;
-const { join } = require("path");
+const { writeFile } = require("fs").promises;
 
 // Require Third-party Dependencies
 const qoa = require("qoa");
@@ -11,7 +10,7 @@ const jsonDiff = require("json-diff");
 const cloneDeep = require("lodash.clonedeep");
 
 // Require Internal Dependencies
-const { checkBeInAgentOrAddonDir } = require("../src/utils");
+const { checkBeInAgentOrSubDir } = require("../src/utils");
 const { getFileAddon, getLocalAddons } = require("../src/agent");
 const REPL = require("../src/REPL");
 
@@ -141,7 +140,7 @@ CMD.addCommand("addons", "Show the list of addons registered in agent.json", (ct
  */
 async function configure(cmd, addons = null) {
     try {
-        checkBeInAgentOrAddonDir();
+        checkBeInAgentOrSubDir();
     }
     catch (err) {
         console.log(grey().bold(`\n > ${red().bold("Current working dir as not been detected as a SlimIO Agent")}`));

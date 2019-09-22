@@ -13,7 +13,7 @@ const { yellow, white } = require("kleur");
 const { validate } = require("@slimio/validate-addon-name");
 
 // Require Internal Dependencies
-const { fileExist, checkBeInAgentOrAddonDir, writeToAgent } = require("../src/utils");
+const { fileExist, checkBeInAgentOrSubDir, writeToAgent } = require("../src/utils");
 
 // CONSTANTS
 const E_TYPES = new Set(["Addon", "Manifest"]);
@@ -56,7 +56,7 @@ async function create(type, config = {}) {
 
     switch (type) {
         case "Addon": {
-            checkBeInAgentOrAddonDir();
+            checkBeInAgentOrSubDir();
             const path = join(process.cwd(), "addons");
             if (is.string(config.name)) {
                 await generateAndLogAddon(config.name, path);

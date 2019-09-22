@@ -11,7 +11,7 @@ const qoa = require("qoa");
 const premove = require("premove");
 
 // Require Internal Dependencies
-const { checkBeInAgentDir } = require("../src/utils");
+const { checkBeInAgentOrSubDir } = require("../src/utils");
 
 /**
  * @async
@@ -20,7 +20,7 @@ const { checkBeInAgentDir } = require("../src/utils");
  * @returns {Promise<void>}
  */
 async function debug(clearFiles) {
-    checkBeInAgentDir();
+    checkBeInAgentOrSubDir();
 
     let files;
     const debugDir = join(process.cwd(), "debug");

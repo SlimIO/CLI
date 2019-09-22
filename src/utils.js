@@ -194,28 +194,30 @@ function checkBeInAgentDir() {
 }
 
 /**
- * @function checkBeInAgentOrAddonDir
+ * @function checkBeInAgentOrSubDir
  * @description check if we are at the root of the agent or at the root of addons dir
  * @memberof Utils#
+ * @param {number} [depth=1]
  * @returns {void}
  *
  * @throws {Error}
  */
-function checkBeInAgentOrAddonDir() {
+function checkBeInAgentOrSubDir(depth = 1) {
     try {
         checkBeInAgentDir();
     }
     catch (err) {
         try {
-            const { name, type } = Manifest.open(join(process.cwd(), "..", "slimio.toml"));
+            const pathToUnmount = "../".repeat(depth);
+            const { name, type } = Manifest.open(join(process.cwd(), pathToUnmount, "slimio.toml"));
             if (name !== "agent" && type !== "Service") {
                 throw new Error("You must be in an Agent or addons directory");
             }
             // always start from agent dir
-            process.chdir("..");
+            process.chdir(pathToUnmount);
         }
         catch (err) {
-            throw new Error("You must be in an Agent or addons directory");
+            throw new Error("You must be in an Agent or in one of the sub-directory");
         }
     }
 }
@@ -263,6 +265,6 @@ module.exports = Object.freeze({
     renameDirFromManifest,
     installAddon,
     checkBeInAgentDir,
-    checkBeInAgentOrAddonDir,
+    checkBeInAgentOrSubDir,
     writeToAgent
 });

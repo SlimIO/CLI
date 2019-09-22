@@ -12,7 +12,7 @@ const jsonDiff = require("json-diff");
 const { white, cyan, grey, yellow, green } = require("kleur");
 
 // Require Internal Dependencies
-const { checkBeInAgentOrAddonDir } = require("../src/utils");
+const { checkBeInAgentOrSubDir } = require("../src/utils");
 
 // Config
 Spinner.DEFAULT_SPINNER = "dots";
@@ -47,7 +47,7 @@ async function removeAddon([name, dir]) {
  */
 async function remove(addons = []) {
     try {
-        checkBeInAgentOrAddonDir();
+        checkBeInAgentOrSubDir();
     }
     catch (err) {
         console.log(grey().bold(`\n > ${red().bold("Current working dir as not been detected as a SlimIO Agent")}`));

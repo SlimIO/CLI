@@ -10,7 +10,7 @@ const { white, yellow, red, grey, green } = require("kleur");
 const Spinner = require("@slimio/async-cli-spinner");
 
 // Require Internal Dependencies
-const { installAddon, checkBeInAgentOrAddonDir, writeToAgent } = require("../src/utils");
+const { installAddon, checkBeInAgentOrSubDir, writeToAgent } = require("../src/utils");
 
 /**
  * @async
@@ -21,7 +21,7 @@ const { installAddon, checkBeInAgentOrAddonDir, writeToAgent } = require("../src
  */
 async function add(addons = [], nonActif = []) {
     try {
-        checkBeInAgentOrAddonDir();
+        checkBeInAgentOrSubDir();
     }
     catch (err) {
         console.log(grey().bold(`\n > ${red().bold("Current working dir as not been detected as a SlimIO Agent")}`));
