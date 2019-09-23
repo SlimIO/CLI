@@ -125,9 +125,11 @@ prog
         console.log(white().bold(`Successfully writed ${green().bold(key)} = ${cyan().bold(value)} in the local cache!`));
     });
 
+const fsk = [...SETTINGS_KEYS].join("\n\t- ");
 prog
     .command("get [key]")
-    .describe("Get one or all keys stored in the local cache (return all keys if no argument is given)")
+    .describe(`Get one or all keys stored in the local cache (return all keys if no argument is given).
+     Available settings keys are: \n\t- ${fsk}`)
     .example("get json_tab")
     .example("get json_stdout")
     .action(async(key) => {
