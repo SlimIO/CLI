@@ -18,54 +18,51 @@ const commands = require("../commands");
 const CACHE_PATH = "/tmp/slimio-cli";
 const SETTINGS_KEYS = new Set(["json_tab", "json_stdout"]);
 
-const prog = sade("slimio").version("0.2.0");
+// eslint-disable-next-line
+const splitOnComma = (arg) => typeof arg === "strubg" ? arg.split(",") : [];
+
+const prog = sade("slimio").version("0.3.0");
 
 prog
-    .command("init [dirName]")
-    .describe("Initialize a new SlimIO Agent")
-    .option("-a , --add", "List to add addons with initialization")
-    .action(async(dirName = "agent", opts) => {
-        const additionalAddons = typeof opts.a === "undefined" ? [] : opts.a.split(",");
-        await commands.initAgent(dirName, { additionalAddons });
+    .command("init [agentDirectoryName]")
+    .describe("Clone and install a complete SlimIO Agent")
+    .option("-a, --add", "Additional addons to install in addition to the built-in")
+    .example("init --add ihm,cpu-addon")
+    .example("init myAgent")
+    .action(async(agentDirectoryName = "agent", opts) => {
+        await commands.initAgent(agentDirectoryName, {
+            additionalAddons: splitOnComma(opts.add)
+        });
     });
 
+// TODO: add alias install (when sade alias RFC land)
 prog
     .command("add [addons]")
-    .describe("Add one or many addon(s) to the local agent (they will be activated by default).")
-    .option("-d , --disabled", "Add an addon as disabled by default.")
-    .action(async(addons, options) => {
-        const opts = typeof options.d === "undefined" ? [] : options.d.split(",");
-        const adds = typeof addons === "undefined" ? [] : addons.split(",");
-
-        await commands.add(adds, opts);
+    .describe("Add one or many addon(s) to the local agent (Addon are enabled by default).")
+    .option("-d, --disabled", "Add an addon as disabled by default.")
+    .action(async(addons, { disabled }) => {
+        await commands.add(splitOnComma(addons), splitOnComma(disabled));
     });
 
+// TODO: add alias rm, uninstall (when sade alias RFC land)
 prog
     .command("remove [addons]")
     .describe("Remove one or many addons from the local agent (Erase them from the disk)")
     .action(async(addons) => {
-        const toRemove = typeof addons === "undefined" ? [] : addons.split(",");
-        await commands.remove(toRemove);
+        await commands.remove(splitOnComma(addons));
     });
 
 prog
     .command("create [type]")
-    .describe("Create and generate SlimIO Manifest and Addon")
-    .option("-n , --name", "Addon name (only when Addon type is Addon)")
+    .describe("Create/generate SlimIO files and addons")
+    .option("-n, --name", "Addon name (only when Addon type is Addon)")
     .action(async(type, opts) => {
         const config = {};
-        if (typeof opts.n !== "undefined") {
-            Reflect.set(config, "name", opts.n);
+        if (typeof opts.name === "string") {
+            config.name = opts.name;
         }
         await commands.create(type, config);
     });
-
-// prog
-//     .command("service [action]")
-//     .describe("Create an agent service")
-//     .action(async(action) => {
-//         await commands.service(action);
-//     });
 
 prog
     .command("build")
@@ -79,14 +76,17 @@ prog
 prog
     .command("connect [agent]")
     .describe("Connect to a local or remote running agent")
+    .example("connect localhost:1433")
     .action(async(agent = "localhost:1337") => {
         const [host, port] = agent.split(":");
         await commands.connectAgent({ host, port: Number(port) });
     });
 
 prog
-    .command("configure [cmd] [addon]")
+    .command("config [cmd] [addon]")
     .describe("Configure a local agent or a remote running agent")
+    .example("config enable ihm,cpu")
+    .example("config sync")
     .action(async(cmd, addon) => {
         await commands.configure(cmd, addon);
     });
@@ -101,7 +101,7 @@ prog
 
 prog
     .command("start")
-    .describe("Start a local agent")
+    .describe("start the local agent and enable/unlock advanced debug tools")
     .action(async() => {
         await commands.start();
     });
@@ -109,6 +109,8 @@ prog
 prog
     .command("set <key> <value>")
     .describe("Setup a new settings in the local cache")
+    .example("set json_tab 4")
+    .example("set json_stdout on")
     .action(async(key, value) => {
         console.log("");
         if (!SETTINGS_KEYS.has(key)) {
@@ -125,7 +127,9 @@ prog
 
 prog
     .command("get [key]")
-    .describe("Get one or all keys stored in the local cache")
+    .describe("Get one or all keys stored in the local cache (return all keys if no argument is given)")
+    .example("get json_tab")
+    .example("get json_stdout")
     .action(async(key) => {
         console.log("");
 
