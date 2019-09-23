@@ -15,5 +15,6 @@ commands.set("connectAgent", () => require("./connect"));
 commands.set("configure", () => require("./configure"));
 commands.set("start", () => require("./start"));
 commands.set("debug", () => require("./debug"));
+commands.set("archive", () => require("./archive"));
 
 module.exports = commands.value;

@@ -66,11 +66,16 @@ prog
 
 prog
     .command("build")
-    .describe("Build the agent or a given addon")
-    .option("-a, --addon", "Addon name")
-    .option("-t, --type", "Type of build (addon or core)")
-    .action(async(options) => {
-        await commands.build(options.t, options.a);
+    .describe("Build and compile an agent into an executable with Node.js bundled in it")
+    .action(async() => {
+        await commands.build();
+    });
+
+prog
+    .command("archive [addonName]")
+    .describe("Create an addon archive")
+    .action(async(addonName) => {
+        await commands.archive(addonName);
     });
 
 prog
