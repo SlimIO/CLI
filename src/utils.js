@@ -97,11 +97,11 @@ function npmInstall(cwd = process.cwd(), lock = false) {
  * @returns {Promise<string>}
  */
 async function renameDirFromManifest(dir = process.cwd(), fileName = "slimio.toml") {
-    /** @type {string} */
-    let name;
     try {
-        const manifest = Manifest.open(join(dir, fileName));
-        name = manifest.name;
+        const { name } = Manifest.open(join(dir, fileName));
+        await rename(dir, join(dir, "..", name));
+
+        return name;
     }
     catch (err) {
         const [addonName] = dir.split("\\").pop().split("-");
@@ -109,16 +109,6 @@ async function renameDirFromManifest(dir = process.cwd(), fileName = "slimio.tom
 
         return addonName;
     }
-
-    try {
-        await rename(dir, join(dir, "..", name));
-    }
-    catch (err) {
-        await premove(dir);
-        throw err;
-    }
-
-    return name;
 }
 
 /**
