@@ -19,7 +19,7 @@ const CACHE_PATH = "/tmp/slimio-cli";
 const SETTINGS_KEYS = new Set(["json_tab", "json_stdout"]);
 
 // eslint-disable-next-line
-const splitOnComma = (arg) => typeof arg === "strubg" ? arg.split(",") : [];
+const splitOnComma = (arg) => typeof arg === "string" ? arg.split(",") : [];
 
 const prog = sade("slimio").version("0.3.0");
 
