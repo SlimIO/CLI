@@ -7,7 +7,6 @@ const is = require("@slimio/is");
 const cacache = require("cacache");
 const prettyJSON = require("@slimio/pretty-json");
 const stdin = require("@slimio/stdin");
-const clonedeep = require("lodash.clonedeep");
 
 // CONSTANTS
 const CACHE_PATH = "/tmp/slimio-cli";
