@@ -26,15 +26,15 @@ const ADDON_LOCK = new Lock({ max: 3 });
 
 /**
  * @async
- * @function directoryExist
- * @description Check if a given directory exist (and throw Error if diferent of ENOENT).
+ * @function directoryMustNotExist
+ * @description Throw an Error if a given directory exist.
  * @memberof Utils#
  * @param {!string} dir directory location
  * @returns {Promise<void>}
  *
  * @throws {Error}
  */
-async function directoryExist(dir) {
+async function directoryMustNotExist(dir) {
     try {
         const stats = await stat(dir);
         if (stats.isDirectory()) {
@@ -259,7 +259,7 @@ async function writeToAgent(addonName, active = false) {
 
 module.exports = Object.freeze({
     BUILT_IN_ADDONS,
-    directoryExist,
+    directoryMustNotExist,
     fileExist,
     npmInstall,
     renameDirFromManifest,

@@ -15,7 +15,7 @@ const ms = require("ms");
 // Require Internal Dependencies
 const {
     BUILT_IN_ADDONS,
-    directoryExist,
+    directoryMustNotExist,
     npmInstall,
     installAddon
 } = require("../src/utils");
@@ -61,7 +61,7 @@ async function initAgent(init, options = Object.create(null)) {
     console.log(white().bold("Initialize new SlimIO Agent!"));
     strictEqual(init.length !== 0, true, new Error("directoryName length must be 1 or more"));
 
-    await directoryExist(init);
+    await directoryMustNotExist(init);
 
     const startTime = performance.now();
     const agentDir = join(process.cwd(), init);
