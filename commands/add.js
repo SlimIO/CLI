@@ -10,7 +10,8 @@ const { white, yellow, red, grey, green } = require("kleur");
 const Spinner = require("@slimio/async-cli-spinner");
 
 // Require Internal Dependencies
-const { installAddon, checkBeInAgentOrSubDir, writeToAgent } = require("../src/utils");
+const { installAddon, checkBeInAgentOrSubDir } = require("../src/utils");
+const { writeToAgent } = require("../src/agent");
 
 /**
  * @async

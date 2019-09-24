@@ -13,7 +13,8 @@ const { yellow, white } = require("kleur");
 const { validate } = require("@slimio/validate-addon-name");
 
 // Require Internal Dependencies
-const { fileMustNotExist, checkBeInAgentOrSubDir, writeToAgent } = require("../src/utils");
+const { fileMustNotExist, checkBeInAgentOrSubDir } = require("../src/utils");
+const { writeToAgent } = require("../src/agent");
 
 // CONSTANTS
 const E_TYPES = new Set(["Addon", "Manifest"]);

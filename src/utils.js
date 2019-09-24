@@ -2,18 +2,15 @@
 
 // Require Node.js Dependencies
 const { spawn } = require("child_process");
-const { existsSync } = require("fs");
-const { rename, stat, writeFile, readFile } = require("fs").promises;
+const { rename, stat } = require("fs").promises;
 const { join } = require("path");
 
 // Require Third-party Dependencies
 const download = require("@slimio/github");
 const Manifest = require("@slimio/manifest");
 const Lock = require("@slimio/lock");
-const { cyan, white, grey, red, yellow } = require("kleur");
+const { cyan } = require("kleur");
 const Spinner = require("@slimio/async-cli-spinner");
-const premove = require("premove");
-const jsonDiff = require("json-diff");
 
 // CONSTANTS
 const EXEC_SUFFIX = process.platform === "win32";
@@ -210,41 +207,6 @@ function checkBeInAgentOrSubDir(depth = 1) {
     }
 }
 
-/**
- * @async
- * @function writeToAgent
- * @param {!string} addonName
- * @param {boolean} [active=false]
- * @returns {Promise<void>}
- */
-async function writeToAgent(addonName, active = false) {
-    const agentConfig = join(process.cwd(), "agent.json");
-    console.log(white().bold(`\nWriting addon in the local configuration '${yellow().bold(agentConfig)}'`));
-
-    const configExist = existsSync(agentConfig);
-    const addons = { [addonName]: { active } };
-
-    if (configExist) {
-        const buf = await readFile(agentConfig);
-        let str = buf.toString().trim();
-        if (str === "") {
-            str = "{}";
-        }
-        const json = JSON.parse(str);
-        if (!Reflect.has(json, "addons")) {
-            json.addons = {};
-        }
-        Object.assign(json.addons, addons);
-
-        console.log(grey().bold(jsonDiff.diffString(JSON.parse(str), json)));
-        await writeFile(agentConfig, JSON.stringify(json, null, 4));
-    }
-    else {
-        console.log(red().bold("(!) No local configuration detected. Creating one from scratch."));
-        await writeFile(agentConfig, JSON.stringify({ addons }, null, 4));
-    }
-}
-
 module.exports = Object.freeze({
     BUILT_IN_ADDONS,
     directoryMustNotExist,
@@ -253,6 +215,5 @@ module.exports = Object.freeze({
     renameDirFromManifest,
     installAddon,
     checkBeInAgentDir,
-    checkBeInAgentOrSubDir,
-    writeToAgent
+    checkBeInAgentOrSubDir
 });
