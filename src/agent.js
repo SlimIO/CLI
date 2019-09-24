@@ -100,8 +100,29 @@ async function writeToAgent(addonName, active = false) {
     }
 }
 
+/**
+ * @async
+ * @function removeAddonsFromAgent
+ * @param {!string} agentFilePath
+ * @param {...string[]} addons
+ * @returns {Promise<void>}
+ */
+async function removeAddonsFromAgent(agentFilePath, ...addons) {
+    const str = await readFile(agentFilePath, "utf-8");
+    const config = JSON.parse(str);
+
+    for (const name of addons) {
+        Reflect.deleteProperty(config.addons, name);
+    }
+
+    console.log("");
+    console.log(grey().bold(jsonDiff.diffString(JSON.parse(str), config)));
+    await writeFile(agentFilePath, JSON.stringify(config, null, 4));
+}
+
 module.exports = {
     getFileAddon,
     getLocalAddons,
-    writeToAgent
+    writeToAgent,
+    removeAddonsFromAgent
 };

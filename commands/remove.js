@@ -2,17 +2,17 @@
 
 // Require Node.js Dependencies
 const { join } = require("path");
-const { existsSync, readFileSync, writeFileSync } = require("fs");
+const { access } = require("fs").promises;
 const { performance } = require("perf_hooks");
 
 // Require Third-party Dependencies
 const premove = require("premove");
 const Spinner = require("@slimio/async-cli-spinner");
-const jsonDiff = require("json-diff");
 const { white, cyan, grey, yellow, green } = require("kleur");
 
 // Require Internal Dependencies
 const { checkBeInAgentOrSubDir } = require("../src/utils");
+const { removeAddonsFromAgent } = require("../src/agent");
 
 // Config
 Spinner.DEFAULT_SPINNER = "dots";
@@ -41,6 +41,24 @@ async function removeAddon([name, dir]) {
 
 /**
  * @async
+ * @function addonDirExist
+ * @param {!string} addonName
+ * @returns {any}
+ */
+async function addonDirExist(addonName) {
+    try {
+        const addonDir = join(process.cwd(), "addons", addonName);
+        await access(addonDir);
+
+        return [addonName, addonDir];
+    }
+    catch (err) {
+        return null;
+    }
+}
+
+/**
+ * @async
  * @function remove
  * @param {string[]} [addons]
  * @returns {Promise<void>}
@@ -57,33 +75,15 @@ async function remove(addons = []) {
     }
     console.log("");
 
-    const toRemove = [];
-    for (const addonName of addons) {
-        const addonDir = join(process.cwd(), "addons", addonName);
-        if (existsSync(addonDir)) {
-            toRemove.push([addonName, addonDir]);
-        }
-    }
+    const result = await Promise.all(addons.map((name) => addonDirExist(name)));
+    const toRemove = result.filter((row) => row !== null);
 
     // Remove all addons recursively
     await Promise.all(toRemove.map(removeAddon));
 
-    try {
-        const agentConfig = join(process.cwd(), "agent.json");
-        const str = readFileSync(agentConfig, "utf-8");
-        const config = JSON.parse(str);
-
-        for (const [name] of toRemove) {
-            Reflect.deleteProperty(config.addons, name);
-        }
-
-        console.log("");
-        console.log(grey().bold(jsonDiff.diffString(JSON.parse(str), config)));
-        writeFileSync(agentConfig, JSON.stringify(config, null, 4));
-    }
-    catch (err) {
-        console.error(err);
-    }
+    // Remove from agent.json
+    const agentConfig = join(process.cwd(), "agent.json");
+    await removeAddonsFromAgent(agentConfig, ...toRemove.map((row) => row[0]));
 }
 
 module.exports = remove;
