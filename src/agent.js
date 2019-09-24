@@ -9,9 +9,7 @@ const { readdir, access, readFile, writeFile } = require("fs").promises;
 const Config = require("@slimio/config");
 const { white, grey, red, yellow } = require("kleur");
 const jsonDiff = require("json-diff");
-
-// Require Internal Dependencies
-const { BUILT_IN_ADDONS } = require("./utils");
+const { CONSTANTS: { BUILT_IN_ADDONS } } = require("@slimio/installer");
 
 // CONSTANTS
 const addons = BUILT_IN_ADDONS.reduce((prev, curr) => (prev[curr.toLowerCase()] = { active: true }) && prev, {});

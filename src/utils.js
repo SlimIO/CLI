@@ -1,21 +1,21 @@
 "use strict";
 
 // Require Node.js Dependencies
-const { spawn } = require("child_process");
-const { rename, stat } = require("fs").promises;
+const { stat } = require("fs").promises;
 const { join } = require("path");
 
 // Require Third-party Dependencies
-const download = require("@slimio/github");
 const Manifest = require("@slimio/manifest");
 const Lock = require("@slimio/lock");
-const { cyan } = require("kleur");
+const { cyan, white } = require("kleur");
 const Spinner = require("@slimio/async-cli-spinner");
+const { installAddon } = require("@slimio/installer");
 
 // CONSTANTS
-const EXEC_SUFFIX = process.platform === "win32";
-const BUILT_IN_ADDONS = Object.freeze(["Events", "Socket", "Gate", "Alerting"]);
-const ADDON_LOCK = new Lock({ max: 3 });
+const ADDON_LOCK = new Lock({ max: 5 });
+
+// Vars
+Spinner.DEFAULT_SPINNER = process.platform === "win32" ? "line" : "dots";
 
 /**
  * @namespace Utils
@@ -70,84 +70,32 @@ async function fileMustNotExist(file) {
 }
 
 /**
- * @function npmInstall
- * @memberof Utils#
- * @param {!string} cwd working dir where we need to run the npm install cmd
- * @param {boolean} [lock=false] install with package.lock (npm ci)
- * @returns {NodeJS.ReadableStream}
- */
-function npmInstall(cwd = process.cwd(), lock = false) {
-    const ci = lock ? ["ci"] : ["install", "--production"];
-
-    return spawn(`npm${EXEC_SUFFIX ? ".cmd" : ""}`, ci, {
-        cwd, stdio: "pipe"
-    });
-}
-
-/**
  * @async
- * @function renameDirFromManifest
- * @description Rename cloned addon repository by retrieving the real name in the SlimIO manifest.
- * @memberof Utils#
- * @param {!string} dir location of the directory to rename
- * @param {!string} fileName manifest file name
- * @returns {Promise<string>}
- */
-async function renameDirFromManifest(dir = process.cwd(), fileName = "slimio.toml") {
-    try {
-        const { name } = Manifest.open(join(dir, fileName));
-        await rename(dir, join(dir, "..", name));
-
-        return name;
-    }
-    catch (err) {
-        const [addonName] = dir.split("\\").pop().split("-");
-        await rename(dir, addonName);
-
-        return addonName;
-    }
-}
-
-/**
- * @async
- * @function installAddon
+ * @function install
  * @memberof Utils#
  * @param {!string} addonName addon name
  * @param {object} options options
- * @param {string} [options.dlDir] download location
+ * @param {string} [options.dest] download location
  * @param {string} [options.verbose=true] Display spinner
  * @returns {Promise<void>}
  */
-async function installAddon(addonName, options = Object.create(null)) {
-    const { dlDir = process.cwd(), verbose = true } = options;
+async function install(addonName, options = Object.create(null)) {
+    const { dest = process.cwd(), verbose = true } = options;
 
     const free = await ADDON_LOCK.acquireOne();
     const spinner = new Spinner({
-        prefixText: cyan().bold(addonName),
-        spinner: "dots",
-        verbose
-    }).start("Installation started");
+        prefixText: cyan().bold(addonName), verbose
+    }).start(white().bold("Clone and Install Addon"));
 
     try {
-        spinner.text = "Cloning from GitHub";
-        const dirName = await download(`SlimIO.${addonName}`, {
-            dest: dlDir,
-            auth: process.env.GIT_TOKEN,
-            extract: true
+        const token = typeof process.env.GIT_TOKEN === "string" ? { token: process.env.GIT_TOKEN } : {};
+        await installAddon(addonName, dest, {
+            forceMkdir: false,
+            ...token
         });
+        spinner.succeed("Addon successfully installed!");
 
-        spinner.text = "Renaming folder from manifest";
-        const addonDir = await renameDirFromManifest(dirName);
-
-        spinner.text = "Installing dependencies";
-        await new Promise((resolve, reject) => {
-            const subProcess = npmInstall(join(dlDir, addonDir));
-            subProcess.once("close", resolve);
-            subProcess.once("error", reject);
-        });
-        spinner.succeed("Node dependencies installed");
-
-        return addonDir.split("/");
+        return addonName;
     }
     catch (err) {
         spinner.failed(`Error occured: ${err.message}`);
@@ -208,12 +156,9 @@ function checkBeInAgentOrSubDir(depth = 1) {
 }
 
 module.exports = Object.freeze({
-    BUILT_IN_ADDONS,
     directoryMustNotExist,
     fileMustNotExist,
-    npmInstall,
-    renameDirFromManifest,
-    installAddon,
+    install,
     checkBeInAgentDir,
     checkBeInAgentOrSubDir
 });

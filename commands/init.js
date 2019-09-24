@@ -2,23 +2,25 @@
 
 // Require Node.js Dependencies
 const { strictEqual } = require("assert").strict;
-const { rename, mkdir, writeFile } = require("fs").promises;
+const { mkdir, writeFile } = require("fs").promises;
 const { join } = require("path");
 const { performance } = require("perf_hooks");
 
 // Require Third-party Dependencies
 const { yellow, white, green, red, cyan } = require("kleur");
-const download = require("@slimio/github");
 const Spinner = require("@slimio/async-cli-spinner");
 const ms = require("ms");
+const {
+    extractAgent,
+    installDependencies,
+    CONSTANTS: { BUILT_IN_ADDONS }
+} = require("@slimio/installer");
 
 // Require Internal Dependencies
-const {
-    BUILT_IN_ADDONS,
-    directoryMustNotExist,
-    npmInstall,
-    installAddon
-} = require("../src/utils");
+const { directoryMustNotExist, install } = require("../src/utils");
+
+// Vars
+Spinner.DEFAULT_SPINNER = process.platform === "win32" ? "line" : "dots";
 
 /**
  * @function installAgentDep
@@ -29,22 +31,20 @@ const {
  */
 async function installAgentDep(agentDir, verbose = true) {
     const spinner = new Spinner({
-        prefixText: cyan().bold("Agent"),
-        spinner: "dots",
-        verbose
+        prefixText: cyan().bold("Agent"), verbose
     }).start("Installing dependencies");
 
-    await new Promise((resolve, reject) => {
-        const subProcess = npmInstall(agentDir, true);
-        subProcess.once("close", (code) => {
-            spinner.succeed("Node dependencies installed");
-            resolve();
+    try {
+        await new Promise((resolve, reject) => {
+            const subProcess = installDependencies(agentDir, true);
+            subProcess.once("close", resolve);
+            subProcess.once("error", reject);
         });
-        subProcess.once("error", (err) => {
-            spinner.failed("Something wrong append !");
-            reject(err);
-        });
-    });
+        spinner.succeed("Agent dependencies sucessfully installed!");
+    }
+    catch (error) {
+        spinner.failed(error.message);
+    }
 }
 
 /**
@@ -58,26 +58,19 @@ async function installAgentDep(agentDir, verbose = true) {
  */
 async function initAgent(init, options = Object.create(null)) {
     const { additionalAddons = [], verbose = true } = options;
-    console.log(white().bold("Initialize new SlimIO Agent!"));
+    console.log(white().bold("\n > Initialize new SlimIO Agent!"));
     strictEqual(init.length !== 0, true, new Error("directoryName length must be 1 or more"));
 
     await directoryMustNotExist(init);
 
     const startTime = performance.now();
-    const agentDir = join(process.cwd(), init);
-    const addonDir = join(agentDir, "addons");
-    {
-        const dirName = await download("SlimIO.Agent", {
-            dest: process.cwd(),
-            auth: process.env.GIT_TOKEN,
-            extract: true
-        });
-        await rename(dirName, agentDir);
-
-        console.log(`Agent successfully cloned at ${yellow().bold(agentDir)}`);
-    }
+    const agentDir = await extractAgent(process.cwd(), {
+        name: init,
+        token: process.env.GIT_TOKEN
+    });
 
     // Create addons directory
+    const addonDir = join(agentDir, "addons");
     await mkdir(addonDir, { recursive: true });
 
     console.log(`\n${yellow().bold("Installing Built-in addons")} and ${yellow().bold("Install Agent dependencies")}`);
@@ -89,8 +82,8 @@ async function initAgent(init, options = Object.create(null)) {
     const toInstall = [...new Set([...BUILT_IN_ADDONS, ...additionalAddons])];
     await Spinner.startAll([
         Spinner.create(installAgentDep, agentDir, verbose),
-        ...toInstall.map((addonName) => Spinner.create(installAddon, addonName, { dlDir: addonDir, verbose }))
-    ]);
+        ...toInstall.map((addonName) => Spinner.create(install, addonName, { dest: addonDir, verbose }))
+    ], { recap: false });
 
     const executeTimeMs = ms(performance.now() - startTime, { long: true });
     console.log(green().bold(`\nInstallation completed in ${yellow().bold(executeTimeMs)}`));

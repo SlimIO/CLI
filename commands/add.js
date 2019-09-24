@@ -10,7 +10,7 @@ const { white, yellow, red, grey, green } = require("kleur");
 const Spinner = require("@slimio/async-cli-spinner");
 
 // Require Internal Dependencies
-const { installAddon, checkBeInAgentOrSubDir } = require("../src/utils");
+const { install, checkBeInAgentOrSubDir } = require("../src/utils");
 const { writeToAgent } = require("../src/agent");
 
 /**
@@ -35,7 +35,7 @@ async function add(addons = [], nonActif = []) {
     const addonNonActif = new Set([...nonActif]);
     const startTime = performance.now();
     for (const addon of [...addons, ...nonActif]) {
-        console.log(white().bold(`Adding addon '${yellow().bold(addon)}'`));
+        console.log(white().bold(`\n > Adding addon '${yellow().bold(addon)}'`));
         await createDirectory(join(process.cwd(), "addons"));
 
         /** @type {URL} */
@@ -70,8 +70,8 @@ async function add(addons = [], nonActif = []) {
     }
 
     const addonInstalled = await Spinner.startAll([
-        ...addonsChecked.map((addonName) => Spinner.create(installAddon, addonName, { dlDir: join(process.cwd(), "addons") }))
-    ]);
+        ...addonsChecked.map((addonName) => Spinner.create(install, addonName, { dest: join(process.cwd(), "addons") }))
+    ], { recap: false });
 
     for (const addonName of addonInstalled.filter((addon) => addon !== undefined)) {
         await writeToAgent(addonName, !addonNonActif.has(addonName));
