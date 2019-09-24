@@ -50,15 +50,15 @@ async function directoryMustNotExist(dir) {
 
 /**
  * @async
- * @function fileExist
- * @description Check if a given file exist (and throw Error if diferent of ENOENT).
+ * @function fileMustNotExist
+ * @description Assert that a given file not exist (else we throw an error).
  * @memberof Utils#
  * @param {!string} file file path
  * @returns {Promise<void>}
  *
  * @throws {Error}
  */
-async function fileExist(file) {
+async function fileMustNotExist(file) {
     try {
         const stats = await stat(file);
         if (stats.isFile()) {
@@ -260,7 +260,7 @@ async function writeToAgent(addonName, active = false) {
 module.exports = Object.freeze({
     BUILT_IN_ADDONS,
     directoryMustNotExist,
-    fileExist,
+    fileMustNotExist,
     npmInstall,
     renameDirFromManifest,
     installAddon,

@@ -13,7 +13,7 @@ const { yellow, white } = require("kleur");
 const { validate } = require("@slimio/validate-addon-name");
 
 // Require Internal Dependencies
-const { fileExist, checkBeInAgentOrSubDir, writeToAgent } = require("../src/utils");
+const { fileMustNotExist, checkBeInAgentOrSubDir, writeToAgent } = require("../src/utils");
 
 // CONSTANTS
 const E_TYPES = new Set(["Addon", "Manifest"]);
@@ -85,7 +85,7 @@ async function create(type, config = {}) {
             break;
         }
         case "Manifest": {
-            await fileExist("slimio.toml");
+            await fileMustNotExist("slimio.toml");
 
             let tomlType = config.type;
             if (!Reflect.has(config, "type")) {
