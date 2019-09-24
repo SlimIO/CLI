@@ -81,11 +81,10 @@ async function fileMustNotExist(file) {
  */
 async function install(addonName, options = Object.create(null)) {
     const { dest = process.cwd(), verbose = true } = options;
-
-    const free = await ADDON_LOCK.acquireOne();
     const spinner = new Spinner({
         prefixText: cyan().bold(addonName), verbose
     }).start(white().bold("Clone and Install Addon"));
+    const free = await ADDON_LOCK.acquireOne();
 
     try {
         const token = typeof process.env.GIT_TOKEN === "string" ? { token: process.env.GIT_TOKEN } : {};

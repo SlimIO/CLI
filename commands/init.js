@@ -58,7 +58,7 @@ async function installAgentDep(agentDir, verbose = true) {
  */
 async function initAgent(init, options = Object.create(null)) {
     const { additionalAddons = [], verbose = true } = options;
-    console.log(white().bold("\n > Initialize new SlimIO Agent!"));
+    console.log(white().bold("\n > Initialize and install a complete SlimIO Agent!"));
     strictEqual(init.length !== 0, true, new Error("directoryName length must be 1 or more"));
 
     await directoryMustNotExist(init);
@@ -73,10 +73,9 @@ async function initAgent(init, options = Object.create(null)) {
     const addonDir = join(agentDir, "addons");
     await mkdir(addonDir, { recursive: true });
 
-    console.log(`\n${yellow().bold("Installing Built-in addons")} and ${yellow().bold("Install Agent dependencies")}`);
     if (additionalAddons.length > 0) {
         const addonsList = additionalAddons.map((name) => yellow().bold(name)).join(",");
-        console.log(`${red().bold("Warning!")} Additional addons detected => ${addonsList}\n`);
+        console.log(`${red().bold("Warning!")} Additional addons requested: ${addonsList}\n`);
     }
 
     const toInstall = [...new Set([...BUILT_IN_ADDONS, ...additionalAddons])];
