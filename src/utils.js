@@ -145,17 +145,15 @@ async function installAddon(addonName, options = Object.create(null)) {
         spinner.text = "Installing dependencies";
         await new Promise((resolve, reject) => {
             const subProcess = npmInstall(join(dlDir, addonDir));
-            subProcess.once("close", () => {
-                spinner.succeed("Node dependencies installed");
-                resolve();
-            });
+            subProcess.once("close", resolve);
             subProcess.once("error", reject);
         });
+        spinner.succeed("Node dependencies installed");
 
         return addonDir.split("/");
     }
     catch (err) {
-        spinner.failed("Something wrong append !");
+        spinner.failed(`Error occured: ${err.message}`);
         throw err;
     }
     finally {
