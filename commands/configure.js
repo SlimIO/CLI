@@ -35,8 +35,9 @@ async function splitAddons(ctx) {
         });
     }
 
+    console.log("");
     const { addon } = await qoa.interactive({
-        query: "Choose an addon",
+        query: yellow().bold("Choose one addon on the below list"),
         handle: "addon",
         menu: [...ctx.localAddons]
     });
@@ -66,15 +67,15 @@ async function activeSwitch(ctx, switcher = false) {
 
 const CMD = new REPL();
 
-CMD.addCommand("enable", "Enable a given addon", async(ctx) => {
+CMD.addCommand("enable", "enable a given addon", async(ctx) => {
     await activeSwitch(ctx, true);
 });
 
-CMD.addCommand("disable", "Disable a given addon", async(ctx) => {
+CMD.addCommand("disable", "disable a given addon", async(ctx) => {
     await activeSwitch(ctx, false);
 });
 
-CMD.addCommand("sync", "sync agent.json with addons folder", async(ctx) => {
+CMD.addCommand("sync", "synchronize agent.json with the /addons directory", async(ctx) => {
     const agentBeforeUpdate = cloneDeep(ctx.agentConfig);
     let udpateCount = 0;
 
@@ -127,7 +128,7 @@ CMD.addCommand("sync", "sync agent.json with addons folder", async(ctx) => {
     }
 });
 
-CMD.addCommand("addons", "Show the list of addons registered in agent.json", (ctx) => {
+CMD.addCommand("addons", "show the list of addons registered in agent.json", (ctx) => {
     CMD.stdout([...ctx.localAddons], true);
 });
 
@@ -167,7 +168,7 @@ async function configure(cmd, addons = null) {
         await CMD.callHandler(cmd, ctx);
     }
     else {
-        await CMD.init(grey("agent.json >"), ctx);
+        await CMD.init(grey("agent.json > "), ctx);
     }
 }
 

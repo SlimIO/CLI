@@ -7,6 +7,7 @@ const is = require("@slimio/is");
 const cacache = require("cacache");
 const prettyJSON = require("@slimio/pretty-json");
 const stdin = require("@slimio/stdin");
+const yn = require("yn");
 
 // CONSTANTS
 const CACHE_PATH = "/tmp/slimio-cli";
@@ -26,9 +27,9 @@ class REPL {
         Object.defineProperty(this, symJSON, { value: false, writable: true });
         Object.defineProperty(this, symTAB, { value: DEFAULT_JSON_TAB, writable: true });
 
-        this.addCommand("help", "display all available commands in the REPL");
+        this.addCommand("help", "display all available commands in the current REPL");
         this.addCommand("quit", "exit the current REPL");
-        this.addCommand("json", "enable or disable json output");
+        this.addCommand("json", `[${green().bold("on")}/${red().bold("off")}] enable or disable json output`);
     }
 
     /**
@@ -201,8 +202,8 @@ class REPL {
                 case "quit":
                     break replWhile;
                 case "json": {
-                    const state = args[0] || "off";
-                    this[symJSON] = state === "on";
+                    const state = args[0] || false;
+                    this[symJSON] = state === "on" || yn(state, { default: false });
                     console.log(`\n${white().bold("JSON output ")} ${green().bold(this[symJSON] ? "Enabled" : "Disabled")}\n`);
 
                     break;
