@@ -129,7 +129,7 @@ CMD.addCommand("sync", "synchronize agent.json with the /addons directory", asyn
 });
 
 CMD.addCommand("addons", "show the list of addons registered in agent.json", (ctx) => {
-    CMD.stdout([...ctx.localAddons], true);
+    CMD.stdout([...ctx.localAddons], ctx.hasREPL);
 });
 
 /**
@@ -160,11 +160,13 @@ async function configure(cmd, addons = null) {
     const ctx = {
         agentConfig,
         addons: new Set([...Object.keys(agentConfig)]),
-        localAddons
+        localAddons,
+        hasREPL: true
     };
 
     if (typeof cmd === "string") {
         ctx.args = addons === null ? [] : [addons.trim()];
+        ctx.hasREPL = false;
         await CMD.callHandler(cmd, ctx);
     }
     else {
