@@ -7,7 +7,7 @@ const { join } = require("path");
 // Require Third-party Dependencies
 const Manifest = require("@slimio/manifest");
 const Lock = require("@slimio/lock");
-const { cyan, white } = require("kleur");
+const { cyan, white, green } = require("kleur");
 const Spinner = require("@slimio/async-cli-spinner");
 const { installAddon } = require("@slimio/installer");
 
@@ -35,7 +35,7 @@ async function directoryMustNotExist(dir) {
     try {
         const stats = await stat(dir);
         if (stats.isDirectory()) {
-            throw new Error(`Directory ${dir} already exist`);
+            throw new Error(`Directory '${dir}' already exist`);
         }
     }
     catch (err) {
@@ -59,7 +59,7 @@ async function fileMustNotExist(file) {
     try {
         const stats = await stat(file);
         if (stats.isFile()) {
-            throw new Error(`File ${file} already exist`);
+            throw new Error(`File '${file}' already exist`);
         }
     }
     catch (err) {
@@ -83,7 +83,7 @@ async function install(addonName, options = Object.create(null)) {
     const { dest = process.cwd(), verbose = true } = options;
     const spinner = new Spinner({
         prefixText: cyan().bold(addonName), verbose
-    }).start(white().bold("Clone and Install Addon"));
+    }).start(white().bold("Clone and install..."));
     const free = await ADDON_LOCK.acquireOne();
 
     try {
@@ -92,7 +92,7 @@ async function install(addonName, options = Object.create(null)) {
             forceMkdir: false,
             ...token
         });
-        spinner.succeed("Addon successfully installed!");
+        spinner.succeed(green().bold("done!"));
 
         return addonName;
     }

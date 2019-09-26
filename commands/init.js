@@ -7,7 +7,7 @@ const { join } = require("path");
 const { performance } = require("perf_hooks");
 
 // Require Third-party Dependencies
-const { yellow, white, green, red, cyan } = require("kleur");
+const { yellow, white, green, red, cyan, grey } = require("kleur");
 const Spinner = require("@slimio/async-cli-spinner");
 const ms = require("ms");
 const {
@@ -32,7 +32,7 @@ Spinner.DEFAULT_SPINNER = process.platform === "win32" ? "line" : "dots";
 async function installAgentDep(agentDir, verbose = true) {
     const spinner = new Spinner({
         prefixText: cyan().bold("Agent"), verbose
-    }).start("Installing dependencies");
+    }).start(white().bold("Install dependencies"));
 
     try {
         await new Promise((resolve, reject) => {
@@ -40,7 +40,7 @@ async function installAgentDep(agentDir, verbose = true) {
             subProcess.once("close", resolve);
             subProcess.once("error", reject);
         });
-        spinner.succeed("Agent dependencies sucessfully installed!");
+        spinner.succeed(green().bold("done!"));
     }
     catch (error) {
         spinner.failed(error.message);
@@ -58,10 +58,19 @@ async function installAgentDep(agentDir, verbose = true) {
  */
 async function initAgent(init, options = Object.create(null)) {
     const { additionalAddons = [], verbose = true } = options;
-    console.log(white().bold("\n > Initialize and install a complete SlimIO Agent!"));
+    console.log(white().bold("\nInitialize and install a complete SlimIO Agent!"));
+    console.log(grey().bold("-----------------------------------------------"));
     strictEqual(init.length !== 0, true, new Error("directoryName length must be 1 or more"));
 
-    await directoryMustNotExist(init);
+    try {
+        await directoryMustNotExist(init);
+    }
+    catch (error) {
+        console.log(grey().bold(`\n > ${red().bold(error.message)}`));
+        console.log(grey().bold(` > ${yellow().bold(process.cwd())}`));
+
+        return;
+    }
 
     const startTime = performance.now();
     const agentDir = await extractAgent(process.cwd(), {
@@ -75,7 +84,8 @@ async function initAgent(init, options = Object.create(null)) {
 
     if (additionalAddons.length > 0) {
         const addonsList = additionalAddons.map((name) => yellow().bold(name)).join(",");
-        console.log(`${red().bold("Warning!")} Additional addons requested: ${addonsList}\n`);
+        console.log(`${red().bold("!! Warning")} Additional addon(s) requested: ${addonsList}`);
+        console.log(grey().bold("-----------------------------------------------"));
     }
 
     const toInstall = [...new Set([...BUILT_IN_ADDONS, ...additionalAddons])];
@@ -85,7 +95,8 @@ async function initAgent(init, options = Object.create(null)) {
     ], { recap: false });
 
     const executeTimeMs = ms(performance.now() - startTime, { long: true });
-    console.log(green().bold(`\nInstallation completed in ${yellow().bold(executeTimeMs)}`));
+    console.log(grey().bold("-----------------------------------------------"));
+    console.log(white().bold(`Installation completed in ${green().bold(executeTimeMs)}`));
 
     // Write agent.json
     const localConfig = { addons: {} };
@@ -93,6 +104,9 @@ async function initAgent(init, options = Object.create(null)) {
         localConfig.addons[addonName.toLowerCase()] = { active: true };
     }
     await writeFile(join(agentDir, "agent.json"), JSON.stringify(localConfig, null, 4));
+
+    console.log(yellow().bold(`\nAgent successfully installed at: ${cyan().bold(agentDir)}`));
+    console.log(grey().bold(`$ cd ${init}\n`));
 }
 
 module.exports = initAgent;
