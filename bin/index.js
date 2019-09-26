@@ -27,11 +27,13 @@ prog
     .command("init [agentDirectoryName]")
     .describe("Clone and install a complete SlimIO Agent")
     .option("-a, --add", "Additional addons to install in addition to the built-in")
+    .option("-s, --set", "choose a given set of addons", null)
     .example("init --add ihm,cpu-addon")
     .example("init myAgent")
-    .action(async(agentDirectoryName = "agent", opts) => {
+    .action(async(agentDirectoryName = "agent", { add, set }) => {
         await commands.initAgent(agentDirectoryName, {
-            additionalAddons: splitOnComma(opts.add)
+            addons: splitOnComma(add),
+            set
         });
     });
 

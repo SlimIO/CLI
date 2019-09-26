@@ -19,6 +19,11 @@ const {
 // Require Internal Dependencies
 const { directoryMustNotExist, install } = require("../src/utils");
 
+// CONSTANTS
+const ADDONS_SETS = new Map([
+    ["metrology", ["cpu-addon"]]
+]);
+
 // Vars
 Spinner.DEFAULT_SPINNER = process.platform === "win32" ? "line" : "dots";
 
@@ -52,12 +57,23 @@ async function installAgentDep(agentDir, verbose = true) {
  * @function initAgent
  * @param {!string} init initial directory
  * @param {object} [options]
- * @param {string[]} [options.additionalAddons]
+ * @param {string[]} [options.addons]
+ * @param {null | string} [options.set]
  * @param {boolean} [options.verbose]
  * @returns {Promise<void>}
  */
 async function initAgent(init, options = Object.create(null)) {
-    const { additionalAddons = [], verbose = true } = options;
+    const { addons = [], verbose = true, set } = options;
+
+    // Verify set
+    if (typeof set === "string" && !ADDONS_SETS.has(set)) {
+        console.log(grey().bold(`\n > ${red().bold(`Unknown addon set with name '${set}'`)}`));
+        const sets = [...ADDONS_SETS.keys()].map((name) => yellow().bold(name)).join(",");
+        console.log(white().bold(` > Available sets are: ${sets}`));
+
+        return;
+    }
+
     console.log(white().bold("\nInitialize and install a complete SlimIO Agent!"));
     console.log(grey().bold("-----------------------------------------------"));
     strictEqual(init.length !== 0, true, new Error("directoryName length must be 1 or more"));
@@ -82,13 +98,14 @@ async function initAgent(init, options = Object.create(null)) {
     const addonDir = join(agentDir, "addons");
     await mkdir(addonDir, { recursive: true });
 
-    if (additionalAddons.length > 0) {
-        const addonsList = additionalAddons.map((name) => yellow().bold(name)).join(",");
+    if (addons.length > 0) {
+        const addonsList = addons.map((name) => yellow().bold(name)).join(",");
         console.log(`${red().bold("!! Warning")} Additional addon(s) requested: ${addonsList}`);
         console.log(grey().bold("-----------------------------------------------"));
     }
 
-    const toInstall = [...new Set([...BUILT_IN_ADDONS, ...additionalAddons])];
+    const setAddons = ADDONS_SETS.has(set) ? ADDONS_SETS.get(set) : [];
+    const toInstall = [...new Set([...BUILT_IN_ADDONS, ...addons, ...setAddons])];
     await Spinner.startAll([
         Spinner.create(installAgentDep, agentDir, verbose),
         ...toInstall.map((addonName) => Spinner.create(install, addonName, { dest: addonDir, verbose }))
