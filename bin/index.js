@@ -151,7 +151,7 @@ prog
                 keys[key] = (await cacache.get(CACHE_PATH, key)).data.toString();
             }
 
-            console.log(grey().bold(" - Local settings -\n"));
+            console.log(grey().bold(" - Local settings -"));
             prettyJSON(keys);
         }
     });
