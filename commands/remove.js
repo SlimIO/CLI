@@ -8,11 +8,12 @@ const { performance } = require("perf_hooks");
 // Require Third-party Dependencies
 const premove = require("premove");
 const Spinner = require("@slimio/async-cli-spinner");
-const { white, cyan, grey, yellow, green } = require("kleur");
+const levenshtein = require("fast-levenshtein");
+const { white, cyan, grey, yellow, green, red } = require("kleur");
 
 // Require Internal Dependencies
 const { checkBeInAgentOrSubDir } = require("../src/utils");
-const { removeAddonsFromAgent } = require("../src/agent");
+const { removeAddonsFromAgent, getLocalAddons } = require("../src/agent");
 
 // Config
 Spinner.DEFAULT_SPINNER = "dots";
@@ -77,6 +78,26 @@ async function remove(addons = []) {
 
     const result = await Promise.all(addons.map((name) => addonDirExist(name)));
     const toRemove = result.filter((row) => row !== null);
+
+    if (toRemove.length === 0) {
+        console.log(red().bold(" > Failed to found any addon(s) to remove"));
+        const addonName = addons.shift();
+        const localAddons = await getLocalAddons();
+
+        const isMatching = [];
+        for (const item of localAddons) {
+            const count = levenshtein.get(item, addonName);
+            if (count <= 2) {
+                isMatching.push(item);
+            }
+        }
+        if (isMatching.length > 0) {
+            const str = isMatching.map((row) => yellow().bold(row)).join(",");
+            console.log(white().bold(` > Did you mean: ${str} ?`));
+        }
+
+        return;
+    }
 
     // Remove all addons recursively
     await Promise.all(toRemove.map(removeAddon));
