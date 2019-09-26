@@ -17,10 +17,10 @@ const { writeToAgent } = require("../src/agent");
  * @async
  * @function add
  * @param {string[]} [addons]
- * @param {string[]} [nonActif]
+ * @param {boolean} [disabled=false]
  * @returns {Promise<void>}
  */
-async function add(addons = [], nonActif = []) {
+async function add(addons = [], disabled = false) {
     try {
         checkBeInAgentOrSubDir();
     }
@@ -32,9 +32,8 @@ async function add(addons = [], nonActif = []) {
     }
 
     const addonsChecked = [];
-    const addonNonActif = new Set([...nonActif]);
     const startTime = performance.now();
-    for (const addon of [...addons, ...nonActif]) {
+    for (const addon of addons) {
         console.log(white().bold(`\n > Adding addon '${yellow().bold(addon)}'`));
         await createDirectory(join(process.cwd(), "addons"));
 
@@ -75,7 +74,8 @@ async function add(addons = [], nonActif = []) {
     ], { recap: false });
 
     for (const addonName of addonInstalled.filter((addon) => addon !== undefined)) {
-        await writeToAgent(addonName, !addonNonActif.has(addonName));
+        // TODO: optimize to write all addons at once ?
+        await writeToAgent(addonName, !disabled);
     }
 
     const executeTimeMs = (performance.now() - startTime) / 1000;

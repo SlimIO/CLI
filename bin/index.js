@@ -39,9 +39,9 @@ prog
 prog
     .command("add [addons]")
     .describe("Add one or many addon(s) to the local agent (Addon are enabled by default).")
-    .option("-d, --disabled", "Add an addon as disabled by default.")
+    .option("-d, --disabled", "Write addons as active: false in agent.json", false)
     .action(async(addons, { disabled }) => {
-        await commands.add(splitOnComma(addons), splitOnComma(disabled));
+        await commands.add(splitOnComma(addons), Boolean(disabled));
     });
 
 // TODO: add alias rm, uninstall (when sade alias RFC land)
