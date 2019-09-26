@@ -69,8 +69,9 @@ async function add(addons = [], nonActif = []) {
         }
     }
 
+    const options = { dest: join(process.cwd(), "addons") };
     const addonInstalled = await Spinner.startAll([
-        ...addonsChecked.map((addonName) => Spinner.create(install, addonName, { dest: join(process.cwd(), "addons") }))
+        ...addonsChecked.map((addonName) => Spinner.create(install, addonName, options))
     ], { recap: false });
 
     for (const addonName of addonInstalled.filter((addon) => addon !== undefined)) {

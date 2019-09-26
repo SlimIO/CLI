@@ -2,7 +2,7 @@
 
 // Require Node.js Dependencies
 const { stat } = require("fs").promises;
-const { join } = require("path");
+const { join, sep } = require("path");
 
 // Require Third-party Dependencies
 const Manifest = require("@slimio/manifest");
@@ -88,13 +88,13 @@ async function install(addonName, options = Object.create(null)) {
 
     try {
         const token = typeof process.env.GIT_TOKEN === "string" ? { token: process.env.GIT_TOKEN } : {};
-        await installAddon(addonName, dest, {
+        const addonDir = await installAddon(addonName, dest, {
             forceMkdir: false,
             ...token
         });
         spinner.succeed(green().bold("done!"));
 
-        return addonName;
+        return addonDir.split(sep).pop();
     }
     catch (err) {
         spinner.failed(`Error occured: ${err.message}`);
