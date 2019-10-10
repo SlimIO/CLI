@@ -38,7 +38,7 @@
         "@slimio/bundler": "^0.4.1",
         "@slimio/config": "^0.15.1",
         "@slimio/core": "^0.9.1",
-        "@slimio/installer": "^0.1.1",
+        "@slimio/installer": "^0.2.4",
         "@slimio/is": "^1.5.1",
         "@slimio/lazy": "^1.2.0",
         "@slimio/lock": "^0.3.0",
