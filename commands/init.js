@@ -109,7 +109,7 @@ async function initAgent(init, options = Object.create(null)) {
     await Spinner.startAll([
         Spinner.create(installAgentDep, agentDir, verbose),
         ...toInstall.map((addonName) => Spinner.create(install, addonName, { dest: addonDir, verbose }))
-    ], { recap: false });
+    ], { recap: "error" });
 
     const executeTimeMs = ms(performance.now() - startTime, { long: true });
     console.log(grey().bold("-----------------------------------------------"));

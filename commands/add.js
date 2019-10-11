@@ -71,7 +71,7 @@ async function add(addons = [], disabled = false) {
     const options = { dest: join(process.cwd(), "addons") };
     const addonInstalled = await Spinner.startAll([
         ...addonsChecked.map((addonName) => Spinner.create(install, addonName, options))
-    ], { recap: false });
+    ], { recap: "error" });
 
     for (const addonName of addonInstalled.filter((addon) => addon !== undefined)) {
         // TODO: optimize to write all addons at once ?
