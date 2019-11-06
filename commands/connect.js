@@ -55,7 +55,7 @@ CMD.addCommand("reload", "reload a given addon", async({ client, args }) => {
 
             let started = false;
             try {
-                const info = await client.sendOne(`${addonName}.get_info`);
+                const info = await client.sendOne(`${addonName}.status`);
                 started = info.started;
             }
             catch (err) {
@@ -94,7 +94,7 @@ CMD.addCommand("addons", "Call an addon's callback", async({ client }) => {
     });
     console.log("");
 
-    const addonInfo = await tcpSendMessage(client, `${addon}.get_info`);
+    const addonInfo = await tcpSendMessage(client, `${addon}.status`);
     const { callback } = await qoa.interactive({
         query: "Choose a callback",
         handle: "callback",
@@ -160,7 +160,7 @@ async function connectAgent(options = Object.create(null)) {
     const autocomplete = [];
     try {
         const addons = await client.getActiveAddons();
-        const infos = await Promise.all(addons.map((name) => client.sendOne(`${name}.get_info`)));
+        const infos = await Promise.all(addons.map((name) => client.sendOne(`${name}.status`)));
         for (const addon of infos) {
             autocomplete.unshift(`callback ${addon.name}.`);
             autocomplete.push(...addon.callbacks.map((cbName) => `callback ${addon.name}.${cbName}`));
