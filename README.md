@@ -9,7 +9,7 @@
 SlimIO Command Line Interface. This tool has been created to help Developer and Integrator to work, design and scale the product easily.
 
 ## Requirements
-- [Node.js](https://nodejs.org/en/) version 10 or higher
+- [Node.js](https://nodejs.org/en/) version 12 or higher
 - Administrative privilege for some commands.
 
 ## Getting Started
