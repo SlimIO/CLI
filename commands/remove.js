@@ -2,11 +2,10 @@
 
 // Require Node.js Dependencies
 const { join } = require("path");
-const { access } = require("fs").promises;
+const { access, rmdir } = require("fs").promises;
 const { performance } = require("perf_hooks");
 
 // Require Third-party Dependencies
-const premove = require("premove");
 const Spinner = require("@slimio/async-cli-spinner");
 const levenshtein = require("fast-levenshtein");
 const { white, cyan, grey, yellow, green, red } = require("kleur");
@@ -31,7 +30,7 @@ async function removeAddon([name, dir]) {
     const start = performance.now();
 
     try {
-        await premove(dir);
+        await rmdir(dir, { recursive: true });
         const executionTimeMs = green().bold(`${(performance.now() - start).toFixed(2)}ms`);
         spinner.succeed(white().bold(`Successfully removed addon in ${executionTimeMs}`));
     }

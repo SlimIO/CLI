@@ -77,7 +77,6 @@ A complete CLI API is available on the [Governance](https://github.com/SlimIO/Go
 |[lodash.clonedeep](https://github.com/lodash/lodash)|Minor|Low|Clone deep Objects|
 |[make-promises-safe](https://github.com/mcollina/make-promises-safe#readme)|⚠️Major|Medium|Force Node.js [DEP00018](https://nodejs.org/dist/latest-v8.x/docs/api/deprecations.html#deprecations_dep0018_unhandled_promise_rejections)|
 |[ms](https://github.com/zeit/ms#readme)|Minor|Low|Convert various time formats to milliseconds.|
-|[premove](https://github.com/lukeed/premove#readme)|Minor|Low|Light rm -rf implementation for Node.js|
 |[qoa](https://github.com/klaussinani/qoa#readme)|⚠️Major|Low|Interactive CLI prompt|
 |[sade](https://github.com/lukeed/sade#readme)|Minor|High|Sade is a small but powerful tool for building command-line interface (CLI)|
 |[yn](https://github.com/sindresorhus/yn#readme)|Minor|Low|TBC|

@@ -1,14 +1,13 @@
 "use strict";
 
 // Require Node.js Dependencies
-const { readFile, access, readdir } = require("fs").promises;
+const { readFile, access, readdir, rmdir } = require("fs").promises;
 const { join } = require("path");
 
 // Require Third-party Dependencies
 const { white, cyan, yellow } = require("kleur");
 const prettyStack = require("@slimio/pretty-stack");
 const qoa = require("qoa");
-const premove = require("premove");
 
 // Require Internal Dependencies
 const { checkBeInAgentOrSubDir } = require("../src/utils");
@@ -39,7 +38,7 @@ async function debug(clearFiles) {
 
     if (clearFiles) {
         console.log(yellow().bold("\n > Removing all dump files in debug directory"));
-        await premove(debugDir);
+        await rmdir(debugDir, { recursive: true });
 
         return;
     }
