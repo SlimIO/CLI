@@ -6,7 +6,7 @@ const { writeFile } = require("fs").promises;
 // Require Third-party Dependencies
 const qoa = require("qoa");
 const { grey, yellow, white, red, cyan } = require("kleur");
-const jsonDiff = require("json-diff");
+const jsonDiff = require("@slimio/json-diff");
 const cloneDeep = require("lodash.clonedeep");
 
 // Require Internal Dependencies
@@ -60,7 +60,7 @@ async function activeSwitch(ctx, switcher = false) {
         Reflect.set(ctx.agentConfig[addon], "active", switcher);
     }
 
-    console.log(grey().bold(jsonDiff.diffString(agentBeforeUpdate, ctx.agentConfig)));
+    jsonDiff(agentBeforeUpdate, ctx.agentConfig);
     await writeFile("agent.json", JSON.stringify({ addons: ctx.agentConfig }, null, 4));
     console.log("");
 }

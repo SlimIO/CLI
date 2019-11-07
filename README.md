@@ -55,13 +55,16 @@ A complete CLI API is available on the [Governance](https://github.com/SlimIO/Go
 |[@slimio/addon-factory](https://github.com/SlimIO/AddonFactory#readme)|Minor|Low|Programmatically generate a SlimIO Addon|
 |[@slimio/async-cli-spinner](https://github.com/SlimIO/async-cli-spinner#readme)|Minor|Low|Elegant Asynchronous Terminal (CLI) Spinner for Node.js|
 |[@slimio/bundler](https://github.com/SlimIO/Bundler#readme)|Minor|High|Core & Addons Archives bundler|
+|[@slimio/config](https://github.com/SlimIO/Config)|Minor|High|Reactive and safe JSON Configuration loaded|
 |[@slimio/core](https://github.com/SlimIO/Core#readme)|Minor|High|SlimIO Core|
-|[@slimio/github](https://github.com/SlimIO/github-download#readme)|Minor|High|Download and extract github repository archive.|
+|[@slimio/installer](https://github.com/SlimIO/agent-test-pack#readme)|Minor|High|TBC|
 |[@slimio/is](https://github.com/SlimIO/is)|Minor|Low|JavaScript Type checker|
+|[@slimio/json-diff](https://github.com/SlimIO/json-diff#readme)|Minor|High|TBC|
 |[@slimio/lazy](https://github.com/SlimIO/Lazy#readme)|Minor|Low|Lazy evaluation on JavaScript Objects|
 |[@slimio/lock](https://github.com/SlimIO/Lock#readme)|Minor|High|Node.js Semaphore for async/await|
 |[@slimio/manifest](https://github.com/SlimIO/Manifester#readme)|Minor|Low|Manage SlimIO manifest files|
 |[@slimio/pretty-json](https://github.com/SlimIO/Pretty-JSON#readme)|Minor|Low|Stdout beautified JSON in your terminal with colors|
+|[@slimio/pretty-stack](https://github.com/SlimIO/pretty-stack)|Minor|Low|prettify stack-trace to stdout in TTY|
 |[@slimio/stdin](https://github.com/SlimIO/stdin#readme)|Minor|Low|Interactive input crafted for REPL with history & auto-completion|
 |[@slimio/tcp-sdk](https://github.com/SlimIO/TCP-SDK#readme)|Minor|Low|Communicate to the Socket Addon with TCP/IP|
 |[@slimio/utils](https://github.com/SlimIO/Utils#readme)|Minor|Low|Bunch of useful functions|
@@ -77,6 +80,7 @@ A complete CLI API is available on the [Governance](https://github.com/SlimIO/Go
 |[premove](https://github.com/lukeed/premove#readme)|Minor|Low|Light rm -rf implementation for Node.js|
 |[qoa](https://github.com/klaussinani/qoa#readme)|⚠️Major|Low|Interactive CLI prompt|
 |[sade](https://github.com/lukeed/sade#readme)|Minor|High|Sade is a small but powerful tool for building command-line interface (CLI)|
+|[yn](https://github.com/sindresorhus/yn#readme)|Minor|Low|TBC|
 
 ## License
 

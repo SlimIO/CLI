@@ -8,7 +8,7 @@ const { readdir, access, readFile, writeFile } = require("fs").promises;
 // Require Third-party Dependencies
 const Config = require("@slimio/config");
 const { white, grey, red, yellow } = require("kleur");
-const jsonDiff = require("json-diff");
+const jsonDiff = require("@slimio/json-diff");
 const { CONSTANTS: { BUILT_IN_ADDONS } } = require("@slimio/installer");
 
 // CONSTANTS
@@ -89,7 +89,7 @@ async function writeToAgent(addonName, active = false) {
         }
         Object.assign(json.addons, addons);
 
-        console.log(grey().bold(jsonDiff.diffString(JSON.parse(str), json)));
+        jsonDiff(JSON.parse(str), json);
         await writeFile(agentConfig, JSON.stringify(json, null, 4));
     }
     else {
