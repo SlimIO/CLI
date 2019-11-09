@@ -17,7 +17,7 @@ const {
 } = require("@slimio/installer");
 
 // Require Internal Dependencies
-const { directoryMustNotExist, install } = require("../src/utils");
+const { directoryMustNotExist, install, cleanupAddonsList } = require("../src/utils");
 
 // CONSTANTS
 const ADDONS_SETS = new Map([
@@ -109,7 +109,7 @@ async function initAgent(init, options = Object.create(null)) {
     }
 
     const setAddons = ADDONS_SETS.has(set) ? ADDONS_SETS.get(set) : [];
-    const toInstall = [...new Set([...BUILT_IN_ADDONS, ...addons, ...setAddons])];
+    const toInstall = [...new Set([...BUILT_IN_ADDONS, ...cleanupAddonsList(addons), ...setAddons])];
     await Spinner.startAll([
         Spinner.create(installAgentDep, agentDir, verbose),
         ...toInstall.map((addonName) => Spinner.create(install, addonName, { dest: addonDir, verbose }))

@@ -12,7 +12,7 @@ const { get } = require("httpie");
 const stdin = require("@slimio/stdin");
 
 // Require Internal Dependencies
-const { install, checkBeInAgentOrSubDir } = require("../src/utils");
+const { install, checkBeInAgentOrSubDir, cleanupAddonsList } = require("../src/utils");
 const { writeToAgent } = require("../src/agent");
 
 /**
@@ -48,7 +48,7 @@ async function add(addons = [], options = {}) {
 
     const addonsChecked = [];
     const startTime = performance.now();
-    for (const addon of addons) {
+    for (const addon of cleanupAddonsList(addons)) {
         console.log(white().bold(`\n > Adding addon '${yellow().bold(addon)}'`));
         await createDirectory(join(process.cwd(), "addons"));
 

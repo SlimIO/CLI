@@ -154,10 +154,22 @@ function checkBeInAgentOrSubDir(depth = 1) {
     }
 }
 
+/**
+ * @function cleanupAddonsList
+ * @description cleanup a list of addons (remove double etc..).
+ * @memberof Utils#
+ * @param {string[]} [addons]
+ * @returns {string[]}
+ */
+function cleanupAddonsList(addons = []) {
+    return [...new Set(addons.map((name) => name.toLowerCase()))];
+}
+
 module.exports = Object.freeze({
     directoryMustNotExist,
     fileMustNotExist,
     install,
     checkBeInAgentDir,
-    checkBeInAgentOrSubDir
+    checkBeInAgentOrSubDir,
+    cleanupAddonsList
 });

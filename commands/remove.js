@@ -12,7 +12,7 @@ const { white, cyan, grey, yellow, green, red } = require("kleur");
 const qoa = require("qoa");
 
 // Require Internal Dependencies
-const { checkBeInAgentOrSubDir } = require("../src/utils");
+const { checkBeInAgentOrSubDir, cleanupAddonsList } = require("../src/utils");
 const { removeAddonsFromAgent, getLocalAddons } = require("../src/agent");
 
 // Config
@@ -90,7 +90,7 @@ async function remove(addons = [], options = {}) {
         console.log("");
     }
 
-    const result = await Promise.all(addons.map((name) => addonDirExist(name)));
+    const result = await Promise.all(cleanupAddonsList(addons).map((name) => addonDirExist(name)));
     const toRemove = result.filter((row) => row !== null);
 
     if (toRemove.length === 0) {
