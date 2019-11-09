@@ -9,6 +9,7 @@ const { performance } = require("perf_hooks");
 const Spinner = require("@slimio/async-cli-spinner");
 const levenshtein = require("fast-levenshtein");
 const { white, cyan, grey, yellow, green, red } = require("kleur");
+const qoa = require("qoa");
 
 // Require Internal Dependencies
 const { checkBeInAgentOrSubDir } = require("../src/utils");
@@ -61,9 +62,12 @@ async function addonDirExist(addonName) {
  * @async
  * @function remove
  * @param {string[]} [addons]
+ * @param {object} [options]
  * @returns {Promise<void>}
  */
-async function remove(addons = []) {
+async function remove(addons = [], options = {}) {
+    const { interactive = false } = options;
+
     try {
         checkBeInAgentOrSubDir();
     }
@@ -75,13 +79,23 @@ async function remove(addons = []) {
     }
     console.log("");
 
+    const localAddons = await getLocalAddons();
+    if (interactive) {
+        const { addon } = await qoa.interactive({
+            query: white().bold("which addon do you want to remove ?"),
+            handle: "addon",
+            menu: [...localAddons]
+        });
+        addons.push(addon);
+        console.log("");
+    }
+
     const result = await Promise.all(addons.map((name) => addonDirExist(name)));
     const toRemove = result.filter((row) => row !== null);
 
     if (toRemove.length === 0) {
         console.log(red().bold(" > Failed to found any addon(s) to remove"));
         const addonName = addons.shift();
-        const localAddons = await getLocalAddons();
 
         const isMatching = [];
         for (const item of localAddons) {

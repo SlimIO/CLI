@@ -8,6 +8,8 @@ const { performance } = require("perf_hooks");
 const { createDirectory } = require("@slimio/utils");
 const { white, yellow, red, grey, green } = require("kleur");
 const Spinner = require("@slimio/async-cli-spinner");
+const { get } = require("httpie");
+const stdin = require("@slimio/stdin");
 
 // Require Internal Dependencies
 const { install, checkBeInAgentOrSubDir } = require("../src/utils");
@@ -17,10 +19,13 @@ const { writeToAgent } = require("../src/agent");
  * @async
  * @function add
  * @param {string[]} [addons]
- * @param {boolean} [disabled=false]
+ * @param {object} [options]
+ * @param {boolean} [options.disabled=false]
  * @returns {Promise<void>}
  */
-async function add(addons = [], disabled = false) {
+async function add(addons = [], options = {}) {
+    const { disabled = false, interactive = false } = options;
+
     try {
         checkBeInAgentOrSubDir();
     }
@@ -29,6 +34,16 @@ async function add(addons = [], disabled = false) {
         console.log(grey().bold(` > ${yellow().bold(process.cwd())}`));
 
         return;
+    }
+
+    if (interactive) {
+        console.log("");
+        const { data } = await get("https://raw.githubusercontent.com/SlimIO/Governance/master/addons.json");
+        const autocomplete = JSON.parse(data);
+
+        const addonName = await stdin(grey().bold("Enter an addon name: "), { autocomplete });
+        addons.push(addonName);
+        console.log("");
     }
 
     const addonsChecked = [];
@@ -68,9 +83,9 @@ async function add(addons = [], disabled = false) {
         }
     }
 
-    const options = { dest: join(process.cwd(), "addons") };
+    const installOptions = { dest: join(process.cwd(), "addons") };
     const addonInstalled = await Spinner.startAll([
-        ...addonsChecked.map((addonName) => Spinner.create(install, addonName, options))
+        ...addonsChecked.map((addonName) => Spinner.create(install, addonName, installOptions))
     ], { recap: "error" });
 
     for (const addonName of addonInstalled.filter((addon) => addon !== undefined)) {

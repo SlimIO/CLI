@@ -28,12 +28,14 @@ prog
     .describe("Clone and install a complete SlimIO Agent")
     .option("-a, --add", "Additional addons to install in addition to the built-in")
     .option("-s, --set", "choose a given set of addons", null)
+    .option("-i, --interactive", "enable interactive mode", false)
     .example("init --add ihm,cpu-addon")
     .example("init myAgent")
-    .action(async(agentDirectoryName = "agent", { add, set }) => {
+    .action(async(agentDirectoryName = "agent", { add, set, interactive }) => {
         await commands.initAgent(agentDirectoryName, {
             addons: splitOnComma(add),
-            set
+            set,
+            interactive
         });
     });
 
@@ -42,16 +44,21 @@ prog
     .command("add [addons]")
     .describe("Add one or many addon(s) to the local agent (Addon are enabled by default).")
     .option("-d, --disabled", "Write addons as active: false in agent.json", false)
-    .action(async(addons, { disabled }) => {
-        await commands.add(splitOnComma(addons), Boolean(disabled));
+    .option("-i, --interactive", "enable interactive mode", false)
+    .action(async(addons, { disabled, interactive }) => {
+        await commands.add(splitOnComma(addons), {
+            disabled: Boolean(disabled),
+            interactive
+        });
     });
 
 // TODO: add alias rm, uninstall (when sade alias RFC land)
 prog
     .command("remove [addons]")
+    .option("-i, --interactive", "enable interactive mode", false)
     .describe("Remove one or many addons from the local agent (Erase them from the disk)")
-    .action(async(addons) => {
-        await commands.remove(splitOnComma(addons));
+    .action(async(addons, { interactive }) => {
+        await commands.remove(splitOnComma(addons), { interactive });
     });
 
 prog

@@ -114,7 +114,7 @@ async function removeAddonsFromAgent(agentFilePath, ...addons) {
     }
 
     console.log("");
-    console.log(grey().bold(jsonDiff.diffString(JSON.parse(str), config)));
+    jsonDiff(JSON.parse(str), config);
     await writeFile(agentFilePath, JSON.stringify(config, null, 4));
 }
 

@@ -53,6 +53,7 @@
         "cacache": "^13.0.1",
         "dotenv": "^8.1.0",
         "fast-levenshtein": "^2.0.6",
+        "httpie": "^1.1.2",
         "kleur": "^3.0.3",
         "lodash.clonedeep": "^4.5.0",
         "make-promises-safe": "^5.1.0",

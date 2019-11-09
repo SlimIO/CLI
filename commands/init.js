@@ -63,7 +63,7 @@ async function installAgentDep(agentDir, verbose = true) {
  * @returns {Promise<void>}
  */
 async function initAgent(init, options = Object.create(null)) {
-    const { addons = [], verbose = true, set } = options;
+    const { addons = [], verbose = true, set, interactive = false } = options;
 
     // Verify set
     if (typeof set === "string" && !ADDONS_SETS.has(set)) {
@@ -72,6 +72,10 @@ async function initAgent(init, options = Object.create(null)) {
         console.log(white().bold(` > Available sets are: ${sets}`));
 
         return;
+    }
+
+    if (interactive) {
+        throw new Error("Not Implemented Yet");
     }
 
     console.log(white().bold("\nInitialize and install a complete SlimIO Agent!"));
