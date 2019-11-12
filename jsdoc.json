@@ -23,7 +23,9 @@
             "commands/archive.js",
             "src/REPL.js",
             "src/utils.js",
-            "src/agent.js"
+            "src/agent.js",
+            "src/i18n/index.js",
+            "src/i18n/english.js"
         ],
         "exclude": [
             "node_modules",
