@@ -24,7 +24,7 @@
         "index.d.ts",
         "bin/index.js",
         "commands/*.js",
-        "src/*.js"
+        "src"
     ],
     "author": "SlimIO",
     "license": "MIT",
