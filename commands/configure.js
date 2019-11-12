@@ -123,7 +123,7 @@ CMD.addCommand("sync", "synchronize agent.json with the /addons directory", asyn
     }
     else {
         console.log("");
-        console.log(grey().bold(jsonDiff.diffString(agentBeforeUpdate, ctx.agentConfig)));
+        jsonDiff(agentBeforeUpdate, ctx.agentConfig);
         await writeFile("agent.json", JSON.stringify({ addons: ctx.agentConfig }, null, 4));
     }
 });

@@ -14,6 +14,7 @@ const stdin = require("@slimio/stdin");
 // Require Internal Dependencies
 const { install, checkBeInAgentOrSubDir, cleanupAddonsList } = require("../src/utils");
 const { writeToAgent } = require("../src/agent");
+const { getToken } = require("../src/i18n");
 
 /**
  * @async
@@ -30,7 +31,7 @@ async function add(addons = [], options = {}) {
         checkBeInAgentOrSubDir();
     }
     catch (err) {
-        console.log(grey().bold(`\n > ${red().bold("Current working dir as not been detected as a SlimIO Agent")}`));
+        console.log(grey().bold(`\n > ${red().bold(await getToken("workdir_not_agent"))}`));
         console.log(grey().bold(` > ${yellow().bold(process.cwd())}`));
 
         return;
@@ -41,7 +42,7 @@ async function add(addons = [], options = {}) {
         const { data } = await get("https://raw.githubusercontent.com/SlimIO/Governance/master/addons.json");
         const autocomplete = JSON.parse(data);
 
-        const addonName = await stdin(grey().bold("Enter an addon name: "), { autocomplete });
+        const addonName = await stdin(grey().bold(await getToken("enter_addon_name")), { autocomplete });
         addons.push(addonName);
         console.log("");
     }
@@ -49,8 +50,12 @@ async function add(addons = [], options = {}) {
     const addonsChecked = [];
     const startTime = performance.now();
     for (const addon of cleanupAddonsList(addons)) {
-        console.log(white().bold(`\n > Adding addon '${yellow().bold(addon)}'`));
+        const addToken = await getToken("adding_addon", yellow().bold(addon));
+        const slimioSupportedToken = await getToken("slimio_supported");
+
+        console.log(white().bold(`\n > ${addToken}`));
         await createDirectory(join(process.cwd(), "addons"));
+
 
         /** @type {URL} */
         let myurl;
@@ -64,16 +69,17 @@ async function add(addons = [], options = {}) {
 
             const [, orga, add] = myurl.pathname.split("/");
             if (orga !== "SlimIO") {
-                throw new Error("At this time, organisation must be SlimIO");
+                throw new Error(slimioSupportedToken);
             }
             addonsChecked.push(add);
         }
         catch (error) {
-            console.log(grey().bold("(!) Not detected as an URL.\n"));
+            console.log(grey().bold(await getToken("not_url")));
+            console.log("");
             if (addon.split("/").length === 2) {
                 const [orga, add] = addon.split("/");
                 if (orga !== "SlimIO") {
-                    throw new Error("At this time, organisation must be SlimIO");
+                    throw new Error(slimioSupportedToken);
                 }
                 addonsChecked.push(add);
             }
@@ -94,7 +100,9 @@ async function add(addons = [], options = {}) {
     }
 
     const executeTimeMs = (performance.now() - startTime) / 1000;
-    console.log(green().bold(`\nInstallation completed in ${yellow().bold(executeTimeMs.toFixed(2))} seconds`));
+    const completedToken = await getToken("installation_completed", yellow().bold(executeTimeMs.toFixed(2)));
+    console.log("");
+    console.log(green().bold(completedToken));
 }
 
 module.exports = add;
