@@ -29,13 +29,15 @@ prog
     .option("-a, --add", "Additional addons to install in addition to the built-in")
     .option("-s, --set", "choose a given set of addons", null)
     .option("-i, --interactive", "enable interactive mode", false)
+    .option("--nocache", "Disable cache for archives and force download from remote git", false)
     .example("init --add ihm,cpu-addon")
     .example("init myAgent")
-    .action(async(agentDirectoryName = "agent", { add, set, interactive }) => {
+    .action(async(agentDirectoryName = "agent", { add, set, interactive, nocache }) => {
         await commands.initAgent(agentDirectoryName, {
             addons: splitOnComma(add),
             set,
-            interactive
+            interactive,
+            nocache
         });
     });
 

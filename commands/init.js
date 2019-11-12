@@ -60,10 +60,11 @@ async function installAgentDep(agentDir, verbose = true) {
  * @param {string[]} [options.addons]
  * @param {null | string} [options.set]
  * @param {boolean} [options.verbose]
+ * @param {boolean} [options.nocache=false]
  * @returns {Promise<void>}
  */
 async function initAgent(init, options = Object.create(null)) {
-    const { addons = [], verbose = true, set, interactive = false } = options;
+    const { addons = [], verbose = true, set, interactive = false, nocache } = options;
 
     // Verify set
     if (typeof set === "string" && !ADDONS_SETS.has(set)) {
@@ -95,6 +96,7 @@ async function initAgent(init, options = Object.create(null)) {
     const startTime = performance.now();
     const agentDir = await extractAgent(process.cwd(), {
         name: init,
+        downloadFromRemote: nocache,
         token: process.env.GIT_TOKEN
     });
 
