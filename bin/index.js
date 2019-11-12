@@ -25,7 +25,7 @@ const prog = sade("slimio").version("0.3.0");
 
 prog
     .command("init [agentDirectoryName]")
-    .describe("Clone and install a complete SlimIO Agent")
+    .describe("Clone and install a complete SlimIO Agent.")
     .option("-a, --add", "Additional addons to install in addition to the built-in")
     .option("-s, --set", "choose a given set of addons", null)
     .option("-i, --interactive", "enable interactive mode", false)
@@ -56,14 +56,14 @@ prog
 prog
     .command("remove [addons]")
     .option("-i, --interactive", "enable interactive mode", false)
-    .describe("Remove one or many addons from the local agent (Erase them from the disk)")
+    .describe("Remove one or many addons from the local agent (Erase them from the disk).")
     .action(async(addons, { interactive }) => {
         await commands.remove(splitOnComma(addons), { interactive });
     });
 
 prog
     .command("create [type]")
-    .describe("Create/generate SlimIO files and addons")
+    .describe("Create and/or generate SlimIO files and addons.")
     .option("-n, --name", "Addon name (only when Addon type is Addon)")
     .action(async(type, opts) => {
         const config = {};
@@ -75,21 +75,21 @@ prog
 
 prog
     .command("build")
-    .describe("Build and compile an agent into an executable with Node.js bundled in it")
+    .describe("Build and compile an agent into an executable with Node.js bundled in it.")
     .action(async() => {
         await commands.build();
     });
 
 prog
     .command("archive [addonName]")
-    .describe("Create an addon archive")
+    .describe("Create an addon archive (useful to remotely deploy addons with Prism).")
     .action(async(addonName) => {
         await commands.archive(addonName);
     });
 
 prog
     .command("connect [agent]")
-    .describe("Connect to a local or remote running agent")
+    .describe("Connect to a local or remote SlimIO agent (must be started with the Socket built-in Addon).")
     .example("connect localhost:1433")
     .action(async(agent = "localhost:1337") => {
         const [host, port] = agent.split(":");
@@ -98,7 +98,7 @@ prog
 
 prog
     .command("config [cmd] [addon]")
-    .describe("Configure a local agent or a remote running agent")
+    .describe("Configure a local agent or a remote running agent.")
     .example("config enable ihm,cpu")
     .example("config sync")
     .action(async(cmd, addon) => {
@@ -107,7 +107,7 @@ prog
 
 prog
     .command("debug")
-    .describe("debug (navigate through local agent dump files)")
+    .describe("Debug local agent (navigate through local agent dump files)")
     .option("-c, --clear", "clear dump files", false)
     .action(async(options) => {
         await commands.debug(Boolean(options.clear));
@@ -115,14 +115,14 @@ prog
 
 prog
     .command("start")
-    .describe("start the local agent and enable/unlock advanced debug tools")
+    .describe("Start the local agent with advanced debugging and logging utilities.")
     .action(async() => {
         await commands.start();
     });
 
 prog
     .command("set <key> <value>")
-    .describe("Setup a new settings in the local cache")
+    .describe("Setup a new settings in the local cache.")
     .example("set json_tab 4")
     .example("set json_stdout on")
     .action(async(key, value) => {
