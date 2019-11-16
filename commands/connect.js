@@ -11,6 +11,7 @@ const { grey, yellow, white, red, cyan } = require("kleur");
 // Require Internal Dependencies
 const create = require("./create");
 const REPL = require("../src/REPL");
+const { getToken } = require("../src/i18n");
 
 // CONSTANTS
 const TCP_CONNECT_TIMEOUT_MS = 1000;
@@ -49,7 +50,7 @@ CMD.addCommand("reload", "reload a given addon", async({ client, args }) => {
     try {
         for (const addonName of args) {
             if (!activeAddons.has(addonName)) {
-                console.log(red().bold(`Unable to found any addon with name '${yellow().bold(addonName)}'`));
+                console.log(red().bold(await getToken("connect_addon_not_found", yellow().bold(addonName))));
                 continue;
             }
 
@@ -69,7 +70,7 @@ CMD.addCommand("reload", "reload a given addon", async({ client, args }) => {
                 await sleep(10);
             }
             await client.sendOne("gate.start_addon", addonName);
-            console.log(white().bold(`addon '${cyan().bold(addonName)}' succesfully restarted!`));
+            console.log(white().bold(await getToken("connect_addon_restarted", cyan().bold(addonName))));
         }
     }
     finally {
@@ -88,7 +89,7 @@ CMD.addCommand("addons", "Call an addon's callback", async({ client }) => {
     }
 
     const { addon } = await qoa.interactive({
-        query: "Choose an active addon",
+        query: await getToken("connect_choose_active_addon"),
         handle: "addon",
         menu
     });
@@ -96,7 +97,7 @@ CMD.addCommand("addons", "Call an addon's callback", async({ client }) => {
 
     const addonInfo = await tcpSendMessage(client, `${addon}.status`);
     const { callback } = await qoa.interactive({
-        query: "Choose a callback",
+        query: await getToken("connect_choose_callback"),
         handle: "callback",
         menu: addonInfo.callbacks
     });
@@ -107,7 +108,7 @@ CMD.addCommand("addons", "Call an addon's callback", async({ client }) => {
         CMD.stdout(callbackResult);
     }
     catch (err) {
-        console.log(red().bold(`${addon}.${callback} Error: ${err}`));
+        console.log(red().bold(await getToken("connect_error", addon, callback, err)));
     }
     console.log("");
 });
@@ -115,7 +116,7 @@ CMD.addCommand("addons", "Call an addon's callback", async({ client }) => {
 CMD.addCommand("callback", "trigger a callback yourself on the remote agent", async({ args, client }) => {
     const [target, ...rest] = args;
     if (typeof target === "undefined") {
-        console.log(red().bold(" > Callback target can't be undefined"));
+        console.log(red().bold(await getToken("connect_callback_target_undefined")));
 
         return void 0;
     }
@@ -174,7 +175,7 @@ async function connectAgent(options = Object.create(null)) {
         process.chdir(client.agent.location);
     }
 
-    console.log(white().bold(`\n > Connected on '${yellow().bold(host)}' agent !\n`));
+    console.log(white().bold(await getToken("connect_connected", yellow().bold(host))));
     await CMD.init(grey(`${host}:${port} > `), { client, autocomplete });
     client.close();
 }

@@ -14,6 +14,7 @@ const qoa = require("qoa");
 // Require Internal Dependencies
 const { checkBeInAgentOrSubDir, cleanupAddonsList } = require("../src/utils");
 const { removeAddonsFromAgent, getLocalAddons } = require("../src/agent");
+const { getToken } = require("../src/i18n");
 
 // Config
 Spinner.DEFAULT_SPINNER = "dots";
@@ -26,14 +27,14 @@ Spinner.DEFAULT_SPINNER = "dots";
  */
 async function removeAddon([name, dir]) {
     const spinner = new Spinner({
-        prefixText: white().bold(`Removing addon ${cyan().bold(name)}`)
+        prefixText: white().bold(await getToken("remove_remove_addon", cyan().bold(name)))
     }).start();
     const start = performance.now();
 
     try {
         await rmdir(dir, { recursive: true });
         const executionTimeMs = green().bold(`${(performance.now() - start).toFixed(2)}ms`);
-        spinner.succeed(white().bold(`Successfully removed addon in ${executionTimeMs}`));
+        spinner.succeed(white().bold(await getToken("remove_success", executionTimeMs)));
     }
     catch (err) {
         spinner.failed(err.message);
@@ -72,7 +73,7 @@ async function remove(addons = [], options = {}) {
         checkBeInAgentOrSubDir();
     }
     catch (err) {
-        console.log(grey().bold(`\n > ${red().bold("Current working dir as not been detected as a SlimIO Agent")}`));
+        console.log(grey().bold(`\n > ${red().bold(await getToken("remove_not_slimio"))}`));
         console.log(grey().bold(` > ${yellow().bold(process.cwd())}`));
 
         return;
@@ -82,7 +83,7 @@ async function remove(addons = [], options = {}) {
     const localAddons = await getLocalAddons();
     if (interactive) {
         const { addon } = await qoa.interactive({
-            query: white().bold("which addon do you want to remove ?"),
+            query: white().bold(await getToken("remove_remove_addon_ask")),
             handle: "addon",
             menu: [...localAddons]
         });
@@ -94,7 +95,7 @@ async function remove(addons = [], options = {}) {
     const toRemove = result.filter((row) => row !== null);
 
     if (toRemove.length === 0) {
-        console.log(red().bold(" > Failed to found any addon(s) to remove"));
+        console.log(red().bold(await getToken("remove_failed_remove")));
         const addonName = addons.shift();
 
         const isMatching = [];
@@ -106,7 +107,7 @@ async function remove(addons = [], options = {}) {
         }
         if (isMatching.length > 0) {
             const str = isMatching.map((row) => yellow().bold(row)).join(",");
-            console.log(white().bold(` > Did you mean: ${str} ?`));
+            console.log(white().bold(await getToken("remove_mean_question", str)));
         }
 
         return;

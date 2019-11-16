@@ -15,6 +15,7 @@ const { validate } = require("@slimio/validate-addon-name");
 // Require Internal Dependencies
 const { fileMustNotExist, checkBeInAgentOrSubDir } = require("../src/utils");
 const { writeToAgent } = require("../src/agent");
+const { getToken } = require("../src/i18n");
 
 // CONSTANTS
 const E_TYPES = new Set(["Addon", "Manifest"]);
@@ -28,7 +29,7 @@ const E_TYPES = new Set(["Addon", "Manifest"]);
  */
 async function generateAndLogAddon(name, path) {
     await (new AddonFactory(name)).generate(path);
-    console.log(white().bold(`\n > '${yellow().bold(name)}' addon generated at ${yellow().bold(path)}\n`));
+    console.log(white().bold(await getToken("create_generate_addon", yellow().bold(name), yellow().bold(path))));
 
     const str = await readFile(join(path, name, "index.js"), "utf-8");
     console.log(str);
@@ -44,7 +45,7 @@ async function generateAndLogAddon(name, path) {
 async function create(type, config = {}) {
     if (is.nullOrUndefined(type)) {
         const { createFile } = await qoa.interactive({
-            query: "What do you want to create ?",
+            query: await getToken("create_creating"),
             handle: "createFile",
             menu: ["Addon", "Manifest"]
         });
@@ -52,7 +53,7 @@ async function create(type, config = {}) {
         type = createFile;
     }
     if (!E_TYPES.has(type)) {
-        throw new Error(`Unknown type '${type}'`);
+        throw new Error(await getToken("create_error_type_not_found", type));
     }
 
     switch (type) {
@@ -64,16 +65,16 @@ async function create(type, config = {}) {
                 break;
             }
             const { addonName } = await qoa.input({
-                query: "Give a name for the Addon:",
+                query: await getToken("create_creating_name"),
                 handle: "addonName"
             });
 
             if (!validate(addonName)) {
-                throw new Error(`invalid addon name '${addonName}'`);
+                throw new Error(await getToken("create_invalid_addon_name", addonName));
             }
 
             const { register } = await qoa.confirm({
-                query: `Do you want to add '${addonName}' to the local agent.json ?`,
+                query: await getToken("create_add_addon", addonName),
                 handle: "register",
                 accept: "y"
             });
@@ -91,7 +92,7 @@ async function create(type, config = {}) {
             let tomlType = config.type;
             if (!Reflect.has(config, "type")) {
                 const res = await qoa.interactive({
-                    query: "Choose the project type",
+                    query: await getToken("create_project_type"),
                     handle: "type",
                     menu: [...Manifest.TYPES]
                 });
@@ -105,7 +106,7 @@ async function create(type, config = {}) {
             const options = { name: realName, version, type: tomlType };
             const path = join(process.cwd(), "slimio.toml");
             Manifest.create(options, path, true);
-            console.log(white().bold(`\n > slimio.toml Manifest created at ${yellow().bold(process.cwd())}\n`));
+            console.log(white().bold(await getToken("create_toml_created", yellow().bold(process.cwd()))));
 
             const str = await readFile(path, "utf-8");
             console.log(str);
