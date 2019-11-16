@@ -116,7 +116,8 @@ CMD.addCommand("addons", "Call an addon's callback", async({ client }) => {
 CMD.addCommand("callback", "trigger a callback yourself on the remote agent", async({ args, client }) => {
     const [target, ...rest] = args;
     if (typeof target === "undefined") {
-        console.log(red().bold(await getToken("connect_callback_target_undefined")));
+        const targetUndefinedToken = await getToken("connect_callback_target_undefined");
+        console.log(red().bold(` > ${targetUndefinedToken}`));
 
         return void 0;
     }
@@ -175,7 +176,8 @@ async function connectAgent(options = Object.create(null)) {
         process.chdir(client.agent.location);
     }
 
-    console.log(white().bold(await getToken("connect_connected", yellow().bold(host))));
+    const connectedToken = await getToken("connect_connected", yellow().bold(host));
+    console.log(white().bold(`\n > ${connectedToken}\n`));
     await CMD.init(grey(`${host}:${port} > `), { client, autocomplete });
     client.close();
 }

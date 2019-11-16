@@ -27,13 +27,13 @@ module.exports = {
     configure_workdir_not_agent: "Current working dir as not been detected as a SlimIO Agent",
 
     // eslint-disable-next-line id-length
-    connect_callback_target_undefined: " > Callback target can't be undefined",
+    connect_callback_target_undefined: "Callback target can't be undefined",
     connect_addon_not_found: taggedString`Unable to found any addon with name '${0}'`,
     connect_addon_restarted: taggedString`addon '${0}' succesfully restarted!`,
     connect_choose_active_addon: "Choose an active addon",
     connect_choose_callback: "Choose a callback",
     connect_error: taggedString`${0}.${1} Error: ${2}`,
-    connect_connected: taggedString`\n > Connected on '${0}' agent !\n`,
+    connect_connected: taggedString`Connected on '${0}' agent !`,
 
     create_generate_addon: taggedString`\n > '${0}' addon generated at ${1}\n`,
     create_creating: "What do you want to create ?",
@@ -67,8 +67,8 @@ module.exports = {
     remove_success: taggedString`Successfully removed addon in ${0}`,
     remove_not_slimio: "Current working dir as not been detected as a SlimIO Agent",
     remove_remove_addon_ask: "which addon do you want to remove ?",
-    remove_failed_remove: " > Failed to found any addon(s) to remove",
-    remove_mean_question: taggedString` > Did you mean: ${0} ?`,
+    remove_failed_remove: "Failed to found any addon(s) to remove",
+    remove_mean_question: taggedString`Did you mean: ${0} ?`,
 
-    start_starting: taggedString`\n > Starting SlimIO Agent with the CLI at: ${0}\n`
+    start_starting: taggedString`Starting SlimIO Agent with the CLI at: ${0}`
 };

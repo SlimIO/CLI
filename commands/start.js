@@ -16,7 +16,10 @@ const { getToken } = require("../src/i18n");
 async function start() {
     checkBeInAgentDir();
     const cwd = process.cwd();
-    console.log(white().bold(await getToken("start_starting", cyan().bold(cwd))));
+    {
+        const startingToken = await getToken("start_starting", cyan().bold(cwd));
+        console.log(white().bold(`\n > ${startingToken}\n`));
+    }
 
     const core = await (new Core(cwd, {
         silent: false,

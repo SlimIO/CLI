@@ -95,7 +95,7 @@ async function remove(addons = [], options = {}) {
     const toRemove = result.filter((row) => row !== null);
 
     if (toRemove.length === 0) {
-        console.log(red().bold(await getToken("remove_failed_remove")));
+        console.log(red().bold(` > ${await getToken("remove_failed_remove")}`));
         const addonName = addons.shift();
 
         const isMatching = [];
@@ -107,7 +107,8 @@ async function remove(addons = [], options = {}) {
         }
         if (isMatching.length > 0) {
             const str = isMatching.map((row) => yellow().bold(row)).join(",");
-            console.log(white().bold(await getToken("remove_mean_question", str)));
+            const removeToken = await getToken("remove_mean_question", str);
+            console.log(white().bold(` > ${removeToken}`));
         }
 
         return;
