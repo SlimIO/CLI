@@ -20,10 +20,9 @@
         "monitoring"
     ],
     "files": [
-        "index.ts",
         "index.d.ts",
         "bin/index.js",
-        "commands/*.js",
+        "commands",
         "src"
     ],
     "author": "SlimIO",
