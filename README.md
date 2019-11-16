@@ -5,7 +5,8 @@
 ![dep](https://img.shields.io/david/SlimIO/CLI)
 ![size](https://img.shields.io/github/languages/code-size/SlimIO/CLI)
 ![Known Vulnerabilities](https://img.shields.io/snyk/vulnerabilities/npm/@slimio/cli)
-[![Build Status](https://travis-ci.com/SlimIO/CLI.svg?branch=master)](https://travis-ci.com/SlimIO/CLI) [![Greenkeeper badge](https://badges.greenkeeper.io/SlimIO/CLI.svg)](https://greenkeeper.io/)
+[![Build Status](https://travis-ci.com/SlimIO/CLI.svg?branch=master)](https://travis-ci.com/SlimIO/CLI)
+[![Greenkeeper badge](https://badges.greenkeeper.io/SlimIO/CLI.svg)](https://greenkeeper.io/)
 
 SlimIO Command Line Interface. This tool has been created to help Developer and Integrator to work, design and scale the product easily.
 
