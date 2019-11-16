@@ -13,6 +13,7 @@ const { red, yellow, white, cyan } = require("kleur");
 // Require Internal Dependencies
 const { checkBeInAgentOrSubDir, checkBeInAgentDir } = require("../src/utils");
 const { getLocalAddons } = require("../src/agent");
+const { getToken } = require("../src/i18n");
 
 /**
  * @async
@@ -27,7 +28,7 @@ async function createAddonArchive(cwd, dest, addonName) {
     const location = await bundler.generateAddonArchive(cwd, { dest });
 
     console.log(
-        white().bold(`Successfully created ${cyan().bold(addonName)} addon archive at '${yellow().bold(location)}'`)
+        white().bold(await getToken("archive_creating_success", cyan().bold(addonName), yellow().bold(location)))
     );
 }
 
@@ -51,14 +52,14 @@ async function archive(addon) {
 
     const { type, name } = Manifest.open();
     if (type !== "Addon" && name !== "agent") {
-        console.log(red().bold("Current working dir as not been detected as an Addon!"));
+        console.log(red().bold(await getToken("archive_workdir_not_addon")));
         process.exit(0);
     }
 
     if (name === "agent") {
         const localAddons = await getLocalAddons();
         const { addonName } = await qoa.interactive({
-            query: "For which addon(s) do you want to generate an archive ?",
+            query: await getToken("archive_addon_archive"),
             handle: "addonName",
             menu: [...localAddons]
         });

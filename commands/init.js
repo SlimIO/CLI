@@ -18,6 +18,7 @@ const {
 
 // Require Internal Dependencies
 const { directoryMustNotExist, install, cleanupAddonsList } = require("../src/utils");
+const { getToken } = require("../src/i18n");
 
 // CONSTANTS
 const ADDONS_SETS = new Map([
@@ -37,7 +38,7 @@ Spinner.DEFAULT_SPINNER = process.platform === "win32" ? "line" : "dots";
 async function installAgentDep(agentDir, verbose = true) {
     const spinner = new Spinner({
         prefixText: cyan().bold("Agent"), verbose
-    }).start(white().bold("Install dependencies"));
+    }).start(white().bold(await getToken("init_install_deps")));
 
     try {
         await new Promise((resolve, reject) => {
@@ -45,7 +46,7 @@ async function installAgentDep(agentDir, verbose = true) {
             subProcess.once("close", resolve);
             subProcess.once("error", reject);
         });
-        spinner.succeed(green().bold("done!"));
+        spinner.succeed(green().bold(await getToken("init_install_done")));
     }
     catch (error) {
         spinner.failed(error.message);
@@ -68,20 +69,20 @@ async function initAgent(init, options = Object.create(null)) {
 
     // Verify set
     if (typeof set === "string" && !ADDONS_SETS.has(set)) {
-        console.log(grey().bold(`\n > ${red().bold(`Unknown addon set with name '${set}'`)}`));
+        console.log(grey().bold(`\n > ${red().bold(await getToken("init_unknow", set))}`));
         const sets = [...ADDONS_SETS.keys()].map((name) => yellow().bold(name)).join(",");
-        console.log(white().bold(` > Available sets are: ${sets}`));
+        console.log(white().bold(await getToken("init_available", sets)));
 
         return;
     }
 
     if (interactive) {
-        throw new Error("Not Implemented Yet");
+        throw new Error(await getToken("init_error_not_implemented"));
     }
 
-    console.log(white().bold("\nInitialize and install a complete SlimIO Agent!"));
+    console.log(white().bold(await getToken("init_full_initialize")));
     console.log(grey().bold("-----------------------------------------------"));
-    strictEqual(init.length !== 0, true, new Error("directoryName length must be 1 or more"));
+    strictEqual(init.length !== 0, true, new Error(await getToken("init_error_directory")));
 
     try {
         await directoryMustNotExist(init);
@@ -106,8 +107,8 @@ async function initAgent(init, options = Object.create(null)) {
 
     if (addons.length > 0) {
         const addonsList = addons.map((name) => yellow().bold(name)).join(",");
-        console.log(`${red().bold("!! Warning")} Additional addon(s) requested: ${addonsList}`);
-        console.log(grey().bold("-----------------------------------------------"));
+        console.log(await getToken("init_additional_addon", red().bold("!! Warning"), addonsList));
+        console.log(grey().bold(await getToken("init_separator")));
     }
 
     const setAddons = ADDONS_SETS.has(set) ? ADDONS_SETS.get(set) : [];
@@ -118,8 +119,8 @@ async function initAgent(init, options = Object.create(null)) {
     ], { recap: "error" });
 
     const executeTimeMs = ms(performance.now() - startTime, { long: true });
-    console.log(grey().bold("-----------------------------------------------"));
-    console.log(white().bold(`Installation completed in ${green().bold(executeTimeMs)}`));
+    console.log(grey().bold(await getToken("init_separator")));
+    console.log(white().bold(await getToken("init_completed", green().bold(executeTimeMs))));
 
     // Write agent.json
     const localConfig = { addons: {} };
@@ -128,8 +129,8 @@ async function initAgent(init, options = Object.create(null)) {
     }
     await writeFile(join(agentDir, "agent.json"), JSON.stringify(localConfig, null, 4));
 
-    console.log(yellow().bold(`\nAgent successfully installed at: ${cyan().bold(agentDir)}`));
-    console.log(grey().bold(`$ cd ${init}\n`));
+    console.log(yellow().bold(await getToken("init_success", cyan().bold(agentDir))));
+    console.log(grey().bold(await getToken("init_cd", init)));
 }
 
 module.exports = initAgent;

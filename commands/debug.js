@@ -11,6 +11,7 @@ const qoa = require("qoa");
 
 // Require Internal Dependencies
 const { checkBeInAgentOrSubDir } = require("../src/utils");
+const { getToken } = require("../src/i18n");
 
 /**
  * @async
@@ -27,17 +28,17 @@ async function debug(clearFiles) {
         await access(debugDir);
         files = await readdir(debugDir, { withFileTypes: true });
         if (files.filter((dirent) => dirent.isFile()).length === 0) {
-            throw new Error("no dump");
+            throw new Error(await getToken("debug_error_dump_not_found"));
         }
     }
     catch (err) {
-        console.log(white().bold("\n > No dump (debug dir) detected"));
+        console.log(white().bold(await getToken("debug_dump_not_detected")));
 
         return;
     }
 
     if (clearFiles) {
-        console.log(yellow().bold("\n > Removing all dump files in debug directory"));
+        console.log(yellow().bold(await getToken("debug_removing_dump")));
         await rmdir(debugDir, { recursive: true });
 
         return;
@@ -49,7 +50,7 @@ async function debug(clearFiles) {
             continue;
         }
         const fullPath = join(debugDir, dirent.name);
-        console.log(`\ndump file: ${cyan().bold(fullPath)}`);
+        console.log(await getToken("debug_display_dump", cyan().bold(fullPath)));
         const str = await readFile(fullPath, "utf-8");
         const dumpJson = JSON.parse(str);
         prettyStack(dumpJson.stack, false);
@@ -58,7 +59,7 @@ async function debug(clearFiles) {
             break;
         }
         const { goNext } = await qoa.confirm({
-            query: yellow().bold("do you want to continue to the next dump ?"),
+            query: yellow().bold(await getToken("debug_next_question")),
             handle: "goNext",
             accept: "y"
         });

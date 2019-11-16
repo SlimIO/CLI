@@ -6,6 +6,7 @@ const { white, cyan } = require("kleur");
 
 // Require Internal Dependencies
 const { checkBeInAgentDir } = require("../src/utils");
+const { getToken } = require("../src/i18n");
 
 /**
  * @async
@@ -15,7 +16,7 @@ const { checkBeInAgentDir } = require("../src/utils");
 async function start() {
     checkBeInAgentDir();
     const cwd = process.cwd();
-    console.log(white().bold(`\n > Starting SlimIO Agent with the CLI at: ${cyan().bold(cwd)}\n`));
+    console.log(white().bold(await getToken("start_starting", cyan().bold(cwd))));
 
     const core = await (new Core(cwd, {
         silent: false,
