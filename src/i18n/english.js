@@ -16,7 +16,7 @@ module.exports = {
     archive_creating_success: taggedString`Successfully created ${0} addon archive at '${1}'`,
     archive_addon_archive: "For which addon(s) do you want to generate an archive ?",
 
-    build_generate_core: taggedString`\nCore succesfully generated at: ${0}`,
+    build_generate_core: taggedString`Core succesfully generated at: ${0}`,
 
     configure_unable_addon: taggedString` > Unable to found '${0}' addon`,
     configure_choose_addon: "Choose one addon on the below list",

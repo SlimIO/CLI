@@ -19,11 +19,14 @@ const { getToken } = require("../src/i18n");
 async function build() {
     checkBeInAgentDir();
 
+    console.log("");
     const location = await bundler.generateCoreExecutable(process.cwd(), {
         debug: true,
         cwd: join(process.cwd(), "build")
     });
-    console.log(white().bold(await getToken("build_generate_core", yellow().bold(location))));
+
+    const buildToken = await getToken("build_generate_core", yellow().bold(location));
+    console.log(white().bold(`\n${buildToken}`));
 }
 
 module.exports = build;
