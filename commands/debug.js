@@ -28,17 +28,17 @@ async function debug(clearFiles) {
         await access(debugDir);
         files = await readdir(debugDir, { withFileTypes: true });
         if (files.filter((dirent) => dirent.isFile()).length === 0) {
-            throw new Error(await getToken("debug_error_dump_not_found"));
+            throw new Error(getToken("debug_error_dump_not_found"));
         }
     }
     catch (err) {
-        console.log(white().bold(await getToken("debug_dump_not_detected")));
+        console.log(white().bold(getToken("debug_dump_not_detected")));
 
         return;
     }
 
     if (clearFiles) {
-        console.log(yellow().bold(await getToken("debug_removing_dump")));
+        console.log(yellow().bold(getToken("debug_removing_dump")));
         await rmdir(debugDir, { recursive: true });
 
         return;
@@ -50,7 +50,7 @@ async function debug(clearFiles) {
             continue;
         }
         const fullPath = join(debugDir, dirent.name);
-        console.log(await getToken("debug_display_dump", cyan().bold(fullPath)));
+        console.log(getToken("debug_display_dump", cyan().bold(fullPath)));
         const str = await readFile(fullPath, "utf-8");
         const dumpJson = JSON.parse(str);
         prettyStack(dumpJson.stack, false);
@@ -59,7 +59,7 @@ async function debug(clearFiles) {
             break;
         }
         const { goNext } = await qoa.confirm({
-            query: yellow().bold(await getToken("debug_next_question")),
+            query: yellow().bold(getToken("debug_next_question")),
             handle: "goNext",
             accept: "y"
         });

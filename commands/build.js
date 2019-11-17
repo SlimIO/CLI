@@ -25,7 +25,7 @@ async function build() {
         cwd: join(process.cwd(), "build")
     });
 
-    const buildToken = await getToken("build_generate_core", yellow().bold(location));
+    const buildToken = getToken("build_generate_core", yellow().bold(location));
     console.log(white().bold(`\n${buildToken}`));
 }
 

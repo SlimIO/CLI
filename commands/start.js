@@ -17,7 +17,7 @@ async function start() {
     checkBeInAgentDir();
     const cwd = process.cwd();
     {
-        const startingToken = await getToken("start_starting", cyan().bold(cwd));
+        const startingToken = getToken("start_starting", cyan().bold(cwd));
         console.log(white().bold(`\n > ${startingToken}\n`));
     }
 

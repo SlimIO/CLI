@@ -29,7 +29,7 @@ async function splitAddons(ctx) {
         return addons.filter(async(addon) => {
             const exist = ctx.localAddons.has(addon) || ctx.addons.has(addon);
             if (!exist) {
-                console.log(red().bold(await getToken("configure_unable_addon", yellow().bold(addon))));
+                console.log(red().bold(getToken("configure_unable_addon", yellow().bold(addon))));
             }
 
             return exist;
@@ -38,7 +38,7 @@ async function splitAddons(ctx) {
 
     console.log("");
     const { addon } = await qoa.interactive({
-        query: yellow().bold(await getToken("configure_choose_addon")),
+        query: yellow().bold(getToken("configure_choose_addon")),
         handle: "addon",
         menu: [...ctx.localAddons]
     });
@@ -87,14 +87,14 @@ CMD.addCommand("sync", "synchronize agent.json with the /addons directory", asyn
             if (!ctx.localAddons.has(addon)) {
                 Reflect.deleteProperty(ctx.agentConfig, addon);
                 ctx.addons.delete(addon);
-                console.log(white().bold(await getToken("configure_removing_addon", cyan().bold(addon))));
+                console.log(white().bold(getToken("configure_removing_addon", cyan().bold(addon))));
                 udpateCount++;
             }
             else if (!ctx.addons.has(addon)) {
                 Reflect.set(ctx.agentConfig, addon, { active: false });
                 ctx.addons.add(addon);
                 console.log(white().bold(
-                    await getToken("configure_active_missing_addon", cyan().bold(addon), red().bold("false")))
+                    getToken("configure_active_missing_addon", cyan().bold(addon), red().bold("false")))
                 );
                 udpateCount++;
             }
@@ -106,7 +106,7 @@ CMD.addCommand("sync", "synchronize agent.json with the /addons directory", asyn
             if (!ctx.localAddons.has(addon)) {
                 Reflect.deleteProperty(ctx.agentConfig, addon);
                 ctx.addons.delete(addon);
-                console.log(white().bold(await getToken("configure_removing_addon", cyan().bold(addon))));
+                console.log(white().bold(getToken("configure_removing_addon", cyan().bold(addon))));
                 udpateCount++;
             }
         }
@@ -114,7 +114,7 @@ CMD.addCommand("sync", "synchronize agent.json with the /addons directory", asyn
             if (!ctx.addons.has(addon)) {
                 Reflect.set(ctx.agentConfig, addon, { active: false });
                 ctx.addons.add(addon);
-                console.log(white().bold(await getToken("configure_add_missing_addon", cyan().bold(addon))));
+                console.log(white().bold(getToken("configure_add_missing_addon", cyan().bold(addon))));
                 udpateCount++;
             }
         }
@@ -122,7 +122,7 @@ CMD.addCommand("sync", "synchronize agent.json with the /addons directory", asyn
 
     if (udpateCount === 0) {
         // TODO: remove the line before ?
-        console.log(white().bold(await getToken("configure_no_synchronization")));
+        console.log(white().bold(getToken("configure_no_synchronization")));
     }
     else {
         console.log("");
@@ -147,7 +147,7 @@ async function configure(cmd, addons = null) {
         checkBeInAgentOrSubDir();
     }
     catch (err) {
-        console.log(grey().bold(`\n > ${red().bold(await getToken("configure_workdir_not_agent"))}`));
+        console.log(grey().bold(`\n > ${red().bold(getToken("configure_workdir_not_agent"))}`));
         console.log(grey().bold(` > ${yellow().bold(process.cwd())}`));
 
         return;

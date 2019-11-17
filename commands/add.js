@@ -31,7 +31,7 @@ async function add(addons = [], options = {}) {
         checkBeInAgentOrSubDir();
     }
     catch (err) {
-        console.log(grey().bold(`\n > ${red().bold(await getToken("add_workdir_not_agent"))}`));
+        console.log(grey().bold(`\n > ${red().bold(getToken("add_workdir_not_agent"))}`));
         console.log(grey().bold(` > ${yellow().bold(process.cwd())}`));
 
         return;
@@ -42,7 +42,7 @@ async function add(addons = [], options = {}) {
         const { data } = await get("https://raw.githubusercontent.com/SlimIO/Governance/master/addons.json");
         const autocomplete = JSON.parse(data);
 
-        const addonName = await stdin(grey().bold(await getToken("add_addon_name")), { autocomplete });
+        const addonName = await stdin(grey().bold(getToken("add_addon_name")), { autocomplete });
         addons.push(addonName);
         console.log("");
     }
@@ -50,8 +50,8 @@ async function add(addons = [], options = {}) {
     const addonsChecked = [];
     const startTime = performance.now();
     for (const addon of cleanupAddonsList(addons)) {
-        const addToken = await getToken("add_adding_addon", yellow().bold(addon));
-        const slimioSupportedToken = await getToken("add_error_slimio_supported");
+        const addToken = getToken("add_adding_addon", yellow().bold(addon));
+        const slimioSupportedToken = getToken("add_error_slimio_supported");
 
         console.log(white().bold(`\n > ${addToken}`));
         await createDirectory(join(process.cwd(), "addons"));
@@ -64,7 +64,7 @@ async function add(addons = [], options = {}) {
             console.log("\n");
 
             if (myurl.host !== "github.com") {
-                throw new Error(await getToken("add_error_url_not_found"));
+                throw new Error(getToken("add_error_url_not_found"));
             }
 
             const [, orga, add] = myurl.pathname.split("/");
@@ -74,7 +74,7 @@ async function add(addons = [], options = {}) {
             addonsChecked.push(add);
         }
         catch (error) {
-            console.log(grey().bold(await getToken("add_not_url")));
+            console.log(grey().bold(getToken("add_not_url")));
             console.log("");
             if (addon.split("/").length === 2) {
                 const [orga, add] = addon.split("/");
@@ -100,7 +100,7 @@ async function add(addons = [], options = {}) {
     }
 
     const executeTimeMs = (performance.now() - startTime) / 1000;
-    const completedToken = await getToken("add_installation_completed", yellow().bold(executeTimeMs.toFixed(2)));
+    const completedToken = getToken("add_installation_completed", yellow().bold(executeTimeMs.toFixed(2)));
     console.log("");
     console.log(green().bold(completedToken));
 }

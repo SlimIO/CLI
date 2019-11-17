@@ -28,7 +28,7 @@ async function createAddonArchive(cwd, dest, addonName) {
     const location = await bundler.generateAddonArchive(cwd, { dest });
 
     console.log(
-        white().bold(await getToken("archive_creating_success", cyan().bold(addonName), yellow().bold(location)))
+        white().bold(getToken("archive_creating_success", cyan().bold(addonName), yellow().bold(location)))
     );
 }
 
@@ -52,14 +52,14 @@ async function archive(addon) {
 
     const { type, name } = Manifest.open();
     if (type !== "Addon" && name !== "agent") {
-        console.log(red().bold(await getToken("archive_workdir_not_addon")));
+        console.log(red().bold(getToken("archive_workdir_not_addon")));
         process.exit(0);
     }
 
     if (name === "agent") {
         const localAddons = await getLocalAddons();
         const { addonName } = await qoa.interactive({
-            query: await getToken("archive_addon_archive"),
+            query: getToken("archive_addon_archive"),
             handle: "addonName",
             menu: [...localAddons]
         });

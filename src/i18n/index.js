@@ -22,14 +22,14 @@ let localLang = DEFAULT_LANG;
  * @function getLocalLang
  * @returns {string}
  */
-async function getLocalLang() {
+function getLocalLang() {
     if (LANG_UPDATED) {
         try {
-            const { data } = await cacache.get(CACHE_PATH, "cli-lang");
+            const { data } = cacache.get.sync(CACHE_PATH, "cli-lang");
             localLang = data.toString();
         }
         catch (error) {
-            await cacache.put(CACHE_PATH, "cli-lang", DEFAULT_LANG);
+            cacache.put(CACHE_PATH, "cli-lang", DEFAULT_LANG);
             localLang = DEFAULT_LANG;
         }
         LANG_UPDATED = false;
@@ -39,7 +39,6 @@ async function getLocalLang() {
 }
 
 /**
- * @async
  * @function getToken
  * @param {string} token lang token
  * @param {any[]} params
@@ -47,12 +46,12 @@ async function getLocalLang() {
  *
  * @throws {TypeError}
  */
-async function getToken(token, ...params) {
+function getToken(token, ...params) {
     if (typeof token !== "string") {
         throw new TypeError("token must be a string");
     }
 
-    const lang = await getLocalLang();
+    const lang = getLocalLang();
     if (!Reflect.has(TOKENS, lang)) {
         return `Invalid i18n lang -> ${lang}`;
     }

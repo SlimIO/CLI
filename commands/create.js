@@ -29,7 +29,7 @@ const E_TYPES = new Set(["Addon", "Manifest"]);
  */
 async function generateAndLogAddon(name, path) {
     await (new AddonFactory(name)).generate(path);
-    console.log(white().bold(await getToken("create_generate_addon", yellow().bold(name), yellow().bold(path))));
+    console.log(white().bold(getToken("create_generate_addon", yellow().bold(name), yellow().bold(path))));
 
     const str = await readFile(join(path, name, "index.js"), "utf-8");
     console.log(str);
@@ -45,7 +45,7 @@ async function generateAndLogAddon(name, path) {
 async function create(type, config = {}) {
     if (is.nullOrUndefined(type)) {
         const { createFile } = await qoa.interactive({
-            query: await getToken("create_creating"),
+            query: getToken("create_creating"),
             handle: "createFile",
             menu: ["Addon", "Manifest"]
         });
@@ -53,7 +53,7 @@ async function create(type, config = {}) {
         type = createFile;
     }
     if (!E_TYPES.has(type)) {
-        throw new Error(await getToken("create_error_type_not_found", type));
+        throw new Error(getToken("create_error_type_not_found", type));
     }
 
     switch (type) {
@@ -65,16 +65,16 @@ async function create(type, config = {}) {
                 break;
             }
             const { addonName } = await qoa.input({
-                query: await getToken("create_creating_name"),
+                query: getToken("create_creating_name"),
                 handle: "addonName"
             });
 
             if (!validate(addonName)) {
-                throw new Error(await getToken("create_invalid_addon_name", addonName));
+                throw new Error(getToken("create_invalid_addon_name", addonName));
             }
 
             const { register } = await qoa.confirm({
-                query: await getToken("create_add_addon", addonName),
+                query: getToken("create_add_addon", addonName),
                 handle: "register",
                 accept: "y"
             });
@@ -92,7 +92,7 @@ async function create(type, config = {}) {
             let tomlType = config.type;
             if (!Reflect.has(config, "type")) {
                 const res = await qoa.interactive({
-                    query: await getToken("create_project_type"),
+                    query: getToken("create_project_type"),
                     handle: "type",
                     menu: [...Manifest.TYPES]
                 });
@@ -106,7 +106,7 @@ async function create(type, config = {}) {
             const options = { name: realName, version, type: tomlType };
             const path = join(process.cwd(), "slimio.toml");
             Manifest.create(options, path, true);
-            console.log(white().bold(await getToken("create_toml_created", yellow().bold(process.cwd()))));
+            console.log(white().bold(getToken("create_toml_created", yellow().bold(process.cwd()))));
 
             const str = await readFile(path, "utf-8");
             console.log(str);
