@@ -80,7 +80,7 @@ async function initAgent(init, options = Object.create(null)) {
         throw new Error(getToken("init_error_not_implemented"));
     }
 
-    console.log(white().bold(getToken("init_full_initialize")));
+    console.log(white().bold(`\n${getToken("init_full_initialize")}`));
     console.log(grey().bold("-----------------------------------------------"));
     strictEqual(init.length !== 0, true, new Error(getToken("init_error_directory")));
 
@@ -129,8 +129,9 @@ async function initAgent(init, options = Object.create(null)) {
     }
     await writeFile(join(agentDir, "agent.json"), JSON.stringify(localConfig, null, 4));
 
-    console.log(yellow().bold(getToken("init_success", cyan().bold(agentDir))));
-    console.log(grey().bold(getToken("init_cd", init)));
+    const initSuccessToken = getToken("init_success", cyan().bold(agentDir));
+    console.log(yellow().bold(`\n${initSuccessToken}`));
+    console.log(grey().bold(`${getToken("init_cd", init)}\n`));
 }
 
 module.exports = initAgent;

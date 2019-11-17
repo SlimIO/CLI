@@ -29,7 +29,8 @@ const E_TYPES = new Set(["Addon", "Manifest"]);
  */
 async function generateAndLogAddon(name, path) {
     await (new AddonFactory(name)).generate(path);
-    console.log(white().bold(getToken("create_generate_addon", yellow().bold(name), yellow().bold(path))));
+    const generatedToken = getToken("create_generate_addon", yellow().bold(name), yellow().bold(path));
+    console.log(white().bold(`\n > ${generatedToken}\n`));
 
     const str = await readFile(join(path, name, "index.js"), "utf-8");
     console.log(str);
@@ -106,7 +107,8 @@ async function create(type, config = {}) {
             const options = { name: realName, version, type: tomlType };
             const path = join(process.cwd(), "slimio.toml");
             Manifest.create(options, path, true);
-            console.log(white().bold(getToken("create_toml_created", yellow().bold(process.cwd()))));
+            const createToken = getToken("create_toml_created", yellow().bold(process.cwd()));
+            console.log(white().bold(`\n > ${createToken}\n`));
 
             const str = await readFile(path, "utf-8");
             console.log(str);
