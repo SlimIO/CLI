@@ -2,6 +2,7 @@
 
 // Require Third-party Depedencies
 const cacache = require("cacache");
+const is = require("@slimio/is");
 const get = require("lodash.get");
 
 // CONSTANTS
@@ -56,10 +57,10 @@ function getToken(token, ...params) {
         return `Invalid i18n lang -> ${lang}`;
     }
 
-    if (!Reflect.has(TOKENS[lang], token)) {
+    const langToken = get(TOKENS[lang], token);
+    if (is.nullOrUndefined(langToken)) {
         return `Invalid i18n token -> ${token} for lang -> ${lang}`;
     }
-    const langToken = get(TOKENS[lang], token);
 
     return params.length === 0 ? langToken : langToken(...params);
 }

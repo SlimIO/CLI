@@ -12,11 +12,12 @@ const { red, yellow, white, green, cyan, grey } = require("kleur");
 const prettyJSON = require("@slimio/pretty-json");
 
 // Require Internal Dependencies
+const { getToken } = require("../src/i18n");
 const commands = require("../commands");
 
 // CONSTANTS
 const CACHE_PATH = "/tmp/slimio-cli";
-const SETTINGS_KEYS = new Set(["json_tab", "json_stdout"]);
+const SETTINGS_KEYS = new Set(["json_tab", "json_stdout", "cli-lang"]);
 
 // eslint-disable-next-line
 const splitOnComma = (arg) => typeof arg === "string" ? arg.split(",") : [];
@@ -25,13 +26,14 @@ const prog = sade("slimio").version("0.4.0");
 
 prog
     .command("init [agentDirectoryName]")
-    .describe("Clone and install a complete SlimIO Agent.")
-    .option("-a, --add", "Additional addons to install in addition to the built-in")
-    .option("-s, --set", "choose a given set of addons", null)
-    .option("-i, --interactive", "enable interactive mode", false)
-    .option("--nocache", "Disable cache for archives and force download from remote git", false)
+    .describe(getToken("binary.init_description"))
+    .option("-a, --add", getToken("binary.init_opt_add"))
+    .option("-s, --set", getToken("binary.init_opt_set"), null)
+    .option("-i, --interactive", getToken("binary.opt_interactive"), false)
+    .option("--nocache", getToken("binary.init_opt_nocache"), false)
     .example("init --add ihm,cpu-addon")
-    .example("init myAgent")
+    .example("init --set metrology")
+    .example("init SlimIOAgent")
     .action(async(agentDirectoryName = "agent", { add, set, interactive, nocache }) => {
         await commands.initAgent(agentDirectoryName, {
             addons: splitOnComma(add),
@@ -44,9 +46,11 @@ prog
 // TODO: add alias install (when sade alias RFC land)
 prog
     .command("add [addons]")
-    .describe("Add one or many addon(s) to the local agent (Addon are enabled by default).")
-    .option("-d, --disabled", "Write addons as active: false in agent.json", false)
-    .option("-i, --interactive", "enable interactive mode", false)
+    .describe(getToken("binary.add_description"))
+    .option("-d, --disabled", getToken("binary.add_opt_disabled"), false)
+    .option("-i, --interactive", getToken("binary.opt_interactive"), false)
+    .example("add ihm,prism")
+    .example("add --interactive --disabled")
     .action(async(addons, { disabled, interactive }) => {
         await commands.add(splitOnComma(addons), {
             disabled: Boolean(disabled),
@@ -57,16 +61,18 @@ prog
 // TODO: add alias rm, uninstall (when sade alias RFC land)
 prog
     .command("remove [addons]")
-    .option("-i, --interactive", "enable interactive mode", false)
-    .describe("Remove one or many addons from the local agent (Erase them from the disk).")
+    .describe(getToken("binary.remove_description"))
+    .option("-i, --interactive", getToken("binary.opt_interactive"), false)
+    .example("remove ihm")
     .action(async(addons, { interactive }) => {
         await commands.remove(splitOnComma(addons), { interactive });
     });
 
 prog
     .command("create [type]")
-    .describe("Create and/or generate SlimIO files and addons.")
-    .option("-n, --name", "Addon name (only when Addon type is Addon)")
+    .describe(getToken("binary.create_description"))
+    .option("-n, --name", getToken("binary.create_opt_name"))
+    .example("create --name myFirstAddon")
     .action(async(type, opts) => {
         const config = {};
         if (typeof opts.name === "string") {
@@ -77,21 +83,21 @@ prog
 
 prog
     .command("build")
-    .describe("Build and compile an agent into an executable with Node.js bundled in it.")
+    .describe(getToken("binary.build_description"))
     .action(async() => {
         await commands.build();
     });
 
 prog
     .command("archive [addonName]")
-    .describe("Create an addon archive (useful to remotely deploy addons with Prism).")
+    .describe(getToken("binary.archive_description"))
     .action(async(addonName) => {
         await commands.archive(addonName);
     });
 
 prog
     .command("connect [agent]")
-    .describe("Connect to a local or remote SlimIO agent (must be started with the Socket built-in Addon).")
+    .describe(getToken("binary.connect_description"))
     .example("connect localhost:1433")
     .action(async(agent = "localhost:1337") => {
         const [host, port] = agent.split(":");
@@ -100,7 +106,7 @@ prog
 
 prog
     .command("config [cmd] [addon]")
-    .describe("Configure a local agent or a remote running agent.")
+    .describe(getToken("binary.config_description"))
     .example("config enable ihm,cpu")
     .example("config sync")
     .action(async(cmd, addon) => {
@@ -109,43 +115,43 @@ prog
 
 prog
     .command("debug")
-    .describe("Debug local agent (navigate through local agent dump files)")
-    .option("-c, --clear", "clear dump files", false)
+    .describe(getToken("binary.debug_description"))
+    .option("-c, --clear", getToken("binary.debug_opt_clear"), false)
     .action(async(options) => {
         await commands.debug(Boolean(options.clear));
     });
 
 prog
     .command("start")
-    .describe("Start the local agent with advanced debugging and logging utilities.")
+    .describe(getToken("binary.start_description"))
     .action(async() => {
         await commands.start();
     });
 
 prog
     .command("set <key> <value>")
-    .describe("Setup a new settings in the local cache.")
+    .describe(getToken("binary.set_description"))
     .example("set json_tab 4")
     .example("set json_stdout on")
     .action(async(key, value) => {
         console.log("");
         if (!SETTINGS_KEYS.has(key)) {
-            console.log(red().bold(` > Unknown settings key '${yellow().bold(key)}' !`));
-            console.log(white().bold("\nAvailable keys are:"));
+            const unknownToken = getToken("binary.set_unknown_settings", yellow().bold(key));
+            console.log(red().bold(` > ${unknownToken}`));
+            console.log(white().bold(`\n${getToken("binary.set_available_keys")}:`));
             prettyJSON([...SETTINGS_KEYS]);
 
             return;
         }
 
         await cacache.put(CACHE_PATH, key, value);
-        console.log(white().bold(`Successfully writed ${green().bold(key)} = ${cyan().bold(value)} in the local cache!`));
+        const msgToken = getToken("binary.set_success_write", green().bold(key), cyan().bold(value));
+        console.log(white().bold(msgToken));
     });
 
-const fsk = [...SETTINGS_KEYS].join("\n\t- ");
 prog
     .command("get [key]")
-    .describe(`Get one or all keys stored in the local cache (return all keys if no argument is given).
-     Available settings keys are: \n\t- ${fsk}`)
+    .describe(getToken("binary.get_description", [...SETTINGS_KEYS].join("\n\t- ")))
     .example("get json_tab")
     .example("get json_stdout")
     .action(async(key) => {
@@ -162,7 +168,7 @@ prog
                 keys[key] = (await cacache.get(CACHE_PATH, key)).data.toString();
             }
 
-            console.log(grey().bold(" - Local settings -"));
+            console.log(grey().bold(` ${getToken("binary.get_settings")}`));
             prettyJSON(keys);
         }
     });

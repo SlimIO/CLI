@@ -1,9 +1,36 @@
+/* eslint-disable max-len */
 "use strict";
 
 // Require Third-party Dependencies
 const { taggedString } = require("@slimio/utils");
 
 module.exports = {
+    binary: {
+        opt_interactive: "Enable interactive mode",
+        init_description: "Clone and install a complete SlimIO Agent.",
+        init_opt_add: "Additional addons to install in addition to the built-in",
+        init_opt_set: "Choose a given set of addons",
+        init_opt_nocache: "Disable cache for archives and force download from remote git",
+        add_description: "Add one or many addon(s) to the local agent (Addon are enabled by default).",
+        add_opt_disabled: "Write addons as active: false in agent.json",
+        remove_description: "Remove one or many addons from the local agent (Erase them from the disk).",
+        create_description: "Create and/or generate SlimIO files and addons.",
+        create_opt_name: "Addon name (only when Addon type is Addon)",
+        build_description: "Build and compile an agent into an executable with Node.js bundled in it.",
+        archive_description: "Create an addon archive (useful to remotely deploy addons with Prism).",
+        connect_description: "Connect to a local or remote SlimIO agent (must be started with the Socket built-in Addon).",
+        config_description: "Configure a local agent or a remote running agent.",
+        debug_description: "Debug local agent (navigate through local agent dump files)",
+        debug_opt_clear: "Clear (erase from disk) all local dump files",
+        start_description: "Start the local agent with advanced debugging and logging utilities.",
+        set_description: "Setup a new settings in the local cache.",
+        set_unknown_settings: taggedString`Unknown settings key '${0}' !`,
+        set_available_keys: "Available keys are",
+        set_success_write: taggedString`Successfully writed ${0} = ${1} in the local cache!`,
+        get_description: taggedString`Get one or all keys stored in the local cache (return all keys if no argument is given).\nAvailable settings keys are: \n\t- ${0}`,
+        get_settings: "- Local settings -"
+    },
+
     add_workdir_not_agent: "Current working dir as not been detected as a SlimIO Agent",
     add_addon_name: "Enter an addon name: ",
     add_adding_addon: taggedString`Adding addon '${0}'`,
