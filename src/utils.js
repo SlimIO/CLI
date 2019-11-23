@@ -7,9 +7,16 @@ const { join, sep } = require("path");
 // Require Third-party Dependencies
 const Manifest = require("@slimio/manifest");
 const Lock = require("@slimio/lock");
-const { cyan, white, green } = require("kleur");
 const Spinner = require("@slimio/async-cli-spinner");
+const stdin = require("@slimio/stdin");
+const is = require("@slimio/is");
+const qoa = require("qoa");
+const { get } = require("httpie");
+const { red, grey, yellow, cyan, white, green, bgMagenta } = require("kleur");
 const { installAddon } = require("@slimio/installer");
+
+// Require Internal Dependencies
+const { getToken } = require("./i18n");
 
 // CONSTANTS
 const ADDON_LOCK = new Lock({ max: 5 });
@@ -165,11 +172,80 @@ function cleanupAddonsList(addons = []) {
     return [...new Set(addons.map((name) => name.toLowerCase()))];
 }
 
+/**
+ * @function clearLine
+ * @description clear stdout (TTY) lines
+ * @memberof Utils#
+ * @param {number} [dy=1]
+ * @returns {void}
+ */
+function clearLine(dy = 1) {
+    let tDy = dy;
+
+    while (tDy--) {
+        process.stdout.clearLine(0);
+        process.stdout.moveCursor(0, -1);
+    }
+}
+
+/**
+ * @async
+ * @function interactiveAddons
+ * @description construct addons list interactively!
+ * @memberof Utils#
+ * @param {string[]} [addons]
+ * @returns {Promise<void>}
+ */
+async function interactiveAddons(addons) {
+    console.log("");
+    const { data } = await get("https://raw.githubusercontent.com/SlimIO/Governance/master/addons.json");
+    /** @type {string[]} */
+    const autocomplete = JSON.parse(data);
+
+    while (1) {
+        if (addons.length > 0) {
+            const list = addons.map((value) => bgMagenta(white().bold(` ${value} `))).join("  ");
+            console.log(grey().bold(` addons ${list}`));
+            console.log(grey().bold(" - - - - - - - - - - - - - - - - - - -"));
+        }
+
+        const addonName = await stdin(white().bold(` ${getToken("add_addon_name")}`), { autocomplete });
+        if (is.nullOrUndefined(addonName)) {
+            if (addons.length === 0) {
+                console.log(red().bold(`\n > ${getToken("interactive.leaving")}`));
+
+                return false;
+            }
+
+            clearLine(1);
+            const { leave } = await qoa.confirm({
+                query: yellow().bold(` ${getToken("interactive.ask_to_leave")}`),
+                handle: "leave",
+                accept: "y"
+            });
+            if (leave) {
+                break;
+            }
+        }
+        else {
+            autocomplete.splice(autocomplete.indexOf(addonName), 1);
+            addons.push(addonName);
+        }
+        clearLine(addons.length <= 1 ? 2 : 4);
+        console.log("");
+    }
+    console.log("");
+
+    return true;
+}
+
 module.exports = Object.freeze({
     directoryMustNotExist,
     fileMustNotExist,
     install,
     checkBeInAgentDir,
     checkBeInAgentOrSubDir,
-    cleanupAddonsList
+    cleanupAddonsList,
+    clearLine,
+    interactiveAddons
 });

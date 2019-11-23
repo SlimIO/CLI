@@ -30,9 +30,13 @@ module.exports = {
         get_description: taggedString`Get one or all keys stored in the local cache (return all keys if no argument is given).\nAvailable settings keys are: \n\t- ${0}`,
         get_settings: "- Local settings -"
     },
+    interactive: {
+        leaving: "leaving interactive mode with no addons!",
+        ask_to_leave: "Do you want to leave interactive mode ?"
+    },
 
     add_workdir_not_agent: "Current working dir as not been detected as a SlimIO Agent",
-    add_addon_name: "Enter an addon name: ",
+    add_addon_name: "Search for an addon in the registry: ",
     add_adding_addon: taggedString`Adding addon '${0}'`,
     add_error_slimio_supported: "Only SlimIO org repositories at currently supported by the CLI.",
     add_error_url_not_found: "URL hostname must be github.com",

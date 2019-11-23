@@ -8,11 +8,9 @@ const { performance } = require("perf_hooks");
 const { createDirectory } = require("@slimio/utils");
 const { white, yellow, red, grey, green } = require("kleur");
 const Spinner = require("@slimio/async-cli-spinner");
-const { get } = require("httpie");
-const stdin = require("@slimio/stdin");
 
 // Require Internal Dependencies
-const { install, checkBeInAgentOrSubDir, cleanupAddonsList } = require("../src/utils");
+const { install, checkBeInAgentOrSubDir, cleanupAddonsList, interactiveAddons } = require("../src/utils");
 const { writeToAgent } = require("../src/agent");
 const { getToken } = require("../src/i18n");
 
@@ -38,13 +36,10 @@ async function add(addons = [], options = {}) {
     }
 
     if (interactive) {
-        console.log("");
-        const { data } = await get("https://raw.githubusercontent.com/SlimIO/Governance/master/addons.json");
-        const autocomplete = JSON.parse(data);
-
-        const addonName = await stdin(grey().bold(getToken("add_addon_name")), { autocomplete });
-        addons.push(addonName);
-        console.log("");
+        const isOk = await interactiveAddons(addons);
+        if (!isOk && addons.length === 0) {
+            return;
+        }
     }
 
     const addonsChecked = [];

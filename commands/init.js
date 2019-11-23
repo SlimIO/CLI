@@ -17,7 +17,7 @@ const {
 } = require("@slimio/installer");
 
 // Require Internal Dependencies
-const { directoryMustNotExist, install, cleanupAddonsList } = require("../src/utils");
+const { directoryMustNotExist, install, cleanupAddonsList, interactiveAddons } = require("../src/utils");
 const { getToken } = require("../src/i18n");
 
 // CONSTANTS
@@ -77,7 +77,7 @@ async function initAgent(init, options = Object.create(null)) {
     }
 
     if (interactive) {
-        throw new Error(getToken("init_error_not_implemented"));
+        await interactiveAddons(addons);
     }
 
     console.log(white().bold(`\n${getToken("init_full_initialize")}`));
