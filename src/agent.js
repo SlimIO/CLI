@@ -2,12 +2,11 @@
 
 // Require Node.js Dependencies
 const { join } = require("path");
-const { existsSync } = require("fs");
 const { readdir, access, readFile, writeFile } = require("fs").promises;
 
 // Require Third-party Dependencies
 const Config = require("@slimio/config");
-const { white, grey, red, yellow } = require("kleur");
+const { white, red, yellow } = require("kleur");
 const jsonDiff = require("@slimio/json-diff");
 const { CONSTANTS: { BUILT_IN_ADDONS } } = require("@slimio/installer");
 
@@ -71,31 +70,23 @@ async function getLocalAddons() {
  * @returns {Promise<void>}
  */
 async function writeToAgent(addonName, active = false) {
-    const agentConfig = join(process.cwd(), "agent.json");
-    console.log(white().bold(`\nWriting addon in the local configuration '${yellow().bold(agentConfig)}'`));
+    const agentConfigPath = join(process.cwd(), "agent.json");
+    console.log(white().bold(`\nWriting addon in the local configuration '${yellow().bold(agentConfigPath)}'\n`));
 
-    const configExist = existsSync(agentConfig);
-    const addons = { [addonName]: { active } };
+    const agentConfig = new Config(agentConfigPath, {
+        createOnNoEntry: true
+    });
+    await agentConfig.read();
+    const originalPayload = agentConfig.payload;
 
-    if (configExist) {
-        const buf = await readFile(agentConfig);
-        let str = buf.toString().trim();
-        if (str === "") {
-            str = "{}";
-        }
-        const json = JSON.parse(str);
-        if (!Reflect.has(json, "addons")) {
-            json.addons = {};
-        }
-        Object.assign(json.addons, addons);
-
-        jsonDiff(JSON.parse(str), json);
-        await writeFile(agentConfig, JSON.stringify(json, null, 4));
+    const addonsToWrite = Array.isArray(addonName) ? addonName : [addonName];
+    for (const name of addonsToWrite) {
+        agentConfig.set(`addons.${name}.active`, active);
     }
-    else {
-        console.log(red().bold("(!) No local configuration detected. Creating one from scratch."));
-        await writeFile(agentConfig, JSON.stringify({ addons }, null, 4));
-    }
+
+    await agentConfig.writeOnDisk();
+    jsonDiff(originalPayload, agentConfig.payload);
+    await agentConfig.close();
 }
 
 /**

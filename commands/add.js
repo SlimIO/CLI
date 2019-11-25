@@ -89,10 +89,7 @@ async function add(addons = [], options = {}) {
         ...addonsChecked.map((addonName) => Spinner.create(install, addonName, installOptions))
     ], { recap: "error" });
 
-    for (const addonName of addonInstalled.filter((addon) => addon !== undefined)) {
-        // TODO: optimize to write all addons at once ?
-        await writeToAgent(addonName, !disabled);
-    }
+    await writeToAgent(addonInstalled.filter((addon) => addon !== undefined), !disabled);
 
     const executeTimeMs = (performance.now() - startTime) / 1000;
     const completedToken = getToken("add_installation_completed", yellow().bold(executeTimeMs.toFixed(2)));
