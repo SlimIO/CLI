@@ -22,7 +22,7 @@ const SETTINGS_KEYS = new Set(["json_tab", "json_stdout", "cli-lang"]);
 // eslint-disable-next-line
 const splitOnComma = (arg) => typeof arg === "string" ? arg.split(",") : [];
 
-const prog = sade("slimio").version("0.4.0");
+const prog = sade("slimio").version("0.5.0");
 
 prog
     .command("init [agentDirectoryName]")
