@@ -128,7 +128,7 @@ function checkBeInAgentDir() {
         }
     }
     catch (err) {
-        throw new Error("You must be in an Agent directory");
+        throw new Error(getToken("utils.mustbe_agentdir"));
     }
 }
 
@@ -150,13 +150,13 @@ function checkBeInAgentOrSubDir(depth = 1) {
             const pathToUnmount = "../".repeat(depth);
             const { name, type } = Manifest.open(join(process.cwd(), pathToUnmount, "slimio.toml"));
             if (name !== "agent" && type !== "Service") {
-                throw new Error("You must be in an Agent or addons directory");
+                throw new Error(getToken("utils.mustbe_agent_or_subdir"));
             }
             // always start from agent dir
             process.chdir(pathToUnmount);
         }
         catch (err) {
-            throw new Error("You must be in an Agent or in one of the sub-directory");
+            throw new Error(getToken("utils.mustbe_agent_or_subdir"));
         }
     }
 }

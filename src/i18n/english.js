@@ -34,6 +34,19 @@ module.exports = {
         leaving: "leaving interactive mode with no addons!",
         ask_to_leave: "Do you want to leave interactive mode ?"
     },
+    utils: {
+        mustbe_agentdir: "You must be in an Agent directory",
+        mustbe_agent_or_subdir: "You must be in an Agent or one of the sub directory"
+    },
+    REPL: {
+        available_commands: "available commands",
+        help_cmd: "display all available commands in the current REPL",
+        quit_cmd: "exit the current REPL",
+        json_cmd: "enable or disable json output",
+        unknown_cmd: taggedString`Unknown command '${0}'`,
+        did_you_mean: taggedString`Did you mean: ${0} ?`,
+        connection_closed: taggedString`REPL Connection to ${0} closed`
+    },
 
     add_workdir_not_agent: "Current working dir as not been detected as a SlimIO Agent",
     add_addon_name: "Search for an addon in the registry: ",

@@ -9,6 +9,9 @@ const prettyJSON = require("@slimio/pretty-json");
 const stdin = require("@slimio/stdin");
 const yn = require("yn");
 
+// Require Internal Dependencies
+const { getToken } = require("./i18n");
+
 // CONSTANTS
 const CACHE_PATH = "/tmp/slimio-cli";
 const DEFAULT_JSON_TAB = 4;
@@ -27,9 +30,9 @@ class REPL {
         Object.defineProperty(this, symJSON, { value: false, writable: true });
         Object.defineProperty(this, symTAB, { value: DEFAULT_JSON_TAB, writable: true });
 
-        this.addCommand("help", "display all available commands in the current REPL");
-        this.addCommand("quit", "exit the current REPL");
-        this.addCommand("json", `[${green().bold("on")}/${red().bold("off")}] enable or disable json output`);
+        this.addCommand("help", getToken("REPL.help_cmd"));
+        this.addCommand("quit", getToken("REPL.quit_cmd"));
+        this.addCommand("json", `[${green().bold("on")}/${red().bold("off")}] ${getToken("REPL.json_cmd")}`);
     }
 
     /**
@@ -78,7 +81,7 @@ class REPL {
      * @returns {void}
      */
     showAvailableCommands(breakLine = true) {
-        console.log(`${breakLine ? "\n" : ""}${white().bold("available commands")}`);
+        console.log(`${breakLine ? "\n" : ""}${white().bold(getToken("REPL.available_commands"))}`);
 
         for (const name of this.commandsNames) {
             const options = this.commands.get(name);
@@ -187,10 +190,10 @@ class REPL {
                     }
                 }
 
-                console.log(red().bold(`\nUnknown command '${yellow().bold(first)}'`));
+                console.log(red().bold(`\n${getToken("REPL.unknown_cmd", yellow().bold(first))}`));
                 if (isMatching.length > 0) {
                     const words = isMatching.map((row) => cyan().bold(row)).join(",");
-                    console.log(white().bold(`Did you mean: ${words} ?\n`));
+                    console.log(white().bold(`${getToken("REPL.did_you_mean", words)}\n`));
                 }
                 continue;
             }
@@ -214,7 +217,7 @@ class REPL {
                 }
             }
         }
-        console.log(`REPL Connection to ${title} closed\n`);
+        console.log(`${getToken("REPL.connection_closed", title)}\n`);
     }
 }
 
