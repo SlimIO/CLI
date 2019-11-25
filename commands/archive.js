@@ -27,6 +27,7 @@ async function createAddonArchive(cwd, dest, addonName) {
     await mkdir(dest, { recursive: true });
     const location = await bundler.generateAddonArchive(cwd, { dest });
 
+    console.log("");
     console.log(
         white().bold(getToken("archive_creating_success", cyan().bold(addonName), yellow().bold(location)))
     );
@@ -63,7 +64,6 @@ async function archive(addon) {
             handle: "addonName",
             menu: [...localAddons]
         });
-        console.log("");
 
         await createAddonArchive(process.cwd(), join(process.cwd(), "build"), addonName);
     }
