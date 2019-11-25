@@ -2,6 +2,7 @@
 
 // Require Node.js Dependencies
 const { join } = require("path");
+const { existsSync } = require("fs");
 const { readdir, access, readFile, writeFile } = require("fs").promises;
 
 // Require Third-party Dependencies
@@ -14,13 +15,27 @@ const { CONSTANTS: { BUILT_IN_ADDONS } } = require("@slimio/installer");
 const addons = BUILT_IN_ADDONS.reduce((prev, curr) => (prev[curr.toLowerCase()] = { active: true }) && prev, {});
 
 /**
+ * @function getLocalConfigPath
+ * @returns {string}
+ */
+function getLocalConfigPath() {
+    const jsonPath = join(process.cwd(), "agent.json");
+    if (existsSync(jsonPath)) {
+        return jsonPath;
+    }
+
+    const tomlPath = join(process.cwd(), "agent.toml");
+
+    return existsSync(tomlPath) ? tomlPath : jsonPath;
+}
+
+/**
  * @async
  * @function getFileAddon
  * @returns {Promise<object>}
  */
 async function getFileAddon() {
-    const agentPath = join(process.cwd(), "agent.json");
-    const cfg = new Config(agentPath, {
+    const cfg = new Config(getLocalConfigPath(), {
         createOnNoEntry: true
     });
 
@@ -31,7 +46,7 @@ async function getFileAddon() {
 
         return cfgAddons;
     }
-    catch (error) {
+    catch {
         return { addons };
     }
 }
@@ -70,7 +85,7 @@ async function getLocalAddons() {
  * @returns {Promise<void>}
  */
 async function writeToAgent(addonName, active = false) {
-    const agentConfigPath = join(process.cwd(), "agent.json");
+    const agentConfigPath = getLocalConfigPath();
     console.log(white().bold(`\nWriting addon in the local configuration '${yellow().bold(agentConfigPath)}'\n`));
 
     const agentConfig = new Config(agentConfigPath, {
@@ -113,5 +128,6 @@ module.exports = {
     getFileAddon,
     getLocalAddons,
     writeToAgent,
-    removeAddonsFromAgent
+    removeAddonsFromAgent,
+    getLocalConfigPath
 };

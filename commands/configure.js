@@ -1,17 +1,15 @@
 "use strict";
 
-// Require Node.js Dependencies
-const { writeFile } = require("fs").promises;
-
 // Require Third-party Dependencies
 const qoa = require("qoa");
 const { grey, yellow, white, red, cyan } = require("kleur");
 const jsonDiff = require("@slimio/json-diff");
+const Config = require("@slimio/config");
 const cloneDeep = require("lodash.clonedeep");
 
 // Require Internal Dependencies
 const { checkBeInAgentOrSubDir } = require("../src/utils");
-const { getFileAddon, getLocalAddons } = require("../src/agent");
+const { getFileAddon, getLocalAddons, getLocalConfigPath } = require("../src/agent");
 const REPL = require("../src/REPL");
 const { getToken } = require("../src/i18n");
 
@@ -62,7 +60,7 @@ async function activeSwitch(ctx, switcher = false) {
     }
 
     jsonDiff(agentBeforeUpdate, ctx.agentConfig);
-    await writeFile("agent.json", JSON.stringify({ addons: ctx.agentConfig }, null, 4));
+    await ctx.cfg.set("addons", ctx.agentConfig);
     console.log("");
 }
 
@@ -76,7 +74,7 @@ CMD.addCommand("disable", "disable a given addon", async(ctx) => {
     await activeSwitch(ctx, false);
 });
 
-CMD.addCommand("sync", "synchronize agent.json with the /addons directory", async(ctx) => {
+CMD.addCommand("sync", "synchronize agent config with the /addons directory", async(ctx) => {
     const agentBeforeUpdate = cloneDeep(ctx.agentConfig);
     let udpateCount = 0;
 
@@ -127,11 +125,11 @@ CMD.addCommand("sync", "synchronize agent.json with the /addons directory", asyn
     else {
         console.log("");
         jsonDiff(agentBeforeUpdate, ctx.agentConfig);
-        await writeFile("agent.json", JSON.stringify({ addons: ctx.agentConfig }, null, 4));
+        await ctx.cfg.set("addons", ctx.agentConfig);
     }
 });
 
-CMD.addCommand("addons", "show the list of addons registered in agent.json", (ctx) => {
+CMD.addCommand("addons", "show the list of addons registered in the local agent config", (ctx) => {
     CMD.stdout([...ctx.localAddons], ctx.hasREPL);
 });
 
@@ -159,8 +157,14 @@ async function configure(cmd, addons = null) {
     ]);
     console.log("");
 
+    const cfg = await (new Config(getLocalConfigPath(), {
+        createOnNoEntry: true,
+        writeOnSet: true
+    })).read();
+
     // Define context
     const ctx = {
+        cfg,
         agentConfig,
         addons: new Set([...Object.keys(agentConfig)]),
         localAddons,
@@ -173,8 +177,11 @@ async function configure(cmd, addons = null) {
         await CMD.callHandler(cmd, ctx);
     }
     else {
-        await CMD.init(grey("agent.json > "), ctx);
+        await CMD.init(grey("agent > "), ctx);
     }
+
+    await cfg.writeOnDisk();
+    await cfg.close();
 }
 
 module.exports = configure;
