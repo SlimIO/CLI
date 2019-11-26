@@ -99,7 +99,7 @@ CMD.addCommand("addons", "Call an addon's callback", async({ client }) => {
     const { callback } = await qoa.interactive({
         query: getToken("connect_choose_callback"),
         handle: "callback",
-        menu: addonInfo.callbacks
+        menu: Object.keys(addonInfo.callbacks)
     });
 
     console.log("");
@@ -165,7 +165,7 @@ async function connectAgent(options = Object.create(null)) {
         const infos = await Promise.all(addons.map((name) => client.sendOne(`${name}.status`)));
         for (const addon of infos) {
             autocomplete.unshift(`callback ${addon.name}.`);
-            autocomplete.push(...addon.callbacks.map((cbName) => `callback ${addon.name}.${cbName}`));
+            autocomplete.push(...Object.keys(addon.callbacks).map((cbName) => `callback ${addon.name}.${cbName}`));
         }
     }
     finally {
