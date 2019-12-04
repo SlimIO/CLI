@@ -25,7 +25,8 @@
             "src/utils.js",
             "src/agent.js",
             "src/i18n/index.js",
-            "src/i18n/english.js"
+            "src/i18n/english.js",
+            "src/i18n/french.js"
         ],
         "exclude": [
             "node_modules",
