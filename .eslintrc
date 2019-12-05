@@ -1,6 +1,3 @@
 {
-    "extends": "@slimio/eslint-config",
-    "rules": {
-        "require-atomic-updates": "off"
-    }
+    "extends": "@slimio/eslint-config"
 }
