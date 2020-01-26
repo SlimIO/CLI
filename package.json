@@ -41,7 +41,7 @@
         "@slimio/is": "^1.5.1",
         "@slimio/json-diff": "^0.1.1",
         "@slimio/lazy": "^1.2.0",
-        "@slimio/lock": "^0.3.0",
+        "@slimio/lock": "^0.4.0",
         "@slimio/manifest": "^0.7.1",
         "@slimio/pretty-json": "^1.3.0",
         "@slimio/pretty-stack": "^0.4.1",
