@@ -54,7 +54,6 @@ async function schema(addon) {
     await config.read();
     config.payload = configJson;
     await config.close();
-
 }
 
 module.exports = schema;
