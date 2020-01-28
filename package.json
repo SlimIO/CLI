@@ -49,7 +49,7 @@
         "@slimio/tcp-sdk": "^0.4.6",
         "@slimio/utils": "^0.9.0",
         "@slimio/validate-addon-name": "^1.2.0",
-        "cacache": "^13.0.1",
+        "cacache": "^14.0.0",
         "dotenv": "^8.2.0",
         "fast-levenshtein": "^2.0.6",
         "httpie": "^1.1.2",
