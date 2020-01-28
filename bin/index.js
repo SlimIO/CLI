@@ -114,6 +114,14 @@ prog
     });
 
 prog
+    .command("schema [addon]")
+    .describe(getToken("binary.schema_description"))
+    .example("config socket")
+    .action(async(addon) => {
+        await commands.schema(addon);
+    });
+
+prog
     .command("debug")
     .describe(getToken("binary.debug_description"))
     .option("-c, --clear", getToken("binary.debug_opt_clear"), false)

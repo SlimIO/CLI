@@ -16,5 +16,6 @@ commands.set("configure", () => require("./configure"));
 commands.set("start", () => require("./start"));
 commands.set("debug", () => require("./debug"));
 commands.set("archive", () => require("./archive"));
+commands.set("schema", () => require("./schema"));
 
 module.exports = commands.value;

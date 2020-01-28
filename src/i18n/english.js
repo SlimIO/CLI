@@ -20,6 +20,7 @@ module.exports = {
         archive_description: "Create an addon archive (useful to remotely deploy addons with Prism).",
         connect_description: "Connect to a local or remote SlimIO agent (must be started with the Socket built-in Addon).",
         config_description: "Configure a local or remote running agent.",
+        schema_description: "Create a config file from a Json Schema",
         debug_description: "Debug local agent (navigate through local agent dump files)",
         debug_opt_clear: "Clear (erase from disk) all local dump files",
         start_description: "Start the local agent with advanced debugging and logging utilities.",
@@ -113,6 +114,8 @@ module.exports = {
     remove_remove_addon_ask: "which addon do you want to remove ?",
     remove_failed_remove: "Failed to found any addon(s) to remove",
     remove_mean_question: taggedString`Did you mean: ${0} ?`,
+
+    schema_no_config: "Manifest does not contain config !",
 
     start_starting: taggedString`Starting SlimIO Agent with the CLI at: ${0}`
 };
