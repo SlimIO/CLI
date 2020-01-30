@@ -60,7 +60,7 @@
         "make-promises-safe": "^5.1.0",
         "ms": "^2.1.2",
         "qoa": "^0.2.0",
-        "sade": "^1.6.1",
+        "sade": "^1.7.0",
         "yn": "^4.0.0"
     },
     "devDependencies": {
