@@ -43,9 +43,10 @@ prog
         });
     });
 
-// TODO: add alias install (when sade alias RFC land)
 prog
-    .command("add [addons]")
+    .command("add [addons]", void 0, {
+        alias: ["install"]
+    })
     .describe(getToken("binary.add_description"))
     .option("-d, --disabled", getToken("binary.add_opt_disabled"), false)
     .option("-i, --interactive", getToken("binary.opt_interactive"), false)
@@ -58,9 +59,10 @@ prog
         });
     });
 
-// TODO: add alias rm, uninstall (when sade alias RFC land)
 prog
-    .command("remove [addons]")
+    .command("remove [addons]", void 0, {
+        alias: ["uninstall", "rm"]
+    })
     .describe(getToken("binary.remove_description"))
     .option("-i, --interactive", getToken("binary.opt_interactive"), false)
     .example("remove ihm")
