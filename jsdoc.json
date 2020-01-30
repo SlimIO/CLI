@@ -21,6 +21,7 @@
             "commands/start.js",
             "commands/debug.js",
             "commands/archive.js",
+            "commands/schema.js",
             "src/REPL.js",
             "src/utils.js",
             "src/agent.js",
