@@ -5,6 +5,9 @@
 const { taggedString } = require("@slimio/utils");
 
 module.exports = {
+    keywords: {
+        error: "Error"
+    },
     binary: {
         opt_interactive: "Enable interactive mode",
         init_description: "Clone and install a complete SlimIO Agent.",
@@ -37,7 +40,8 @@ module.exports = {
     },
     utils: {
         mustbe_agentdir: "You must be in an Agent directory",
-        mustbe_agent_or_subdir: "You must be in an Agent or one of the sub directory"
+        mustbe_agent_or_subdir: "You must be in an Agent or one of the sub directory",
+        clone_install: "Clone and install..."
     },
     REPL: {
         available_commands: "available commands",
@@ -47,6 +51,9 @@ module.exports = {
         unknown_cmd: taggedString`Unknown command '${0}'`,
         did_you_mean: taggedString`Did you mean: ${0} ?`,
         connection_closed: taggedString`REPL Connection to ${0} closed`
+    },
+    agentConfig: {
+        addonWritten: taggedString`Writing (adding) addon in the local configuration '${0}'`
     },
 
     add_workdir_not_agent: "Current working dir as not been detected as a SlimIO Agent",

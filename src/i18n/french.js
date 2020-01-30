@@ -5,6 +5,9 @@
 const { taggedString } = require("@slimio/utils");
 
 module.exports = {
+    keywords: {
+        error: "Erreur"
+    },
     binary: {
         opt_interactive: "Activation du mode interactif",
         init_description: "Clone & installe un Agent SlimIO complet.",
@@ -37,7 +40,8 @@ module.exports = {
     },
     utils: {
         mustbe_agentdir: "Vous devez être dans le dossier d'un agent",
-        mustbe_agent_or_subdir: "Vous devez être dans le dossier d'un agent ou un des sous dossier"
+        mustbe_agent_or_subdir: "Vous devez être dans le dossier d'un agent ou un des sous dossier",
+        clone_install: "Clonage et installation..."
     },
     REPL: {
         available_commands: "Commandes valides",
@@ -47,6 +51,9 @@ module.exports = {
         unknown_cmd: taggedString`Commande '${0}' inconnue`,
         did_you_mean: taggedString`Vouliez-vous dire: ${0} ?`,
         connection_closed: taggedString`Connexion REPPL à ${0} terminé`
+    },
+    agentConfig: {
+        addonWritten: taggedString`Ajout de l'addon au sein de la configuration local '${0}'`
     },
 
     add_workdir_not_agent: "Le dossier de travail actuel n'est pas détecté comme étant un agent SlimIO",

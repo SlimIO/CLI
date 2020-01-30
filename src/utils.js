@@ -90,7 +90,7 @@ async function install(addonName, options = Object.create(null)) {
     const { dest = process.cwd(), verbose = true } = options;
     const spinner = new Spinner({
         prefixText: cyan().bold(addonName), verbose
-    }).start(white().bold("Clone and install..."));
+    }).start(white().bold(getToken("utils.clone_install")));
     const free = await ADDON_LOCK.acquireOne();
 
     try {
@@ -104,7 +104,7 @@ async function install(addonName, options = Object.create(null)) {
         return addonDir.split(sep).pop();
     }
     catch (err) {
-        spinner.failed(`Error occured: ${err.message}`);
+        spinner.failed(`${getToken("keywords.error")}: ${err.message}`);
         throw err;
     }
     finally {

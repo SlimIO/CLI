@@ -7,9 +7,12 @@ const { readdir, access, readFile, writeFile } = require("fs").promises;
 
 // Require Third-party Dependencies
 const Config = require("@slimio/config");
-const { white, red, yellow } = require("kleur");
+const { white, yellow } = require("kleur");
 const jsonDiff = require("@slimio/json-diff");
 const { CONSTANTS: { BUILT_IN_ADDONS } } = require("@slimio/installer");
+
+// Require Internal Dependencies
+const { getToken } = require("./i18n");
 
 // CONSTANTS
 const addons = BUILT_IN_ADDONS.reduce((prev, curr) => (prev[curr.toLowerCase()] = { active: true }) && prev, {});
@@ -86,7 +89,10 @@ async function getLocalAddons() {
  */
 async function writeToAgent(addonName, active = false) {
     const agentConfigPath = getLocalConfigPath();
-    console.log(white().bold(`\nWriting addon in the local configuration '${yellow().bold(agentConfigPath)}'\n`));
+    {
+        const token = getToken("agentConfig.addonWritten", yellow().bold(agentConfigPath));
+        console.log(white().bold(`\n${token}\n`));
+    }
 
     const agentConfig = new Config(agentConfigPath, {
         createOnNoEntry: true
