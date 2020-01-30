@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 "use strict";
 
 // Require Third-party Depedencies
@@ -10,8 +11,8 @@ const CACHE_PATH = "/tmp/slimio-cli";
 const DEFAULT_LANG = "english";
 
 const TOKENS = {
-    // eslint-disable-next-line global-require
-    english: require("./english.js")
+    english: require("./english.js"),
+    french: require("./french.js")
 };
 
 // VARS
@@ -67,5 +68,6 @@ function getToken(token, ...params) {
 
 module.exports = {
     getToken,
+    getLocalLang,
     CONSTANTS: { LANG_UPDATED }
 };

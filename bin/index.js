@@ -1,18 +1,22 @@
 #!/usr/bin/env node
 "use strict";
 
-require("make-promises-safe");
-const { join } = require("path");
-require("dotenv").config({ path: join(__dirname, "..", ".env") });
+// Require Node.js Dependencies
+const { readdir } = require("fs").promises;
+const { join, extname, basename } = require("path");
 
 // Require Third-party Dependencies
+require("make-promises-safe");
+require("dotenv").config({ path: join(__dirname, "..", ".env") });
+
 const sade = require("sade");
 const cacache = require("cacache");
+const qoa = require("qoa");
 const { red, yellow, white, green, cyan, grey } = require("kleur");
 const prettyJSON = require("@slimio/pretty-json");
 
 // Require Internal Dependencies
-const { getToken } = require("../src/i18n");
+const { getToken, getLocalLang } = require("../src/i18n");
 const commands = require("../commands");
 
 // CONSTANTS
@@ -136,6 +140,31 @@ prog
     .describe(getToken("binary.start_description"))
     .action(async() => {
         await commands.start();
+    });
+
+prog
+    .command("lang")
+    .describe(getToken("binary.lang_description"))
+    .action(async() => {
+        const currentLang = getLocalLang();
+        const dirents = await readdir(join(__dirname, "../src/i18n"), { withFileTypes: true });
+        const langs = dirents
+            .filter((dirent) => dirent.isFile() && extname(dirent.name) === ".js")
+            .filter((dirent) => dirent.name !== "index.js")
+            .map((dirent) => basename(dirent.name, ".js"));
+
+        langs.splice(langs.indexOf(currentLang), 1);
+        langs.unshift(currentLang);
+
+        console.log("");
+        const { selectedLang } = await qoa.interactive({
+            query: green().bold(` ${getToken("binary.lang_selection")}`),
+            handle: "selectedLang",
+            menu: langs
+        });
+
+        await cacache.put(CACHE_PATH, "cli-lang", selectedLang);
+        console.log(white().bold(`\n ${getToken("binary.lang_registration", yellow().bold(selectedLang))}`));
     });
 
 prog
