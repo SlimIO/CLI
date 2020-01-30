@@ -2,11 +2,13 @@
 
 // Require Node.js Dependencies
 const { access, readFile } = require("fs").promises;
-const { join } = require("path");
+const { join, extname, dirname, sep } = require("path");
 
 // Require Third-party Dependencies
 const Manifest = require("@slimio/manifest");
 const Config = require("@slimio/config");
+const qoa = require("qoa");
+const prettyJSON = require("@slimio/pretty-json");
 const { fillWithSchema } = require("@slimio/json-schema-prompt");
 const { red } = require("kleur");
 
@@ -36,24 +38,30 @@ async function schema(addon) {
 
         return;
     }
-    console.log(man.config);
 
-    const configPath = join(addonDir, man.config);
-    await access(configPath);
+    const configName = extname(man.config) === "" ? `${man.config}.json` : man.config;
+    const config = new Config(join(addonDir, configName), {
+        createOnNoEntry: true
+    });
+    await config.read();
 
-    const buf = await readFile(configPath);
-    const schemaJson = JSON.parse(buf.toString());
-    const configJson = await fillWithSchema(schemaJson);
+    const buf = await readFile(config.schemaFile);
+    const payload = await fillWithSchema(JSON.parse(buf.toString()));
 
-    const config = new Config(join(addonDir, "config.json"), {
-        createOnNoEntry: true,
-        writeOnSet: true,
-        defaultSchema: schemaJson
+    const currentAddonName = dirname(addonDir).split(sep).pop();
+
+    prettyJSON(payload);
+    console.log("");
+    const { ok } = await qoa.confirm({
+        query: `Do you want to apply the configuration to ${currentAddonName} ?`,
+        handle: "ok",
+        accept: "y"
     });
 
-    await config.read();
-    config.payload = configJson;
-    await config.close();
+    if (ok) {
+        config.payload = payload;
+        await config.close();
+    }
 }
 
 module.exports = schema;
