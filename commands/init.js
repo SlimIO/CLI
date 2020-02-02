@@ -41,11 +41,7 @@ async function installAgentDep(agentDir, verbose = true) {
     }).start(white().bold(getToken("init_install_deps")));
 
     try {
-        await new Promise((resolve, reject) => {
-            const subProcess = installDependencies(agentDir, true);
-            subProcess.once("close", resolve);
-            subProcess.once("error", reject);
-        });
+        await installDependencies(agentDir, true);
         spinner.succeed(green().bold(getToken("init_install_done")));
     }
     catch (error) {
