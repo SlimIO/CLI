@@ -55,12 +55,19 @@ async function splitAddons(ctx) {
 async function activeSwitch(ctx, switcher = false) {
     const addons = await splitAddons(ctx);
     const agentBeforeUpdate = cloneDeep(ctx.agentConfig);
+    let atLeastOneUpdate = false;
     for (const addon of addons) {
+        if (!Reflect.has(ctx.agentConfig, addon)) {
+            continue;
+        }
         Reflect.set(ctx.agentConfig[addon], "active", switcher);
+        atLeastOneUpdate = true;
     }
 
-    jsonDiff(agentBeforeUpdate, ctx.agentConfig);
-    await ctx.cfg.set("addons", ctx.agentConfig);
+    if (atLeastOneUpdate) {
+        jsonDiff(agentBeforeUpdate, ctx.agentConfig);
+        await ctx.cfg.set("addons", ctx.agentConfig);
+    }
     console.log("");
 }
 
