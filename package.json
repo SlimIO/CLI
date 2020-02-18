@@ -40,7 +40,7 @@
         "@slimio/installer": "^0.4.0",
         "@slimio/is": "^1.5.1",
         "@slimio/json-diff": "^0.1.1",
-        "@slimio/json-schema-prompt": "^1.0.0",
+        "@slimio/json-schema-prompt": "^1.0.1",
         "@slimio/lazy": "^1.2.0",
         "@slimio/lock": "^0.4.0",
         "@slimio/manifest": "^0.9.1",
