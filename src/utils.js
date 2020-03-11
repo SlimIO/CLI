@@ -99,7 +99,7 @@ async function install(addonName, options = Object.create(null)) {
             forceMkdir: false,
             ...token
         });
-        spinner.succeed(green().bold("done!"));
+        spinner.succeed(green().bold(getToken("init_install_done")));
 
         return addonDir.split(sep).pop();
     }

@@ -9,6 +9,7 @@ const { performance } = require("perf_hooks");
 // Require Third-party Dependencies
 const { yellow, white, green, red, cyan, grey } = require("kleur");
 const Spinner = require("@slimio/async-cli-spinner");
+const Config = require("@slimio/config");
 const ms = require("ms");
 const {
     extractAgent,
@@ -103,7 +104,7 @@ async function initAgent(init, options = Object.create(null)) {
 
     if (addons.length > 0) {
         const addonsList = addons.map((name) => yellow().bold(name)).join(",");
-        console.log(getToken("init_additional_addon", red().bold("!! Warning"), addonsList));
+        console.log(getToken("init_additional_addon", red().bold(getToken("init_warning")), addonsList));
         console.log(grey().bold(getToken("init_separator")));
     }
 
@@ -118,12 +119,21 @@ async function initAgent(init, options = Object.create(null)) {
     console.log(grey().bold(getToken("init_separator")));
     console.log(white().bold(getToken("init_completed", green().bold(executeTimeMs))));
 
-    // Write agent.json
-    const localConfig = { addons: {} };
-    for (const addonName of BUILT_IN_ADDONS) {
-        localConfig.addons[addonName.toLowerCase()] = { active: true };
+    // Write local configuration with all addons!
+    const localConfig = new Config(join(agentDir, "agent.toml"), {
+        createOnNoEntry: true,
+        defaultSchema: {}
+    });
+    await localConfig.read({ addons: {} });
+
+    try {
+        for (const addonName of toInstall) {
+            localConfig.set(`addons.${addonName.toLowerCase()}`, { active: true });
+        }
     }
-    await writeFile(join(agentDir, "agent.json"), JSON.stringify(localConfig, null, 4));
+    finally {
+        await localConfig.close();
+    }
 
     const initSuccessToken = getToken("init_success", cyan().bold(agentDir));
     console.log(yellow().bold(`\n${initSuccessToken}`));

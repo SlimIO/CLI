@@ -105,6 +105,7 @@ module.exports = {
     debug_next_question: "do you want to continue to the next dump ?",
     debug_error_dump_not_found: "no dump",
 
+    init_warning: "!! Warning",
     init_install_deps: "Install dependencies",
     init_install_done: "done !",
     init_unknow: taggedString`Unknown addon set with name '${0}'`,
