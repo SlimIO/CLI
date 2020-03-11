@@ -2,7 +2,7 @@
 
 // Require Node.js Dependencies
 const { strictEqual } = require("assert").strict;
-const { mkdir, writeFile } = require("fs").promises;
+const { mkdir, readdir } = require("fs").promises;
 const { join } = require("path");
 const { performance } = require("perf_hooks");
 
@@ -127,8 +127,11 @@ async function initAgent(init, options = Object.create(null)) {
     await localConfig.read({ addons: {} });
 
     try {
-        for (const addonName of toInstall) {
-            localConfig.set(`addons.${addonName.toLowerCase()}`, { active: true });
+        const addonsList = await readdir(addonDir, { withFileTypes: true });
+        for (const dirent of addonsList) {
+            if (dirent.isDirectory()) {
+                localConfig.set(`addons.${dirent.name}`, { active: true });
+            }
         }
     }
     finally {

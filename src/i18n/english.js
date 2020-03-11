@@ -107,7 +107,7 @@ module.exports = {
 
     init_warning: "!! Warning",
     init_install_deps: "Install dependencies",
-    init_install_done: "done !",
+    init_install_done: "Installation done!",
     init_unknow: taggedString`Unknown addon set with name '${0}'`,
     init_available: taggedString` > Available sets are: ${0}`,
     init_error_not_implemented: "Not Implemented Yet",
