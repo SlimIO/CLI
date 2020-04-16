@@ -37,7 +37,7 @@
         "@slimio/bundler": "^0.4.2",
         "@slimio/config": "^0.15.1",
         "@slimio/core": "^0.11.0",
-        "@slimio/installer": "^0.4.0",
+        "@slimio/installer": "^0.5.0",
         "@slimio/is": "^1.5.1",
         "@slimio/json-diff": "^0.1.1",
         "@slimio/json-schema-prompt": "^1.0.1",
