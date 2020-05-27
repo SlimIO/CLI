@@ -9,7 +9,8 @@
     "scripts": {
         "test": "cross-env psp && jest --coverage",
         "prepublishOnly": "pkg-ok",
-        "doc": "jsdoc -c ./jsdoc.json -r -R ./README.md -P ./package.json --verbose"
+        "doc": "jsdoc -c ./jsdoc.json -r -R ./README.md -P ./package.json --verbose",
+        "coverage": "codecov"
     },
     "repository": {
         "type": "git",
@@ -69,6 +70,7 @@
         "@escommunity/minami": "^1.0.0",
         "@slimio/eslint-config": "^4.1.0",
         "@slimio/psp": "^0.11.1",
+        "codecov": "^3.7.0",
         "cross-env": "^7.0.2",
         "eslint": "^7.0.0",
         "husky": "^4.2.5",
@@ -94,13 +96,5 @@
             "/node_modules/",
             "/test/fixtures/"
         ]
-    },
-    "nyc": {
-        "check-coverage": true,
-        "per-file": false,
-        "lines": 98,
-        "statements": 98,
-        "functions": 98,
-        "branches": 90
     }
 }
