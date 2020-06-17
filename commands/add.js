@@ -3,10 +3,12 @@
 // Require Node.js Dependencies
 const { join } = require("path");
 const { performance } = require("perf_hooks");
+const { existsSync, rmdirSync } = require("fs");
 
 // Require Third-party Dependencies
 const { createDirectory } = require("@slimio/utils");
 const { white, yellow, red, grey, green } = require("kleur");
+const { parseAddonExpr } = require("@slimio/installer");
 const Spinner = require("@slimio/async-cli-spinner");
 
 // Require Internal Dependencies
@@ -23,7 +25,7 @@ const { getToken } = require("../src/i18n");
  * @returns {Promise<void>}
  */
 async function add(addons = [], options = {}) {
-    const { disabled = false, interactive = false } = options;
+    const { disabled = false, interactive = false, force = false } = options;
 
     try {
         checkBeInAgentOrSubDir();
@@ -42,54 +44,38 @@ async function add(addons = [], options = {}) {
         }
     }
 
+    // Generate 'addons' directory if it doesn't exist!
+    const addonDirectory = join(process.cwd(), "addons");
+    await createDirectory(addonDirectory);
+
     const addonsChecked = [];
     const startTime = performance.now();
     for (const addon of cleanupAddonsList(addons)) {
-        const addToken = getToken("add_adding_addon", yellow().bold(addon));
-        const slimioSupportedToken = getToken("add_error_slimio_supported");
+        const { repoName } = parseAddonExpr(addon);
+        const addonPath = join(addonDirectory, repoName);
 
-        console.log(white().bold(`\n > ${addToken}`));
-        await createDirectory(join(process.cwd(), "addons"));
-
-
-        /** @type {URL} */
-        let myurl;
-        try {
-            myurl = new URL(addon);
-            console.log("\n");
-
-            if (myurl.host !== "github.com") {
-                throw new Error(getToken("add_error_url_not_found"));
-            }
-
-            const [, orga, add] = myurl.pathname.split("/");
-            if (orga !== "SlimIO") {
-                throw new Error(slimioSupportedToken);
-            }
-            addonsChecked.push(add);
-        }
-        catch (error) {
-            console.log(grey().bold(getToken("add_not_url")));
-            console.log("");
-            if (addon.split("/").length === 2) {
-                const [orga, add] = addon.split("/");
-                if (orga !== "SlimIO") {
-                    throw new Error(slimioSupportedToken);
-                }
-                addonsChecked.push(add);
+        if (existsSync(addonPath)) {
+            if (force) {
+                rmdirSync(addonPath, { recursive: true });
             }
             else {
-                addonsChecked.push(addon);
+                console.log(`\n > ${white().bold(getToken("add_addon_already_installed", yellow().bold(repoName)))}`);
+                continue;
             }
         }
+        console.log(white().bold(`\n > ${getToken("add_adding_addon", yellow().bold(addon))}`));
+        addonsChecked.push(addon);
     }
+    await new Promise((resolve) => setImmediate(resolve));
 
-    const installOptions = { dest: join(process.cwd(), "addons") };
+    const installOptions = { dest: addonDirectory };
     const addonInstalled = await Spinner.startAll([
         ...addonsChecked.map((addonName) => Spinner.create(install, addonName, installOptions))
     ], { recap: "error" });
 
-    await writeToAgent(addonInstalled.filter((addon) => addon !== undefined), !disabled);
+    if (addonsChecked.length > 0) {
+        await writeToAgent(addonInstalled.filter((addon) => addon !== undefined), !disabled);
+    }
 
     const executeTimeMs = (performance.now() - startTime) / 1000;
     const completedToken = getToken("add_installation_completed", yellow().bold(executeTimeMs.toFixed(2)));

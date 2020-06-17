@@ -16,6 +16,7 @@ module.exports = {
         init_opt_nocache: "Désactivation du cache pour les archives et force le téléchargement sur le git distant.",
         add_description: "Ajoute un ou plusieurs addons dans l'agent local (Ils seront activés par défaut).",
         add_opt_disabled: "Enregistre les addons comme étant actif=false dans la configuration locale de l'agent.",
+        add_opt_force: "Force une ré-installation complète des addons même s'ils sont déjà installés!",
         remove_description: "Retire un ou plusieurs addon(s) de l'agent local (cela les efface du disque).",
         create_description: "Créer et/ou génère des fichiers et des addons.",
         create_opt_name: "Nom de l'addon (Seulement si le type est 'Addon').",
@@ -62,9 +63,7 @@ module.exports = {
     add_workdir_not_agent: "Le dossier de travail actuel n'est pas détecté comme étant un agent SlimIO",
     add_addon_name: "Recherche d'un addon dans le Registry: ",
     add_adding_addon: taggedString`Ajout de l'addon '${0}'`,
-    add_error_slimio_supported: "Seulement les répertoires de l'orga SlimIO sont supportés par le CLI actuellement.",
-    add_error_url_not_found: "URL hostname doit être github.com",
-    add_not_url: "(!) N'est pas détecté en tant qu'URL.",
+    add_addon_already_installed: taggedString`Addon '${0}' déjà installé sur l'agent courant!`,
     add_installation_completed: taggedString`installation completé en ${0} secondes`,
 
     archive_workdir_not_addon: "Le dossier de travail actuel n'est pas détecté en tant qu'Addon !",

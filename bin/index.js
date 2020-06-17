@@ -54,11 +54,13 @@ prog
     .describe(getToken("binary.add_description"))
     .option("-d, --disabled", getToken("binary.add_opt_disabled"), false)
     .option("-i, --interactive", getToken("binary.opt_interactive"), false)
+    .option("-f, --force", getToken("binary.add_opt_force"), false)
     .example("add ihm,prism")
     .example("add --interactive --disabled")
-    .action(async(addons, { disabled, interactive }) => {
+    .action(async(addons, { disabled, interactive, force }) => {
         await commands.add(splitOnComma(addons), {
             disabled: Boolean(disabled),
+            force: Boolean(force),
             interactive
         });
     });
