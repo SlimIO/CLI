@@ -36,7 +36,7 @@
         "@slimio/addon-factory": "^0.5.0",
         "@slimio/async-cli-spinner": "^0.5.2",
         "@slimio/bundler": "^0.4.2",
-        "@slimio/config": "^0.15.1",
+        "@slimio/config": "^0.17.0",
         "@slimio/core": "^0.11.0",
         "@slimio/installer": "^0.5.0",
         "@slimio/is": "^1.5.1",
