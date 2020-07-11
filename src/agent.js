@@ -47,7 +47,7 @@ async function getFileAddon() {
         const cfgAddons = cfg.get("addons");
         await cfg.close();
 
-        return cfgAddons;
+        return cfgAddons ?? {};
     }
     catch {
         return { addons };
