@@ -54,7 +54,7 @@ module.exports = {
         json_cmd: "Active ou désactive la sortie JSON",
         unknown_cmd: taggedString`Commande '${0}' inconnue`,
         did_you_mean: taggedString`Vouliez-vous dire: ${0} ?`,
-        connection_closed: taggedString`Connexion REPPL à ${0} terminé`
+        connection_closed: taggedString`Connexion REPL à ${0} terminée`
     },
     agentConfig: {
         addonWritten: taggedString`Ajout de l'addon au sein de la configuration local '${0}'`
